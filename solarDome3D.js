@@ -21,7 +21,7 @@ export class SolarDome3D {
             showAllMonths: true,
             showDomeWireframe: true,
             showSunRays: true,
-            transparentMassings: false,
+            transparentMassings: true,
             showDimensions: false,
             unitSystem: 'metric',
             massings: []
@@ -242,6 +242,7 @@ export class SolarDome3D {
         const wallHeight = 3.048; // 10 ft
         const roofPeakHeight = 1.8288; // 6 ft (total height = 4.8768 m = 16 ft)
         const length = 18.288; // 60 ft
+        this.houseTotalHeight = wallHeight + roofPeakHeight;
 
         const shape = new THREE.Shape();
         shape.moveTo(-width / 2, 0);
@@ -267,7 +268,9 @@ export class SolarDome3D {
         });
 
         this.houseMesh = new THREE.Mesh(geo, mat);
-        this.houseMesh.position.set(0, (wallHeight + roofPeakHeight) / 2, 0);
+        const s = this.state.zoomScale || 1.0;
+        this.houseMesh.scale.set(s, s, s);
+        this.houseMesh.position.set(0, (this.houseTotalHeight * s) / 2, 0);
         this.houseMesh.castShadow = true;
         this.houseMesh.receiveShadow = true;
 
@@ -424,15 +427,18 @@ export class SolarDome3D {
         const oldLat = this.state.latitude;
         const oldLon = this.state.longitude;
         const oldDate = this.state.date;
+        const oldZoom = this.state.zoomScale;
 
         this.state = { ...this.state, ...newState };
 
-        if (newState.zoomScale !== undefined) {
-            this.camera.zoom = newState.zoomScale;
-            this.camera.updateProjectionMatrix();
-        }
-
-        if (newState.massings !== undefined || newState.transparentMassings !== undefined || newState.showDimensions !== undefined || newState.unitSystem !== undefined) {
+        if (newState.zoomScale !== undefined && newState.zoomScale !== oldZoom) {
+            const s = newState.zoomScale;
+            if (this.houseMesh) {
+                this.houseMesh.scale.set(s, s, s);
+                this.houseMesh.position.set(0, ((this.houseTotalHeight || 4.8768) * s) / 2, 0);
+            }
+            this.rebuildMassings(this.state.massings);
+        } else if (newState.massings !== undefined || newState.transparentMassings !== undefined || newState.showDimensions !== undefined || newState.unitSystem !== undefined) {
             this.rebuildMassings(this.state.massings);
         }
 
@@ -478,20 +484,21 @@ export class SolarDome3D {
                 metalness: 0.05
             });
 
-        const hHalfW = this.house3DWidth / 2; // 1.8m
-        const hHalfL = this.house3DLength / 2; // 2.4m
+        const s = this.state.zoomScale || 1.0;
+        const hHalfW = (this.house3DWidth * s) / 2;
+        const hHalfL = (this.house3DLength * s) / 2;
 
         massingsList.forEach(m => {
             if (!m.points3D || m.points3D.length < 3) return;
 
             const shape = new THREE.Shape();
-            shape.moveTo(m.points3D[0].x, m.points3D[0].z);
+            shape.moveTo(m.points3D[0].x * s, m.points3D[0].z * s);
             for (let i = 1; i < m.points3D.length; i++) {
-                shape.lineTo(m.points3D[i].x, m.points3D[i].z);
+                shape.lineTo(m.points3D[i].x * s, m.points3D[i].z * s);
             }
             shape.closePath();
 
-            const height = m.height || 6.0;
+            const height = (m.height || 6.0) * s;
             const liftOffGround = 0.0508; // 2 inches in meters
             const extrudeSettings = {
                 steps: 1,
@@ -518,17 +525,19 @@ export class SolarDome3D {
 
             // 3D Dimension Line & Label to House
             if (this.state.showDimensions) {
-                let bestPt = m.points3D[0];
+                let bestPt = { x: m.points3D[0].x * s, z: m.points3D[0].z * s };
                 let bestHouseX = 0, bestHouseZ = 0;
                 let minDist = Infinity;
 
                 m.points3D.forEach(p => {
-                    const clampedX = Math.max(-hHalfW, Math.min(hHalfW, p.x));
-                    const clampedZ = Math.max(-hHalfL, Math.min(hHalfL, p.z));
-                    const dist = Math.hypot(p.x - clampedX, p.z - clampedZ);
+                    const scaledX = p.x * s;
+                    const scaledZ = p.z * s;
+                    const clampedX = Math.max(-hHalfW, Math.min(hHalfW, scaledX));
+                    const clampedZ = Math.max(-hHalfL, Math.min(hHalfL, scaledZ));
+                    const dist = Math.hypot(scaledX - clampedX, scaledZ - clampedZ);
                     if (dist < minDist) {
                         minDist = dist;
-                        bestPt = p;
+                        bestPt = { x: scaledX, z: scaledZ };
                         bestHouseX = clampedX;
                         bestHouseZ = clampedZ;
                     }

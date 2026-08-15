@@ -26,7 +26,7 @@ export class PolarChart2D {
             longitude: -105.9378,
             showAnalemmas: true,
             showAllMonths: true,
-            transparentMassings: false,
+            transparentMassings: true,
             showDimensions: false,
             unitSystem: 'metric', // 'metric' (m, m²) | 'customary' (ft, sq ft)
             isDrawMode: false,
@@ -849,27 +849,47 @@ export class PolarChart2D {
         ctx.fillStyle = '#ffffff';
         ctx.fill();
 
-        const tagText = `${pos.elevation.toFixed(1)}° el | ${pos.azimuth.toFixed(1)}° az`;
+        // 2-Line Floating Sun Info Badge: Line 1 = Angles, Line 2 = Time of Day
+        const hours = this.state.date.getHours();
+        const mins = this.state.date.getMinutes();
+        const period = hours >= 12 ? 'PM' : 'AM';
+        const displayH = hours % 12 === 0 ? 12 : hours % 12;
+        const displayM = mins.toString().padStart(2, '0');
+        const timeStr = `${displayH}:${displayM} ${period}`;
+
+        const line1 = `${pos.elevation.toFixed(1)}° el | ${pos.azimuth.toFixed(1)}° az`;
+        const line2 = timeStr;
+
         ctx.font = '500 9px "Roboto Mono", monospace';
-        const tagMetrics = ctx.measureText(tagText);
-        const tagW = tagMetrics.width + 10;
-        const tagH = 16;
+        const m1 = ctx.measureText(line1);
+        ctx.font = '700 9px "Roboto Mono", monospace';
+        const m2 = ctx.measureText(line2);
+        const tagW = Math.max(m1.width, m2.width) + 12;
+        const tagH = 26;
         
         let tagX = sunPt.x + 10;
-        let tagY = sunPt.y - 8;
+        let tagY = sunPt.y - 13;
         if (tagX + tagW > this.width - 8) tagX = sunPt.x - tagW - 10;
         if (tagY < 12) tagY = sunPt.y + 16;
+        if (tagY + tagH > this.height - 8) tagY = this.height - tagH - 8;
 
         ctx.fillStyle = '#181c24';
         ctx.strokeStyle = '#262b36';
         ctx.lineWidth = 1;
-        ctx.fillRect(tagX, tagY - 10, tagW, tagH);
-        ctx.strokeRect(tagX, tagY - 10, tagW, tagH);
+        ctx.fillRect(tagX, tagY, tagW, tagH);
+        ctx.strokeRect(tagX, tagY, tagW, tagH);
 
+        // Line 1: Solar angles
         ctx.fillStyle = '#f3f4f6';
+        ctx.font = '500 8.5px "Roboto Mono", monospace';
         ctx.textAlign = 'left';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(tagText, tagX + 5, tagY - 2);
+        ctx.textBaseline = 'top';
+        ctx.fillText(line1, tagX + 6, tagY + 3.5);
+
+        // Line 2: Time of day
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = '700 8.5px "Roboto Mono", monospace';
+        ctx.fillText(line2, tagX + 6, tagY + 14.5);
     }
 
     drawCenterHouse4x() {

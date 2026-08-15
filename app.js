@@ -17,7 +17,7 @@ class SunDomeApp {
             longitude: -105.9378,
             showAnalemmas: true,
             showAllMonths: true,
-            transparentMassings: false,
+            transparentMassings: true,
             showDimensions: false,
             unitSystem: 'metric', // 'metric' | 'customary'
             zoomScale: 1.0,

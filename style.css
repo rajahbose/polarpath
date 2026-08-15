@@ -707,40 +707,56 @@ header {
     font-weight: 700;
 }
 
-/* Telemetry HUD Badge */
+/* Telemetry HUD Badge (Smaller & subtle color-wise) */
 .telemetry-card {
-    background: var(--bg-card);
+    background: rgba(20, 23, 29, 0.88);
+    backdrop-filter: blur(6px);
     border: 1px solid var(--border-color);
     border-radius: 4px;
-    padding: 0.65rem 0.85rem;
+    padding: 0.45rem 0.65rem;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem 1rem;
-    font-size: 0.75rem;
-    min-width: 220px;
+    gap: 0.35rem 0.75rem;
+    font-size: 0.7rem;
+    min-width: 180px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 .telemetry-item {
     display: flex;
     flex-direction: column;
+    gap: 0.05rem;
 }
 
 .telemetry-label {
-    font-size: 0.62rem;
+    font-size: 0.58rem;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    line-height: 1.1;
 }
 
 .telemetry-value {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--accent-sun);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #e2e8f0;
     font-family: var(--font-mono);
 }
 
+.telemetry-value.cyan {
+    color: #94a3b8;
+}
+
+.telemetry-value.rose {
+    color: #cbd5e1;
+}
+
+.telemetry-value.green {
+    color: #94a3b8;
+}
+
 .telemetry-value.plain {
-    color: var(--text-primary);
+    color: #e2e8f0;
 }
 
 /* Legend Badge */
