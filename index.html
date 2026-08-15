@@ -240,18 +240,20 @@
 
     <!-- Bottom Control Station / Timeline Bar -->
     <footer class="control-station">
-        <!-- Playback Controls -->
+        <!-- Playback Controls (Speed dropdown placed below play controls) -->
         <div class="playback-cluster">
-            <button class="icon-btn" id="btnPrevDay" title="Previous Day">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
-            </button>
-            <button class="icon-btn primary" id="btnPlayPause" title="Play / Pause Time Animation">
-                <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                <svg id="pauseIcon" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-            </button>
-            <button class="icon-btn" id="btnNextDay" title="Next Day">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
+            <div class="playback-buttons">
+                <button class="icon-btn" id="btnPrevDay" title="Previous Day">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                <button class="icon-btn primary" id="btnPlayPause" title="Play / Pause Time Animation">
+                    <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <svg id="pauseIcon" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                </button>
+                <button class="icon-btn" id="btnNextDay" title="Next Day">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </div>
             <select class="speed-select" id="speedSelect" title="Simulation Speed">
                 <option value="1">1x (Real)</option>
                 <option value="10">10x Speed</option>
@@ -266,10 +268,12 @@
             <!-- Row 1: Time of Day Slider -->
             <div class="timeline-row">
                 <div class="timeline-header">
-                    <div class="scrub-label-group">
+                    <div class="scrub-block">
                         <span class="scrub-title">Time of Day</span>
-                        <span class="time-readout" id="timeDisplay">12:00 PM</span>
-                        <span class="sun-state-badge active-sun" id="daylightBadge">☀️ Daylight</span>
+                        <div class="scrub-value-row">
+                            <span class="time-readout" id="timeDisplay">12:00 PM</span>
+                            <span class="sun-state-badge active-sun" id="daylightBadge">☀️ Daylight</span>
+                        </div>
                     </div>
                 </div>
                 <div class="slider-container">
@@ -280,10 +284,12 @@
             <!-- Row 2: Day of Year Slider -->
             <div class="timeline-row">
                 <div class="timeline-header">
-                    <div class="scrub-label-group">
+                    <div class="scrub-block">
                         <span class="scrub-title">Day of Year</span>
-                        <span class="date-readout" id="dateDisplay">Aug 14, 2026</span>
-                        <span class="day-num-badge" id="dayNumBadge">Day 226 / 365</span>
+                        <div class="scrub-value-row">
+                            <span class="date-readout" id="dateDisplay">Aug 14, 2026</span>
+                            <span class="day-num-badge" id="dayNumBadge">Day 226 / 365</span>
+                        </div>
                     </div>
                 </div>
                 <!-- Precision Month Ticks distributed cleanly across the full slider width -->
