@@ -63,7 +63,7 @@ export class ExportModal {
                     <!-- Live Square Preview -->
                     <div class="export-preview-column">
                         <div class="export-preview-box" id="exportPreviewBox">
-                            <canvas id="exportPreviewCanvas" width="280" height="280"></canvas>
+                            <canvas id="exportPreviewCanvas" width="420" height="420"></canvas>
                         </div>
                         <span class="export-spec-tag">3000 × 3000 px • 300 DPI Square</span>
                     </div>
@@ -462,16 +462,7 @@ export class ExportModal {
             ctx.setLineDash([]);
         }
 
-        // 6. Center Monopoly House (Footprint)
-        const houseW = 10 * pixelsPerMeter;
-        const houseL = 12 * pixelsPerMeter;
-        ctx.fillStyle = this.hexToRgba(baseColor, 0.9);
-        ctx.fillRect(centerX - houseW / 2, centerY - houseL / 2, houseW, houseL);
-        ctx.strokeStyle = isDark ? '#0d0f12' : '#ffffff';
-        ctx.lineWidth = Math.max(1, size / 1500);
-        ctx.strokeRect(centerX - houseW / 2, centerY - houseL / 2, houseW, houseL);
-
-        // 7. Massings
+        // 6. Massings (User-Drawn Massing Polygons)
         if (this.options.includeMassings && state.massings && state.massings.length > 0) {
             state.massings.forEach(m => {
                 if (!m.points || m.points.length < 3) return;
@@ -491,7 +482,7 @@ export class ExportModal {
             });
         }
 
-        // 8. Active Sun & Active Daily Sun Path
+        // 7. Active Sun & Active Daily Sun Path
         if (this.options.includeSunPath) {
             const activePath = SolarCalc.getDailyPath(state.date, state.latitude, state.longitude, 2);
             this.drawPathSegments(ctx, activePath, polarToXY, '#f59e0b', Math.max(2, size / 800));
@@ -534,7 +525,7 @@ export class ExportModal {
             }
         }
 
-        // 9. Location & Date Watermark / Architectural Metadata Block
+        // 8. Location & Date Watermark / Architectural Metadata Block
         if (this.options.includeWatermark) {
             const locName = state.currentLocationLabel || `Lat ${state.latitude.toFixed(2)}°, Lon ${state.longitude.toFixed(2)}°`;
             const d = state.date;
@@ -549,7 +540,7 @@ export class ExportModal {
             ctx.font = `700 ${Math.round(size * 0.022)}px "Roboto", sans-serif`;
             ctx.textAlign = 'left';
             ctx.textBaseline = 'top';
-            ctx.fillText(`_polarPath • ${locName}`, blockX, blockY);
+            ctx.fillText(locName, blockX, blockY);
 
             ctx.fillStyle = this.hexToRgba(baseColor, 0.65);
             ctx.font = `500 ${Math.round(size * 0.015)}px "Roboto Mono", monospace`;
@@ -586,7 +577,7 @@ export class ExportModal {
 
     renderPreview() {
         if (!this.previewCanvas) return;
-        this.renderPolarChartToCanvas(this.previewCanvas, 280);
+        this.renderPolarChartToCanvas(this.previewCanvas, 420);
     }
 
     triggerHighResDownload() {
