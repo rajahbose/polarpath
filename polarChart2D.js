@@ -28,7 +28,7 @@ export class PolarChart2D {
             showAllMonths: true,
             transparentMassings: true,
             showDimensions: false,
-            unitSystem: 'metric', // 'metric' (m, m²) | 'customary' (ft, sq ft)
+            unitSystem: 'customary', // 'metric' (m, m²) | 'customary' (ft, sq ft)
             isDrawMode: false,
             activePolygon: [],
             hoverPoint: null,
@@ -46,9 +46,9 @@ export class PolarChart2D {
         this.pixelsPerMeter = 10.0;
         this.zoomScale = 1.0;
 
-        // House bounding box in 3D: width = 30 ft (9.144m), length = 60 ft (18.288m)
-        this.house3DWidth = 9.144;
-        this.house3DLength = 18.288;
+        // House bounding box in 3D: width = 25 ft (7.62m), length = 45 ft (13.716m)
+        this.house3DWidth = 7.62;
+        this.house3DLength = 13.716;
 
         this.allowedAngles = [
             0, 30, 45, 60, 90, 120, 135, 150, 180,

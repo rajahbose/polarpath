@@ -24,7 +24,7 @@ class SunDomeApp {
             showAllMonths: true,
             transparentMassings: true,
             showDimensions: false,
-            unitSystem: 'metric', // 'metric' | 'customary'
+            unitSystem: 'customary', // 'metric' | 'customary' (default: customary Ft In)
             zoomScale: 1.0,
             isPlaying: false,
             playbackSpeed: 30,
@@ -121,7 +121,8 @@ class SunDomeApp {
         this.btnFinishPolygon = document.getElementById('btnFinishPolygon');
         this.btnCancelPolygon = document.getElementById('btnCancelPolygon');
 
-        // Set initial inputs
+        // Set initial inputs & unit system
+        this.setUnitSystem('customary');
         this.updateDateInputs();
         this.renderMassingsList();
     }

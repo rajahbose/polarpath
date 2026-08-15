@@ -837,18 +837,20 @@ header {
 /* studioBOSE Footer Branding (Bottom Left) */
 .app-branding-badge {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    padding-right: 1rem;
+    gap: 0.15rem;
+    padding-right: 1.1rem;
     border-right: 1px solid var(--border-color);
     background: transparent;
     user-select: none;
+    flex-shrink: 0;
 }
 
 .app-brand-logo {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     object-fit: contain;
     background: transparent;
     opacity: 0.95;
@@ -861,11 +863,12 @@ header {
 }
 
 .brand-version-tag {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     font-weight: 700;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     font-family: var(--font-mono);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
+    line-height: 1;
 }
 
 /* Playback Controls */

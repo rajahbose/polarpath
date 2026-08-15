@@ -238,10 +238,10 @@ export class SolarDome3D {
     }
 
     buildSimpleGableHouse() {
-        const width = 9.144; // 30 ft
+        const width = 7.62; // 25 ft
         const wallHeight = 3.048; // 10 ft
         const roofPeakHeight = 1.8288; // 6 ft (total height = 4.8768 m = 16 ft)
-        const length = 18.288; // 60 ft
+        const length = 13.716; // 45 ft
         this.houseTotalHeight = wallHeight + roofPeakHeight;
 
         const shape = new THREE.Shape();
