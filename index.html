@@ -44,28 +44,24 @@
             <div class="unit-toggle-group">
                 <span class="unit-label">Units:</span>
                 <div class="unit-toggle-buttons">
-                    <button class="unit-btn active" id="btnMetric" data-unit="metric" title="Use Metric Units (meters, m²)">Metric (m)</button>
-                    <button class="unit-btn" id="btnCustomary" data-unit="customary" title="Use Customary Units (feet, sq ft)">Customary (ft)</button>
+                    <button class="unit-btn active" id="btnMetric" data-unit="metric" title="Use Metric Units (meters, m²)">M</button>
+                    <button class="unit-btn" id="btnCustomary" data-unit="customary" title="Use Customary Units (feet/inches, sq ft)">Ft In</button>
                 </div>
             </div>
 
-            <!-- Location Presets Dropdown -->
+            <!-- Location Selector Modal Button -->
             <div class="location-selector">
-                <label for="cityPreset" style="font-size: 0.75rem; color: var(--text-muted);">Location:</label>
-                <select id="cityPreset">
-                    <option value="35.6870,-105.9378" selected>Santa Fe, New Mexico, USA (35.7° N)</option>
-                    <option value="40.7128,-74.0060">New York, USA (40.7° N)</option>
-                    <option value="51.5074,-0.1278">London, UK (51.5° N)</option>
-                    <option value="48.8566,2.3522">Paris, France (48.8° N)</option>
-                    <option value="35.6762,139.6503">Tokyo, Japan (35.7° N)</option>
-                    <option value="37.7749,-122.4194">San Francisco, USA (37.8° N)</option>
-                    <option value="25.2048,55.2708">Dubai, UAE (25.2° N)</option>
-                    <option value="1.3521,103.8198">Singapore / Equator (1.3° N)</option>
-                    <option value="-33.8688,151.2093">Sydney, Australia (33.9° S)</option>
-                    <option value="-22.9068,-43.1729">Rio de Janeiro, Brazil (22.9° S)</option>
-                    <option value="64.1466,-21.9426">Reykjavik, Iceland (64.1° N)</option>
-                    <option value="custom">Custom Coordinates...</option>
-                </select>
+                <button class="location-trigger-btn" id="btnOpenLocationModal" title="Open World Map Location Picker">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    <span id="currentLocationName">Santa Fe, NM, USA</span>
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="opacity: 0.7;">
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </header>
@@ -248,13 +244,10 @@
 
     <!-- Bottom Control Station / Timeline Bar -->
     <footer class="control-station">
-        <!-- studioBOSE Branding & Copyright in Bottom Left Corner -->
+        <!-- studioBOSE Branding (Bottom Left Corner) -->
         <div class="app-branding-badge">
             <img src="studiobose-logo.png" alt="studioBOSE" class="app-brand-logo">
-            <div class="app-brand-copy">
-                <span class="brand-rights">All Rights Reserved - studioBOSE</span>
-                <span class="brand-version">Beta V1.2</span>
-            </div>
+            <span class="brand-version-tag">V1.2</span>
         </div>
 
         <!-- Playback Controls (Speed dropdown placed below play controls) -->
@@ -321,22 +314,24 @@
 
         <!-- Location & Presets Cluster -->
         <div class="location-cluster">
-            <!-- Date Picker -->
-            <div class="input-field">
-                <label for="dateInput">Calendar Date</label>
-                <input type="date" id="dateInput">
-            </div>
+            <div class="date-coord-col">
+                <!-- Date Picker -->
+                <div class="input-field date-field">
+                    <label for="dateInput">Calendar Date</label>
+                    <input type="date" id="dateInput">
+                </div>
 
-            <!-- Latitude -->
-            <div class="input-field" style="width: 65px;">
-                <label for="latInput">Latitude</label>
-                <input type="number" id="latInput" step="0.1" min="-90" max="90" value="35.7">
-            </div>
-
-            <!-- Longitude -->
-            <div class="input-field" style="width: 65px;">
-                <label for="lonInput">Longitude</label>
-                <input type="number" id="lonInput" step="0.1" min="-180" max="180" value="-105.9">
+                <!-- Latitude & Longitude Stacked Under Calendar Date -->
+                <div class="coords-sub-row">
+                    <div class="input-field coord-field">
+                        <label for="latInput">Latitude</label>
+                        <input type="number" id="latInput" step="0.1" min="-90" max="90" value="35.7">
+                    </div>
+                    <div class="input-field coord-field">
+                        <label for="lonInput">Longitude</label>
+                        <input type="number" id="lonInput" step="0.1" min="-180" max="180" value="-105.9">
+                    </div>
+                </div>
             </div>
 
             <!-- Quick Season Presets -->

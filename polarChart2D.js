@@ -260,8 +260,10 @@ export class PolarChart2D {
 
     formatLength(meters) {
         if (this.state.unitSystem === 'customary') {
-            const ft = meters * 3.28084;
-            return `${ft.toFixed(1)} ft`;
+            const totalInches = Math.round(meters * 39.3701);
+            const feet = Math.floor(totalInches / 12);
+            const inches = totalInches % 12;
+            return inches > 0 ? `${feet}′ ${inches}″` : `${feet}′`;
         }
         return `${meters.toFixed(1)} m`;
     }

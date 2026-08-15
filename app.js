@@ -8,9 +8,13 @@
 import { SolarCalc } from './solarCalc.js';
 import { PolarChart2D } from './polarChart2D.js';
 import { SolarDome3D } from './solarDome3D.js';
+import { LocationModal } from './locationModal.js';
+import { CITIES_DATABASE, getCityDisplayName } from './citiesData.js';
 
 class SunDomeApp {
     constructor() {
+        this.currentLocationLabel = 'Santa Fe, NM, USA';
+
         this.state = {
             date: new Date(),
             latitude: 35.6870,
@@ -40,6 +44,9 @@ class SunDomeApp {
         // Initialize 3D Solar Dome
         this.solarDome = new SolarDome3D('dome3DContainer');
 
+        // Initialize Interactive World Map Location Modal
+        this.locationModal = new LocationModal((loc) => this.onLocationSelected(loc));
+
         // Setup DOM Elements & Event Listeners
         this.initDomElements();
         this.setupEventListeners();
@@ -64,7 +71,10 @@ class SunDomeApp {
         this.dateInput = document.getElementById('dateInput');
         this.latInput = document.getElementById('latInput');
         this.lonInput = document.getElementById('lonInput');
-        this.cityPreset = document.getElementById('cityPreset');
+
+        // Location Modal Trigger
+        this.btnOpenLocationModal = document.getElementById('btnOpenLocationModal');
+        this.currentLocationName = document.getElementById('currentLocationName');
 
         this.btnPlayPause = document.getElementById('btnPlayPause');
         this.playIcon = document.getElementById('playIcon');
@@ -127,8 +137,10 @@ class SunDomeApp {
 
     formatHeight(meters) {
         if (this.state.unitSystem === 'customary') {
-            const ft = meters * 3.28084;
-            return `${ft.toFixed(1)} ft`;
+            const totalInches = Math.round(meters * 39.3701);
+            const feet = Math.floor(totalInches / 12);
+            const inches = totalInches % 12;
+            return inches > 0 ? `${feet}′ ${inches}″` : `${feet}′`;
         }
         return `${meters.toFixed(1)} m`;
     }
@@ -150,6 +162,13 @@ class SunDomeApp {
         this.btnCustomary.addEventListener('click', () => {
             this.setUnitSystem('customary');
         });
+
+        // Open World Map Location Modal
+        if (this.btnOpenLocationModal) {
+            this.btnOpenLocationModal.addEventListener('click', () => {
+                this.locationModal.open(this.state.latitude, this.state.longitude, this.currentLocationLabel);
+            });
+        }
 
         // Time of Day Slider
         this.timeSlider.addEventListener('input', (e) => {
@@ -178,25 +197,14 @@ class SunDomeApp {
         this.latInput.addEventListener('change', (e) => {
             const lat = Math.max(-90, Math.min(90, parseFloat(e.target.value) || 0));
             this.state.latitude = lat;
-            this.cityPreset.value = 'custom';
+            this.updateLocationLabelFromCoords();
             this.syncState();
         });
 
         this.lonInput.addEventListener('change', (e) => {
             const lon = Math.max(-180, Math.min(180, parseFloat(e.target.value) || 0));
             this.state.longitude = lon;
-            this.cityPreset.value = 'custom';
-            this.syncState();
-        });
-
-        // City Preset
-        this.cityPreset.addEventListener('change', (e) => {
-            if (e.target.value === 'custom') return;
-            const [lat, lon] = e.target.value.split(',').map(Number);
-            this.state.latitude = lat;
-            this.state.longitude = lon;
-            this.latInput.value = lat.toFixed(1);
-            this.lonInput.value = lon.toFixed(1);
+            this.updateLocationLabelFromCoords();
             this.syncState();
         });
 
@@ -323,6 +331,40 @@ class SunDomeApp {
                 this.renderMassingsList();
             }
         });
+    }
+
+    onLocationSelected(loc) {
+        this.state.latitude = loc.latitude;
+        this.state.longitude = loc.longitude;
+        this.currentLocationLabel = loc.displayName;
+
+        if (this.latInput) this.latInput.value = loc.latitude.toFixed(1);
+        if (this.lonInput) this.lonInput.value = loc.longitude.toFixed(1);
+        if (this.currentLocationName) this.currentLocationName.textContent = loc.displayName;
+
+        this.syncState();
+    }
+
+    updateLocationLabelFromCoords() {
+        const lat = this.state.latitude;
+        const lon = this.state.longitude;
+
+        // Check if close to known city
+        let matched = null;
+        for (const city of CITIES_DATABASE) {
+            if (Math.abs(city.lat - lat) < 0.15 && Math.abs(city.lon - lon) < 0.15) {
+                matched = getCityDisplayName(city);
+                break;
+            }
+        }
+
+        const latStr = `${Math.abs(lat).toFixed(1)}° ${lat >= 0 ? 'N' : 'S'}`;
+        const lonStr = `${Math.abs(lon).toFixed(1)}° ${lon >= 0 ? 'E' : 'W'}`;
+        this.currentLocationLabel = matched || `Custom (${latStr}, ${lonStr})`;
+
+        if (this.currentLocationName) {
+            this.currentLocationName.textContent = this.currentLocationLabel;
+        }
     }
 
     setUnitSystem(unit) {
