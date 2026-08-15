@@ -4,6 +4,7 @@
  */
 
 import { CITIES_DATABASE, getCityDisplayName } from './citiesData.js';
+import { WORLD_CONTINENTS_COORDS } from './worldMapData.js';
 
 export class LocationModal {
     constructor(onLocationSelected) {
@@ -545,81 +546,49 @@ export class LocationModal {
         ctx.restore();
     }
 
+    updatePinPosition() {
+        const rect = this.mapCanvas.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        if (width <= 0 || height <= 0) return;
+
+        const { x, y } = this.geoToScreen(this.currentLat, this.currentLon, width, height);
+        this.crosshair.style.left = `${x}px`;
+        this.crosshair.style.top = `${y}px`;
+
+        // Adjust label position if too close to top edge of map
+        if (y < 36) {
+            this.pinLabel.style.top = '16px';
+        } else {
+            this.pinLabel.style.top = '-24px';
+        }
+    }
+
     drawWorldContinents(ctx, width, height) {
         ctx.save();
-        ctx.fillStyle = '#1c222d';
-        ctx.strokeStyle = '#2c3545';
-        ctx.lineWidth = 1;
+        ctx.fillStyle = '#1c2330';
+        ctx.strokeStyle = '#384457';
+        ctx.lineWidth = 1.0;
 
-        // Simplified, robust equirectangular polygonal shapes of major world landmasses
-        const continents = [
-            // North America
-            [
-                [-168, 65], [-160, 71], [-140, 70], [-125, 69], [-85, 70], [-80, 62], [-65, 60],
-                [-55, 50], [-64, 45], [-70, 42], [-75, 35], [-80, 25], [-88, 21], [-88, 16],
-                [-77, 8], [-83, 9], [-93, 16], [-105, 20], [-110, 24], [-117, 32], [-124, 38],
-                [-125, 49], [-135, 57], [-150, 60], [-165, 60], [-168, 65]
-            ],
-            // Greenland
-            [
-                [-50, 60], [-40, 60], [-20, 70], [-20, 80], [-45, 83], [-60, 78], [-55, 70], [-50, 60]
-            ],
-            // South America
-            [
-                [-77, 8], [-72, 11], [-60, 10], [-50, 4], [-35, -5], [-35, -9], [-40, -22],
-                [-50, -30], [-58, -35], [-65, -42], [-66, -55], [-75, -52], [-74, -45],
-                [-70, -30], [-76, -18], [-81, -5], [-77, 8]
-            ],
-            // Eurasia & North Africa (Combined Landmass)
-            [
-                [-9, 36], [-9, 43], [-1, 44], [4, 53], [8, 55], [10, 58], [5, 62], [15, 68],
-                [28, 71], [40, 68], [60, 70], [80, 73], [105, 77], [130, 73], [170, 67],
-                [180, 65], [170, 60], [160, 55], [142, 50], [130, 42], [122, 38], [120, 30],
-                [108, 22], [105, 10], [100, 4], [97, 16], [90, 22], [80, 13], [77, 8],
-                [70, 22], [60, 25], [55, 15], [45, 13], [44, 28], [35, 31], [30, 31],
-                [10, 37], [-5, 36], [-9, 36]
-            ],
-            // Africa
-            [
-                [-5, 36], [10, 37], [30, 31], [32, 28], [44, 12], [51, 10], [42, -5], [36, -20],
-                [32, -28], [27, -34], [18, -34], [12, -20], [8, 4], [3, 6], [-15, 12],
-                [-17, 15], [-12, 27], [-5, 36]
-            ],
-            // Australia
-            [
-                [114, -22], [115, -34], [135, -35], [145, -38], [150, -35], [153, -28],
-                [146, -18], [142, -11], [136, -12], [130, -13], [124, -16], [114, -22]
-            ],
-            // Great Britain / Ireland
-            [
-                [-5, 50], [2, 51], [-1, 58], [-5, 58], [-5, 50]
-            ],
-            // Japan
-            [
-                [130, 32], [135, 34], [141, 38], [145, 44], [141, 45], [138, 38], [130, 32]
-            ],
-            // Madagascar
-            [
-                [44, -13], [50, -14], [48, -25], [44, -25], [44, -13]
-            ],
-            // New Zealand
-            [
-                [166, -46], [174, -41], [178, -38], [173, -35], [168, -44], [166, -46]
-            ],
-            // Antarctica (Base strip)
-            [
-                [-180, -75], [180, -75], [180, -90], [-180, -90], [-180, -75]
-            ]
-        ];
+        WORLD_CONTINENTS_COORDS.forEach(poly => {
+            if (poly.length < 3) return;
 
-        continents.forEach(poly => {
+            // Convert to screen points
+            const pts = poly.map(pt => this.geoToScreen(pt[1], pt[0], width, height));
+
             ctx.beginPath();
-            poly.forEach((pt, i) => {
-                const { x, y } = this.geoToScreen(pt[1], pt[0], width, height);
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            });
+            ctx.moveTo(pts[0].x, pts[0].y);
+            for (let i = 0; i < pts.length - 1; i++) {
+                const xc = (pts[i].x + pts[i + 1].x) / 2;
+                const yc = (pts[i].y + pts[i + 1].y) / 2;
+                ctx.quadraticCurveTo(pts[i].x, pts[i].y, xc, yc);
+            }
+            const last = pts[pts.length - 1];
+            const first = pts[0];
+            ctx.quadraticCurveTo(last.x, last.y, (last.x + first.x) / 2, (last.y + first.y) / 2);
+            ctx.quadraticCurveTo(first.x, first.y, pts[0].x, pts[0].y);
             ctx.closePath();
+
             ctx.fill();
             ctx.stroke();
         });

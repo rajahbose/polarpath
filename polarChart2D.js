@@ -841,17 +841,34 @@ export class PolarChart2D {
         ctx.stroke();
         ctx.setLineDash([]);
 
+        // Sun Halo Glow Ring (150% larger with aura)
+        ctx.save();
         ctx.beginPath();
-        ctx.arc(sunPt.x, sunPt.y, 5, 0, Math.PI * 2);
+        ctx.arc(sunPt.x, sunPt.y, 14, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.18)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.55)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Outer Sun Core (150% larger: r = 8)
+        ctx.beginPath();
+        ctx.arc(sunPt.x, sunPt.y, 8, 0, Math.PI * 2);
         ctx.fillStyle = '#f59e0b';
+        ctx.shadowColor = '#f59e0b';
+        ctx.shadowBlur = 10;
         ctx.fill();
 
+        // Inner Bright Core (150% larger: r = 4.5)
         ctx.beginPath();
-        ctx.arc(sunPt.x, sunPt.y, 3, 0, Math.PI * 2);
+        ctx.arc(sunPt.x, sunPt.y, 4.5, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
         ctx.fill();
+        ctx.restore();
 
-        // 2-Line Floating Sun Info Badge: Line 1 = Angles, Line 2 = Time of Day
+        // 2-Line Floating Sun Info Badge: Centered Underneath the Sun Dot/Ring
         const hours = this.state.date.getHours();
         const mins = this.state.date.getMinutes();
         const period = hours >= 12 ? 'PM' : 'AM';
@@ -866,32 +883,39 @@ export class PolarChart2D {
         const m1 = ctx.measureText(line1);
         ctx.font = '700 9px "Roboto Mono", monospace';
         const m2 = ctx.measureText(line2);
-        const tagW = Math.max(m1.width, m2.width) + 12;
+        const tagW = Math.max(m1.width, m2.width) + 16;
         const tagH = 26;
         
-        let tagX = sunPt.x + 10;
-        let tagY = sunPt.y - 13;
-        if (tagX + tagW > this.width - 8) tagX = sunPt.x - tagW - 10;
-        if (tagY < 12) tagY = sunPt.y + 16;
-        if (tagY + tagH > this.height - 8) tagY = this.height - tagH - 8;
+        // Center the label horizontally underneath the sun dot
+        let tagX = sunPt.x - tagW / 2;
+        let tagY = sunPt.y + 18; // Neatly centered below larger sun dot & ring
 
-        ctx.fillStyle = '#181c24';
-        ctx.strokeStyle = '#262b36';
+        // Boundary checks so label stays cleanly within polar viewport
+        if (tagX < 8) tagX = 8;
+        if (tagX + tagW > this.width - 8) tagX = this.width - tagW - 8;
+        if (tagY + tagH > this.height - 8) tagY = sunPt.y - tagH - 18; // Flip above if near bottom edge
+        if (tagY < 8) tagY = 8;
+
+        ctx.fillStyle = 'rgba(24, 28, 36, 0.94)';
+        ctx.strokeStyle = '#2d3545';
         ctx.lineWidth = 1;
         ctx.fillRect(tagX, tagY, tagW, tagH);
         ctx.strokeRect(tagX, tagY, tagW, tagH);
 
+        // Center aligned text inside badge
+        ctx.textAlign = 'center';
+        const textCenterX = tagX + tagW / 2;
+
         // Line 1: Solar angles
         ctx.fillStyle = '#f3f4f6';
         ctx.font = '500 8.5px "Roboto Mono", monospace';
-        ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
-        ctx.fillText(line1, tagX + 6, tagY + 3.5);
+        ctx.fillText(line1, textCenterX, tagY + 3.5);
 
         // Line 2: Time of day
         ctx.fillStyle = '#f59e0b';
         ctx.font = '700 8.5px "Roboto Mono", monospace';
-        ctx.fillText(line2, tagX + 6, tagY + 14.5);
+        ctx.fillText(line2, textCenterX, tagY + 14.5);
     }
 
     drawCenterHouse4x() {
