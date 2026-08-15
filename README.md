@@ -1,8 +1,8 @@
-# PolarPath
+# _polarPath
 
-**PolarPath** is a modern, responsive web application for solar path analysis and site shadow modeling. It features a synchronized split-screen interface with a **2D Polar Sun Chart (Plan View)** on the left and an interactive **3D Celestial Half-Dome** on the right.
+**_polarPath** is a modern, responsive web application for solar path analysis and site shadow modeling. It features a synchronized split-screen interface with a **2D Polar Sun Chart (Plan View)** on the left and an interactive **3D Shadow Study** on the right.
 
-![PolarPath Studio](screenshot.png) *(or live at your hosted domain)*
+![_polarPath Studio](screenshot.png) *(or live at your hosted domain)*
 
 ---
 
@@ -12,8 +12,8 @@
   - Equidistant polar projection (Zenith $90^\circ$ at center, Horizon $0^\circ$ at edge).
   - Clean daylight curves for key solstices, equinoxes, and daily sun trajectories.
   - Isolated figure-8 Analemma hour loops across all daylight hours.
-  - Central 4× scaled gable house reference anchor.
-- **3D Celestial Hemisphere Studio**:
+  - Central gable house reference anchor ($30\text{ft} \times 60\text{ft}$, $16\text{ft}$ max height).
+- **3D Shadow Study & Celestial Dome Studio**:
   - Thin, minimalist solar trajectory pipes and celestial dome wireframe.
   - Real-time Three.js lighting and soft shadow casting from the sun onto the site and house.
   - Camera presets: Perspective, Top (Plan), Street Eye, South Facing, North Facing.

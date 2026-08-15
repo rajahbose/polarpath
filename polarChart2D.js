@@ -44,9 +44,9 @@ export class PolarChart2D {
         // Scale: 1 meter in 3D = 10.0 pixels on 2D canvas
         this.pixelsPerMeter = 10.0;
 
-        // House bounding box in 3D: width = 3.6m, length = 4.8m
-        this.house3DWidth = 3.6;
-        this.house3DLength = 4.8;
+        // House bounding box in 3D: width = 30 ft (9.144m), length = 60 ft (18.288m)
+        this.house3DWidth = 9.144;
+        this.house3DLength = 18.288;
 
         this.allowedAngles = [
             0, 30, 45, 60, 90, 120, 135, 150, 180,
@@ -839,8 +839,8 @@ export class PolarChart2D {
 
     drawCenterHouse4x() {
         const { ctx, centerX, centerY } = this;
-        const w = 36;
-        const l = 48;
+        const w = this.house3DWidth * this.pixelsPerMeter;
+        const l = this.house3DLength * this.pixelsPerMeter;
 
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(centerX - w / 2, centerY - l / 2, w, l);

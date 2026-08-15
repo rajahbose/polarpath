@@ -33,8 +33,8 @@ export class SolarDome3D {
         this.massingsGroup = new THREE.Group();
         this.dimensions3DGroup = new THREE.Group();
 
-        this.house3DWidth = 3.6;
-        this.house3DLength = 4.8;
+        this.house3DWidth = 9.144; // 30 ft
+        this.house3DLength = 18.288; // 60 ft
 
         this.initScene();
         this.buildPolarBase();
@@ -238,10 +238,10 @@ export class SolarDome3D {
     }
 
     buildSimpleGableHouse() {
-        const width = 3.6;
-        const wallHeight = 2.0;
-        const roofPeakHeight = 1.4;
-        const length = 4.8;
+        const width = 9.144; // 30 ft
+        const wallHeight = 3.048; // 10 ft
+        const roofPeakHeight = 1.8288; // 6 ft (total height = 4.8768 m = 16 ft)
+        const length = 18.288; // 60 ft
 
         const shape = new THREE.Shape();
         shape.moveTo(-width / 2, 0);
@@ -724,19 +724,19 @@ export class SolarDome3D {
     setCameraPreset(presetName) {
         switch (presetName) {
             case 'iso':
-                this.animateCamera(new THREE.Vector3(50, 40, 60), new THREE.Vector3(0, 1.5, 0));
+                this.animateCamera(new THREE.Vector3(50, 40, 60), new THREE.Vector3(0, 2.5, 0));
                 break;
             case 'top':
                 this.animateCamera(new THREE.Vector3(0, 80, 0.1), new THREE.Vector3(0, 0, 0));
                 break;
             case 'street':
-                this.animateCamera(new THREE.Vector3(10, 3.0, 12), new THREE.Vector3(0, 1.5, 0));
+                this.animateCamera(new THREE.Vector3(18, 4.5, 22), new THREE.Vector3(0, 2.5, 0));
                 break;
             case 'south':
-                this.animateCamera(new THREE.Vector3(0, 14, 55), new THREE.Vector3(0, 2, 0));
+                this.animateCamera(new THREE.Vector3(0, 16, 55), new THREE.Vector3(0, 2.5, 0));
                 break;
             case 'north':
-                this.animateCamera(new THREE.Vector3(0, 14, -55), new THREE.Vector3(0, 2, 0));
+                this.animateCamera(new THREE.Vector3(0, 16, -55), new THREE.Vector3(0, 2.5, 0));
                 break;
         }
     }
