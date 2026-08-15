@@ -9,6 +9,7 @@ import { SolarCalc } from './solarCalc.js';
 import { PolarChart2D } from './polarChart2D.js';
 import { SolarDome3D } from './solarDome3D.js';
 import { LocationModal } from './locationModal.js';
+import { ExportModal } from './exportModal.js';
 import { CITIES_DATABASE, getCityDisplayName } from './citiesData.js';
 
 class SunDomeApp {
@@ -47,6 +48,12 @@ class SunDomeApp {
         // Initialize Interactive World Map Location Modal
         this.locationModal = new LocationModal((loc) => this.onLocationSelected(loc));
 
+        // Initialize 300 DPI PNG Export Modal
+        this.exportModal = new ExportModal(
+            () => ({ ...this.state, currentLocationLabel: this.currentLocationLabel }),
+            () => this.polarChart
+        );
+
         // Setup DOM Elements & Event Listeners
         this.initDomElements();
         this.setupEventListeners();
@@ -69,12 +76,15 @@ class SunDomeApp {
         this.dayNumBadge = document.getElementById('dayNumBadge');
         this.daylightBadge = document.getElementById('daylightBadge');
         this.dateInput = document.getElementById('dateInput');
-        this.latInput = document.getElementById('latInput');
-        this.lonInput = document.getElementById('lonInput');
+        this.latDisplay = document.getElementById('latDisplay');
+        this.lonDisplay = document.getElementById('lonDisplay');
 
         // Location Modal Trigger
         this.btnOpenLocationModal = document.getElementById('btnOpenLocationModal');
         this.currentLocationName = document.getElementById('currentLocationName');
+
+        // Export PNG Button
+        this.btnExportPng = document.getElementById('btnExportPng');
 
         this.btnPlayPause = document.getElementById('btnPlayPause');
         this.playIcon = document.getElementById('playIcon');
@@ -170,6 +180,13 @@ class SunDomeApp {
             });
         }
 
+        // Open 300 DPI Export PNG Modal
+        if (this.btnExportPng) {
+            this.btnExportPng.addEventListener('click', () => {
+                this.exportModal.open();
+            });
+        }
+
         // Time of Day Slider
         this.timeSlider.addEventListener('input', (e) => {
             const minutes = parseFloat(e.target.value);
@@ -190,21 +207,6 @@ class SunDomeApp {
             const curMin = this.state.date.getMinutes();
             const curSec = this.state.date.getSeconds();
             this.state.date = new Date(y, m - 1, d, curH, curMin, curSec);
-            this.syncState();
-        });
-
-        // Coordinates
-        this.latInput.addEventListener('change', (e) => {
-            const lat = Math.max(-90, Math.min(90, parseFloat(e.target.value) || 0));
-            this.state.latitude = lat;
-            this.updateLocationLabelFromCoords();
-            this.syncState();
-        });
-
-        this.lonInput.addEventListener('change', (e) => {
-            const lon = Math.max(-180, Math.min(180, parseFloat(e.target.value) || 0));
-            this.state.longitude = lon;
-            this.updateLocationLabelFromCoords();
             this.syncState();
         });
 
@@ -338,11 +340,20 @@ class SunDomeApp {
         this.state.longitude = loc.longitude;
         this.currentLocationLabel = loc.displayName;
 
-        if (this.latInput) this.latInput.value = loc.latitude.toFixed(1);
-        if (this.lonInput) this.lonInput.value = loc.longitude.toFixed(1);
+        this.updateCoordinateDisplays();
         if (this.currentLocationName) this.currentLocationName.textContent = loc.displayName;
 
         this.syncState();
+    }
+
+    updateCoordinateDisplays() {
+        const lat = this.state.latitude;
+        const lon = this.state.longitude;
+        const latStr = `${Math.abs(lat).toFixed(1)}° ${lat >= 0 ? 'N' : 'S'}`;
+        const lonStr = `${Math.abs(lon).toFixed(1)}° ${lon >= 0 ? 'E' : 'W'}`;
+
+        if (this.latDisplay) this.latDisplay.textContent = latStr;
+        if (this.lonDisplay) this.lonDisplay.textContent = lonStr;
     }
 
     updateLocationLabelFromCoords() {
@@ -643,6 +654,7 @@ class SunDomeApp {
     }
 
     syncState() {
+        this.updateCoordinateDisplays();
         const pos = SolarCalc.getSolarPosition(this.state.date, this.state.latitude, this.state.longitude);
         const times = SolarCalc.getSolarTimes(this.state.date, this.state.latitude, this.state.longitude);
 
