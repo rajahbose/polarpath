@@ -797,6 +797,53 @@ header {
     z-index: 50;
 }
 
+/* studioBOSE Footer Branding (Bottom Left) */
+.app-branding-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.25rem;
+    padding-right: 0.85rem;
+    border-right: 1px solid var(--border-color);
+    min-width: 145px;
+    user-select: none;
+}
+
+.app-brand-logo {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    opacity: 0.92;
+    transition: opacity 0.15s;
+}
+
+.app-brand-logo:hover {
+    opacity: 1;
+}
+
+.app-brand-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.brand-rights {
+    font-size: 0.58rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.brand-version {
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+}
+
 /* Playback Controls */
 .playback-cluster {
     display: flex;
