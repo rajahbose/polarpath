@@ -176,6 +176,14 @@
                         <span class="custom-chk"></span>
                         <span>Analemmas</span>
                     </label>
+                    <div class="options-divider"></div>
+                    <div class="zoom-slider-container">
+                        <div class="zoom-label-row">
+                            <span class="zoom-title">Viewport Scale</span>
+                            <span class="zoom-readout" id="zoomScaleReadout">1.0×</span>
+                        </div>
+                        <input type="range" id="zoomScaleSlider" min="0.4" max="2.6" step="0.05" value="1.0" class="custom-range" title="Adjust synchronous scale of both viewports (house 5% to 50% area)">
+                    </div>
                 </div>
             </div>
 
@@ -324,14 +332,10 @@
 
             <!-- Quick Season Presets -->
             <div class="season-btns">
-                <div class="season-btn-row">
-                    <button class="season-btn" data-date="summer">☀️ Summer Solstice</button>
-                    <button class="season-btn" data-date="winter">❄️ Winter Solstice</button>
-                </div>
-                <div class="season-btn-row">
-                    <button class="season-btn" data-date="equinox">🌱 Equinox</button>
-                    <button class="season-btn" data-date="today">📅 Today</button>
-                </div>
+                <button class="season-btn" data-date="summer">☀️ Summer Solstice</button>
+                <button class="season-btn" data-date="winter">❄️ Winter Solstice</button>
+                <button class="season-btn" data-date="equinox">🌱 Equinox</button>
+                <button class="season-btn" data-date="today">📅 Today</button>
             </div>
         </div>
     </footer>

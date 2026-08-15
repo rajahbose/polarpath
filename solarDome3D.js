@@ -427,6 +427,11 @@ export class SolarDome3D {
 
         this.state = { ...this.state, ...newState };
 
+        if (newState.zoomScale !== undefined) {
+            this.camera.zoom = newState.zoomScale;
+            this.camera.updateProjectionMatrix();
+        }
+
         if (newState.massings !== undefined || newState.transparentMassings !== undefined || newState.showDimensions !== undefined || newState.unitSystem !== undefined) {
             this.rebuildMassings(this.state.massings);
         }

@@ -20,6 +20,7 @@ class SunDomeApp {
             transparentMassings: false,
             showDimensions: false,
             unitSystem: 'metric', // 'metric' | 'customary'
+            zoomScale: 1.0,
             isPlaying: false,
             playbackSpeed: 30,
             isDrawMode: false,
@@ -76,6 +77,8 @@ class SunDomeApp {
         this.chkAnalemmas = document.getElementById('chkAnalemmas');
         this.chkTransparent = document.getElementById('chkTransparent');
         this.chkDimensions = document.getElementById('chkDimensions');
+        this.zoomScaleSlider = document.getElementById('zoomScaleSlider');
+        this.zoomScaleReadout = document.getElementById('zoomScaleReadout');
 
         this.hudElevation = document.getElementById('hudElevation');
         this.hudAzimuth = document.getElementById('hudAzimuth');
@@ -244,6 +247,19 @@ class SunDomeApp {
             this.polarChart.updateState({ showDimensions: this.state.showDimensions });
             this.solarDome.updateState({ showDimensions: this.state.showDimensions });
         });
+
+        // Viewport Zoom / Scale Slider
+        if (this.zoomScaleSlider) {
+            this.zoomScaleSlider.addEventListener('input', (e) => {
+                const zoom = parseFloat(e.target.value);
+                this.state.zoomScale = zoom;
+                if (this.zoomScaleReadout) {
+                    this.zoomScaleReadout.textContent = `${zoom.toFixed(2)}×`;
+                }
+                this.polarChart.updateState({ zoomScale: zoom });
+                this.solarDome.updateState({ zoomScale: zoom });
+            });
+        }
 
         // Season Quick Presets
         this.seasonBtns.forEach(btn => {
@@ -643,6 +659,7 @@ class SunDomeApp {
             transparentMassings: this.state.transparentMassings,
             showDimensions: this.state.showDimensions,
             unitSystem: this.state.unitSystem,
+            zoomScale: this.state.zoomScale,
             massings: this.state.massings,
             selectedMassingId: this.state.selectedMassingId
         });
@@ -657,6 +674,7 @@ class SunDomeApp {
             transparentMassings: this.state.transparentMassings,
             showDimensions: this.state.showDimensions,
             unitSystem: this.state.unitSystem,
+            zoomScale: this.state.zoomScale,
             massings: this.state.massings
         });
     }

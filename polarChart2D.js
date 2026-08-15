@@ -41,8 +41,10 @@ export class PolarChart2D {
             dragStartPos: null
         };
 
-        // Scale: 1 meter in 3D = 10.0 pixels on 2D canvas
+        // Scale: 1 meter in 3D = 10.0 pixels on 2D canvas at 1.0x zoom
+        this.basePixelsPerMeter = 10.0;
         this.pixelsPerMeter = 10.0;
+        this.zoomScale = 1.0;
 
         // House bounding box in 3D: width = 30 ft (9.144m), length = 60 ft (18.288m)
         this.house3DWidth = 9.144;
@@ -80,6 +82,18 @@ export class PolarChart2D {
     }
 
     updateState(newState) {
+        if (newState.zoomScale !== undefined) {
+            this.zoomScale = newState.zoomScale;
+            this.pixelsPerMeter = this.basePixelsPerMeter * this.zoomScale;
+            const massingsList = newState.massings || this.state.massings;
+            if (massingsList) {
+                massingsList.forEach(m => {
+                    if (m.points3D && m.points3D.length > 0) {
+                        m.points = m.points3D.map(p => this.world3DToCanvas(p.x, p.z));
+                    }
+                });
+            }
+        }
         this.state = { ...this.state, ...newState };
         this.render();
     }
@@ -564,7 +578,7 @@ export class PolarChart2D {
             }
         });
 
-        // Azimuth Radial Rays
+        // Azimuth Radial Rays (Every 15°, Cardinal 90° thicker)
         for (let az = 0; az < 360; az += 15) {
             const isMajor = az % 30 === 0;
             const isCardinal = az % 90 === 0;
@@ -588,8 +602,18 @@ export class PolarChart2D {
                 ctx.strokeStyle = '#181c24';
             }
             ctx.stroke();
+        }
 
-            const tickLen = isMajor ? 5 : 3;
+        // Perimeter Graduation Ticks in 5° Increments around the outer perimeter
+        for (let az = 0; az < 360; az += 5) {
+            const is30 = az % 30 === 0;
+            const is10 = az % 10 === 0;
+            const isCardinal = az % 90 === 0;
+            const rad = az * Math.PI / 180;
+
+            // Tick length: 30° = 6px, 10° = 4px, 5° = 2.5px
+            const tickLen = is30 ? 6 : (is10 ? 4 : 2.5);
+
             const xTickStart = centerX + radius * Math.sin(rad);
             const yTickStart = centerY - radius * Math.cos(rad);
             const xTickEnd = centerX + (radius + tickLen) * Math.sin(rad);
@@ -598,13 +622,24 @@ export class PolarChart2D {
             ctx.beginPath();
             ctx.moveTo(xTickStart, yTickStart);
             ctx.lineTo(xTickEnd, yTickEnd);
-            ctx.strokeStyle = isMajor ? '#4b5563' : '#262b36';
-            ctx.lineWidth = 1.0;
+            
+            // Subtle color and lineweight hierarchy
+            if (is30) {
+                ctx.strokeStyle = '#4b5563';
+                ctx.lineWidth = 1.0;
+            } else if (is10) {
+                ctx.strokeStyle = '#374151';
+                ctx.lineWidth = 0.75;
+            } else {
+                ctx.strokeStyle = '#262b36';
+                ctx.lineWidth = 0.5;
+            }
             ctx.stroke();
 
-            if (isMajor && !isCardinal) {
-                const xText = centerX + (radius + 14) * Math.sin(rad);
-                const yText = centerY - (radius + 14) * Math.cos(rad);
+            // Degree Angle Labels at 30° intervals (excluding cardinals N/E/S/W)
+            if (is30 && !isCardinal) {
+                const xText = centerX + (radius + 15) * Math.sin(rad);
+                const yText = centerY - (radius + 15) * Math.cos(rad);
                 ctx.font = '8px "Roboto Mono", monospace';
                 ctx.fillStyle = '#6b7280';
                 ctx.textAlign = 'center';

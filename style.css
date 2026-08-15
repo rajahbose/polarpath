@@ -467,6 +467,33 @@ header {
     margin: 0.2rem 0;
 }
 
+.zoom-slider-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-top: 0.15rem;
+}
+
+.zoom-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.68rem;
+}
+
+.zoom-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.zoom-readout {
+    font-weight: 700;
+    color: var(--accent-sun);
+    font-family: var(--font-mono);
+}
+
 /* Massing Height Card */
 .massing-height-card {
     position: absolute;
@@ -992,23 +1019,19 @@ header {
     border-color: var(--border-active);
 }
 
-/* Season Quick Buttons */
+/* Season Quick Buttons (Clean 2x2 Grid with centered text) */
 .season-btns {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-}
-
-.season-btn-row {
-    display: flex;
-    gap: 0.2rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.3rem;
+    min-width: 220px;
 }
 
 .season-btn {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
-    padding: 0.2rem 0.4rem;
+    padding: 0.28rem 0.45rem;
     border-radius: 3px;
     font-size: 0.68rem;
     font-weight: 500;
@@ -1016,6 +1039,11 @@ header {
     cursor: pointer;
     transition: all 0.15s;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
 }
 
 .season-btn:hover {

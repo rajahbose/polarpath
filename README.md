@@ -10,6 +10,7 @@
 
 - **2D Plan View Polar Sun Chart**:
   - Equidistant polar projection (Zenith $90^\circ$ at center, Horizon $0^\circ$ at edge).
+  - $5^\circ$ graduation perimeter ticks with subtle hierarchical lineweights and degree callouts.
   - Clean daylight curves for key solstices, equinoxes, and daily sun trajectories.
   - Isolated figure-8 Analemma hour loops across all daylight hours.
   - Central gable house reference anchor ($30\text{ft} \times 60\text{ft}$, $16\text{ft}$ max height).
@@ -25,6 +26,7 @@
   - **2D Drag-to-Move**: Click and drag selected massings on the 2D plane with real-time 3D shadow and dimension synchronization.
   - **Massings Manager**: Interactive list with height adjustment and per-item delete buttons.
 - **Display & Analysis Tools**:
+  - **Synchronous Viewport Zoom / Scale**: Dynamic slider adjusting both 2D and 3D scenes simultaneously (from $0.4\times$ where the house occupies $\le 5\%$ to $2.6\times$ filling $\sim 50\%$ of the screen).
   - **Transparent Buildings**: 50% blue translucent mode for clear sightlines of underlying polar grid geometry.
   - **To-Scale Dimension Strings**: Real-time distance measurement from massing leading edges to the central house.
   - **Floor Area Calculation**: Automatic polygon area calculation in $\text{m}^2$ or $\text{sq ft}$.
