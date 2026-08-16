@@ -417,25 +417,13 @@ class SunDomeApp {
 
         if (!this.mobileSwipeWrapper || this.mobileTabBtns.length === 0) return;
 
-        // Tab Button Clicks
+        // Tab Button Clicks: smoothly slide to the selected page
         this.mobileTabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const pageIndex = parseInt(btn.getAttribute('data-page'), 10);
                 this.scrollToMobilePage(pageIndex);
             });
         });
-
-        // Swipe Scroll Sync with Debounce
-        let scrollTimeout;
-        this.mobileSwipeWrapper.addEventListener('scroll', () => {
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                const width = this.mobileSwipeWrapper.clientWidth;
-                if (width <= 0) return;
-                const pageIndex = Math.round(this.mobileSwipeWrapper.scrollLeft / width);
-                this.updateActiveMobileTab(pageIndex);
-            }, 60);
-        }, { passive: true });
     }
 
     scrollToMobilePage(pageIndex) {
