@@ -749,160 +749,6 @@ class SunDomeApp {
         }
     }
 
-    setUnitSystem(unit) {
-        this.state.unitSystem = unit;
-        if (unit === 'metric') {
-            this.btnMetric.classList.add('active');
-            this.btnCustomary.classList.remove('active');
-            this.massingHeightRange.min = '1';
-            this.massingHeightRange.max = '40';
-            this.massingHeightRange.step = '0.5';
-        } else {
-            this.btnMetric.classList.remove('active');
-            this.btnCustomary.classList.add('active');
-            this.massingHeightRange.min = '3';
-            this.massingHeightRange.max = '130';
-            this.massingHeightRange.step = '1';
-        }
-
-        const selected = this.state.massings.find(m => m.id === this.state.selectedMassingId);
-        if (selected) {
-            this.updateHeightControlForSelected(selected);
-        }
-
-        this.polarChart.updateState({ unitSystem: unit });
-        this.solarDome.updateState({ unitSystem: unit });
-        this.renderMassingsList();
-    }
-
-    toggleDrawMode(enabled) {
-        this.state.isDrawMode = enabled;
-        this.polarChart.setDrawMode(enabled);
-
-        if (enabled) {
-            this.btnDrawMode.classList.add('active');
-            this.drawModeBanner.style.display = 'flex';
-            this.state.selectedMassingId = null;
-            this.selectedMassingControls.style.display = 'none';
-            this.polarChart.updateState({ selectedMassingId: null });
-        } else {
-            this.btnDrawMode.classList.remove('active');
-            this.drawModeBanner.style.display = 'none';
-        }
-        this.renderMassingsList();
-    }
-
-    onPolygonCompleted(points2D) {
-        const points3D = points2D.map(p => this.polarChart.canvasTo3DWorld(p.x, p.y));
-        const newMassing = {
-            id: Date.now(),
-            points: points2D,
-            points3D: points3D,
-            height: 6.0
-        };
-
-        this.state.massings.push(newMassing);
-        this.state.selectedMassingId = newMassing.id;
-
-        this.toggleDrawMode(false);
-        this.onMassingSelected(newMassing);
-        this.syncMassings();
-        this.renderMassingsList();
-    }
-
-    onMassingSelected(massing) {
-        if (massing) {
-            this.state.selectedMassingId = massing.id;
-            this.selectedMassingControls.style.display = 'flex';
-            this.updateHeightControlForSelected(massing);
-        } else {
-            this.state.selectedMassingId = null;
-            this.selectedMassingControls.style.display = 'none';
-        }
-        this.polarChart.updateState({ selectedMassingId: this.state.selectedMassingId });
-        this.renderMassingsList();
-    }
-
-    updateHeightControlForSelected(massing) {
-        if (this.state.unitSystem === 'customary') {
-            const ft = massing.height * 3.28084;
-            this.massingHeightRange.value = Math.round(ft);
-            this.massingHeightVal.textContent = `${ft.toFixed(1)} ft`;
-        } else {
-            this.massingHeightRange.value = massing.height;
-            this.massingHeightVal.textContent = `${massing.height.toFixed(1)} m`;
-        }
-    }
-
-    onMassingMoved(massing) {
-        massing.points3D = massing.points.map(p => this.polarChart.canvasTo3DWorld(p.x, p.y));
-        this.syncMassings();
-    }
-
-    deleteMassing(id) {
-        this.state.massings = this.state.massings.filter(m => m.id !== id);
-        if (this.state.selectedMassingId === id) {
-            this.state.selectedMassingId = null;
-            this.selectedMassingControls.style.display = 'none';
-        }
-        this.syncMassings();
-        this.renderMassingsList();
-    }
-
-    renderMassingsList() {
-        this.massingCountBadge.textContent = this.state.massings.length;
-
-        if (this.state.massings.length === 0) {
-            this.massingsItems.innerHTML = `<div class="empty-massings-hint">No massings drawn. Click ✏️ to sketch.</div>`;
-            return;
-        }
-
-        let html = '';
-        this.state.massings.forEach((m, idx) => {
-            const isSelected = m.id === this.state.selectedMassingId;
-            const areaM2 = this.polarChart.calculatePolygonAreaM2(m.points);
-            const areaStr = this.formatArea(areaM2);
-            const heightStr = this.formatHeight(m.height);
-
-            html += `
-                <div class="massing-item ${isSelected ? 'selected' : ''}" data-id="${m.id}">
-                    <div class="massing-item-info">
-                        <span class="massing-item-name">Massing #${idx + 1}</span>
-                        <span class="massing-item-meta">H: ${heightStr} • Area: ${areaStr}</span>
-                    </div>
-                    <button class="massing-item-delete" data-del-id="${m.id}" title="Delete this massing">
-                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                    </button>
-                </div>
-            `;
-        });
-
-        this.massingsItems.innerHTML = html;
-
-        // Attach click listeners to massing items and delete buttons
-        this.massingsItems.querySelectorAll('.massing-item').forEach(itemEl => {
-            itemEl.addEventListener('click', (e) => {
-                if (e.target.closest('.massing-item-delete')) return;
-                const id = parseInt(itemEl.getAttribute('data-id'), 10);
-                const massing = this.state.massings.find(m => m.id === id);
-                if (massing) {
-                    this.onMassingSelected(massing);
-                }
-            });
-        });
-
-        this.massingsItems.querySelectorAll('.massing-item-delete').forEach(delBtn => {
-            delBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const id = parseInt(delBtn.getAttribute('data-del-id'), 10);
-                this.deleteMassing(id);
-            });
-        });
-    }
-
     syncMassings() {
         this.polarChart.updateState({
             massings: this.state.massings,
@@ -986,9 +832,11 @@ class SunDomeApp {
         if (this.state.isPlaying) {
             this.playIcon.style.display = 'none';
             this.pauseIcon.style.display = 'block';
+            if (this.btnPlayPause) this.btnPlayPause.classList.add('playing');
         } else {
             this.playIcon.style.display = 'block';
             this.pauseIcon.style.display = 'none';
+            if (this.btnPlayPause) this.btnPlayPause.classList.remove('playing');
         }
     }
 
@@ -1083,6 +931,12 @@ class SunDomeApp {
         if (this.hudDayLength) this.hudDayLength.textContent = dayLengthStr;
         if (this.hudDayLengthMobile) this.hudDayLengthMobile.textContent = dayLengthStr;
 
+        // Separate 2D scale and 3D scale on mobile mode:
+        // 2D chart stays at compact 0.26 (house ~10% width), 3D dome is boosted ~300% to 0.85 for clear presence
+        const isMobile = typeof window !== 'undefined' && window.innerWidth <= 820;
+        const polarZoom = isMobile ? 0.26 : this.state.zoomScale;
+        const domeZoom = isMobile ? 0.85 : this.state.zoomScale;
+
         // Update 2D Polar Chart
         this.polarChart.updateState({
             date: this.state.date,
@@ -1093,7 +947,7 @@ class SunDomeApp {
             transparentMassings: this.state.transparentMassings,
             showDimensions: this.state.showDimensions,
             unitSystem: this.state.unitSystem,
-            zoomScale: this.state.zoomScale,
+            zoomScale: polarZoom,
             massings: this.state.massings,
             selectedMassingId: this.state.selectedMassingId
         });
@@ -1108,7 +962,7 @@ class SunDomeApp {
             transparentMassings: this.state.transparentMassings,
             showDimensions: this.state.showDimensions,
             unitSystem: this.state.unitSystem,
-            zoomScale: this.state.zoomScale,
+            zoomScale: domeZoom,
             massings: this.state.massings
         });
     }

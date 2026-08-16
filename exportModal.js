@@ -223,35 +223,30 @@ export class ExportModal {
                         </div>
                     </div>
 
-                    <!-- Inclusions -->
+                    <!-- Inclusions (Large Touch-Friendly Toggle Buttons) -->
                     <div class="export-form-group">
-                        <label class="export-group-label">Inclusions</label>
-                        <div class="export-checks-grid">
-                            <label class="export-check-item">
-                                <input type="checkbox" id="chkExpSunPathMobile" checked>
-                                <span class="export-chk-custom"></span>
+                        <label class="export-group-label">Include Elements in Export</label>
+                        <div class="export-toggle-buttons-grid" id="exportTogglesMobile">
+                            <button type="button" class="export-toggle-btn active" data-inc="includeSunPath">
+                                <span class="toggle-indicator">✓</span>
                                 <span>Active Sun & Sun Path</span>
-                            </label>
-                            <label class="export-check-item">
-                                <input type="checkbox" id="chkExpSolsticesMobile" checked>
-                                <span class="export-chk-custom"></span>
+                            </button>
+                            <button type="button" class="export-toggle-btn active" data-inc="includeSolstices">
+                                <span class="toggle-indicator">✓</span>
                                 <span>Solstices & Equinoxes</span>
-                            </label>
-                            <label class="export-check-item">
-                                <input type="checkbox" id="chkExpAnalemmasMobile" checked>
-                                <span class="export-chk-custom"></span>
+                            </button>
+                            <button type="button" class="export-toggle-btn active" data-inc="includeAnalemmas">
+                                <span class="toggle-indicator">✓</span>
                                 <span>Analemma Curves</span>
-                            </label>
-                            <label class="export-check-item">
-                                <input type="checkbox" id="chkExpMassingsMobile" checked>
-                                <span class="export-chk-custom"></span>
+                            </button>
+                            <button type="button" class="export-toggle-btn active" data-inc="includeMassings">
+                                <span class="toggle-indicator">✓</span>
                                 <span>Drawn Massings</span>
-                            </label>
-                            <label class="export-check-item">
-                                <input type="checkbox" id="chkExpWatermarkMobile" checked>
-                                <span class="export-chk-custom"></span>
+                            </button>
+                            <button type="button" class="export-toggle-btn active" data-inc="includeWatermark">
+                                <span class="toggle-indicator">✓</span>
                                 <span>Location & Date Badge</span>
-                            </label>
+                            </button>
                         </div>
                     </div>
 
@@ -275,12 +270,6 @@ export class ExportModal {
         this.mobileCustomColorInput = container.querySelector('#exportCustomColorInputMobile');
         this.mobileCustomColorPreview = container.querySelector('#customColorPreviewMobile');
         this.mobileBtnDownload = container.querySelector('#btnTriggerExportMobile');
-
-        this.chkExpSunPathMobile = container.querySelector('#chkExpSunPathMobile');
-        this.chkExpSolsticesMobile = container.querySelector('#chkExpSolsticesMobile');
-        this.chkExpAnalemmasMobile = container.querySelector('#chkExpAnalemmasMobile');
-        this.chkExpMassingsMobile = container.querySelector('#chkExpMassingsMobile');
-        this.chkExpWatermarkMobile = container.querySelector('#chkExpWatermarkMobile');
     }
 
     setupEventListeners() {
@@ -347,32 +336,38 @@ export class ExportModal {
             this.mobileCustomColorInput.addEventListener('input', (e) => handleCustomColor(e.target.value));
         }
 
-        // Inclusions checkboxes sync
-        const syncCheckboxes = (key, val) => {
-            this.options[key] = val;
+        // Inclusions large toggle button handler (Synchronized)
+        const toggleInclusion = (key) => {
+            this.options[key] = !this.options[key];
+            const isInc = this.options[key];
+            document.querySelectorAll(`[data-inc="${key}"]`).forEach(btn => {
+                btn.classList.toggle('active', isInc);
+                const ind = btn.querySelector('.toggle-indicator');
+                if (ind) ind.textContent = isInc ? '✓' : '—';
+            });
             this.renderPreview();
         };
 
-        const bindChk = (desktopEl, mobileEl, key) => {
-            if (desktopEl) {
-                desktopEl.addEventListener('change', () => {
-                    if (mobileEl) mobileEl.checked = desktopEl.checked;
-                    syncCheckboxes(key, desktopEl.checked);
-                });
-            }
-            if (mobileEl) {
-                mobileEl.addEventListener('change', () => {
-                    if (desktopEl) desktopEl.checked = mobileEl.checked;
-                    syncCheckboxes(key, mobileEl.checked);
-                });
-            }
-        };
+        document.querySelectorAll('.export-toggle-btn[data-inc]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const key = btn.dataset.inc;
+                if (key) toggleInclusion(key);
+            });
+        });
 
-        bindChk(this.chkExpSunPath, this.chkExpSunPathMobile, 'includeSunPath');
-        bindChk(this.chkExpSolstices, this.chkExpSolsticesMobile, 'includeSolstices');
-        bindChk(this.chkExpAnalemmas, this.chkExpAnalemmasMobile, 'includeAnalemmas');
-        bindChk(this.chkExpMassings, this.chkExpMassingsMobile, 'includeMassings');
-        bindChk(this.chkExpWatermark, this.chkExpWatermarkMobile, 'includeWatermark');
+        // Desktop checkboxes fallback sync
+        if (this.chkExpSunPath) {
+            [this.chkExpSunPath, this.chkExpSolstices, this.chkExpAnalemmas, this.chkExpMassings, this.chkExpWatermark].forEach(chk => {
+                chk.addEventListener('change', () => {
+                    this.options.includeSunPath = this.chkExpSunPath.checked;
+                    this.options.includeSolstices = this.chkExpSolstices.checked;
+                    this.options.includeAnalemmas = this.chkExpAnalemmas.checked;
+                    this.options.includeMassings = this.chkExpMassings.checked;
+                    this.options.includeWatermark = this.chkExpWatermark.checked;
+                    this.renderPreview();
+                });
+            });
+        }
 
         // Download trigger
         this.btnDownload.addEventListener('click', () => {

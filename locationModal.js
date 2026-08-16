@@ -139,8 +139,7 @@ export class LocationModal {
         if (!mobileContainer) return;
 
         mobileContainer.innerHTML = `
-            <div class="mobile-loc-card">
-                <!-- Search Row -->
+                <!-- Search Row (Clean Search Bar without chips on mobile) -->
                 <div class="loc-search-row">
                     <div class="loc-search-input-wrap">
                         <svg class="loc-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -150,13 +149,6 @@ export class LocationModal {
                         <input type="text" id="locCitySearchMobile" class="loc-search-input" placeholder="Search 350+ cities..." autocomplete="off" spellcheck="false">
                         <button class="loc-search-clear" id="btnLocClearMobile" style="display:none;" title="Clear search">✕</button>
                         <div class="loc-dropdown-list" id="locDropdownListMobile" style="display:none;"></div>
-                    </div>
-
-                    <!-- Category Filter Chips -->
-                    <div class="loc-filter-chips">
-                        <button class="loc-chip active" data-filter="all">All (${CITIES_DATABASE.length})</button>
-                        <button class="loc-chip" data-filter="world">World Top 100</button>
-                        <button class="loc-chip" data-filter="us">US States</button>
                     </div>
                 </div>
 
@@ -206,7 +198,6 @@ export class LocationModal {
         this.mobileSearchInput = mobileContainer.querySelector('#locCitySearchMobile');
         this.mobileBtnClear = mobileContainer.querySelector('#btnLocClearMobile');
         this.mobileDropdownList = mobileContainer.querySelector('#locDropdownListMobile');
-        this.mobileChipButtons = mobileContainer.querySelectorAll('.loc-chip');
         this.mobileMapContainer = mobileContainer.querySelector('#locMapContainerMobile');
         this.mobileMapCanvas = mobileContainer.querySelector('#locMapCanvasMobile');
         this.mobileCrosshair = mobileContainer.querySelector('#locCrosshairMobile');
@@ -627,6 +618,13 @@ export class LocationModal {
     }
 
     renderDropdown() {
+        // Dropdown only appears once the search bar is being actively typed into
+        if (!this.filterText || this.filterText.trim().length === 0) {
+            if (this.dropdownList) this.dropdownList.style.display = 'none';
+            if (this.mobileDropdownList) this.mobileDropdownList.style.display = 'none';
+            return;
+        }
+
         const filtered = this.getFilteredCities();
         const maxItems = 12;
         const itemsToDisplay = filtered.slice(0, maxItems);
