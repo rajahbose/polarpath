@@ -87,26 +87,26 @@
             <span>Charts</span>
         </button>
         <button class="mobile-tab-btn" data-page="1" id="tabBtn1">
-            <svg class="tab-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 19l7-7 3 3-7 7-3-3z"/>
-                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
-            </svg>
-            <span>Massings</span>
-        </button>
-        <button class="mobile-tab-btn" data-page="2" id="tabBtn2">
-            <svg class="tab-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-            </svg>
-            <span>Analysis</span>
-        </button>
-        <button class="mobile-tab-btn" data-page="3" id="tabBtn3">
             <svg class="tab-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="2" y1="12" x2="22" y2="12"/>
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
             </svg>
             <span>Location</span>
+        </button>
+        <button class="mobile-tab-btn" data-page="2" id="tabBtn2">
+            <svg class="tab-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+            </svg>
+            <span>Massings</span>
+        </button>
+        <button class="mobile-tab-btn" data-page="3" id="tabBtn3">
+            <svg class="tab-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span>Analysis</span>
         </button>
         <button class="mobile-tab-btn" data-page="4" id="tabBtn4">
             <svg class="tab-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
@@ -404,9 +404,18 @@
         </div>
 
         <!-- ========================================================
-             PAGE 2: Dedicated Mobile Massings & 2D Sketching Page
+             PAGE 2: Location Map Page (Position 1)
              ======================================================== -->
-        <div class="mobile-page" id="mobilePageMassings" data-page-index="1">
+        <div class="mobile-page" id="mobilePageLocation" data-page-index="1">
+            <div class="mobile-location-page" id="mobileLocationContainer">
+                <!-- Location Map UI is dynamically mounted here -->
+            </div>
+        </div>
+
+        <!-- ========================================================
+             PAGE 3: Dedicated Mobile Massings & 2D Sketching Page (Position 2)
+             ======================================================== -->
+        <div class="mobile-page" id="mobilePageMassings" data-page-index="2">
             <div class="mobile-massings-page">
                 <!-- Top Card: Massings Controls -->
                 <div class="mobile-card-section" id="massingsMobileTopCard">
@@ -475,9 +484,9 @@
         </div>
 
         <!-- ========================================================
-             PAGE 3: Units, Display & Analysis + Solar Telemetry Data
+             PAGE 4: Units, Display & Analysis + Solar Telemetry Data (Position 3)
              ======================================================== -->
-        <div class="mobile-page" id="mobilePageAnalysis" data-page-index="2">
+        <div class="mobile-page" id="mobilePageAnalysis" data-page-index="3">
             <div class="mobile-settings-page">
                 <!-- Section 1: Measurement Units (Moved here for mobile) -->
                 <div class="mobile-card-section">
@@ -598,16 +607,7 @@
         </div>
 
         <!-- ========================================================
-             PAGE 4: Location Map Page
-             ======================================================== -->
-        <div class="mobile-page" id="mobilePageLocation" data-page-index="3">
-            <div class="mobile-location-page" id="mobileLocationContainer">
-                <!-- Location Map UI is dynamically mounted here -->
-            </div>
-        </div>
-
-        <!-- ========================================================
-             PAGE 5: Dedicated PDF / PNG Export Page
+             PAGE 5: Dedicated PDF / PNG Export Page (Position 4)
              ======================================================== -->
         <div class="mobile-page" id="mobilePageExport" data-page-index="4">
             <div class="mobile-export-page" id="mobileExportContainer">

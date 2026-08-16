@@ -208,7 +208,7 @@ class SunDomeApp {
         if (this.btnOpenLocationModal) {
             this.btnOpenLocationModal.addEventListener('click', () => {
                 if (window.innerWidth <= 820) {
-                    this.scrollToMobilePage(3);
+                    this.scrollToMobilePage(1);
                 } else {
                     this.locationModal.open(this.state.latitude, this.state.longitude, this.currentLocationLabel);
                 }
@@ -461,28 +461,34 @@ class SunDomeApp {
         const p2DContainer = document.getElementById('polarCanvasContainer');
         const pMassingsContainer = document.getElementById('polarCanvasContainerMassings');
 
-        // Page 0: Charts
+        // Page 0: Charts (Full polar chart with solar paths & dome)
         if (pageIndex === 0) {
             if (p2DContainer && this.polarChart.canvas.parentNode !== p2DContainer) {
                 p2DContainer.appendChild(this.polarChart.canvas);
             }
+            this.polarChart.updateState({ isSketchOnlyMode: false });
             requestAnimationFrame(() => {
                 this.polarChart.resize();
                 this.solarDome.onResize();
             });
         }
-        // Page 1: Massings & Sketching
-        else if (pageIndex === 1) {
+        // Page 1: Location Map (Shifted to 2nd position)
+        else if (pageIndex === 1 && this.locationModal) {
+            this.locationModal.onMobileTabActive();
+        }
+        // Page 2: Massings & Sketching (Clean blank drafting canvas without solar curves)
+        else if (pageIndex === 2) {
             if (pMassingsContainer && this.polarChart.canvas.parentNode !== pMassingsContainer) {
                 pMassingsContainer.appendChild(this.polarChart.canvas);
             }
+            this.polarChart.updateState({ isSketchOnlyMode: true });
             requestAnimationFrame(() => {
                 this.polarChart.resize();
             });
         }
-        // Page 3: Location Map
-        else if (pageIndex === 3 && this.locationModal) {
-            this.locationModal.onMobileTabActive();
+        // Page 3: Analysis & Units
+        else if (pageIndex === 3) {
+            // Settings and telemetry view
         }
         // Page 4: PDF / PNG Export
         else if (pageIndex === 4 && this.exportModal) {

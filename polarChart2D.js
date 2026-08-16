@@ -529,20 +529,24 @@ export class PolarChart2D {
         this.drawMassings();
 
         // 5. Monthly Paths
-        if (this.state.showAllMonths) {
+        if (this.state.showAllMonths && !this.state.isSketchOnlyMode) {
             this.drawMonthlyPaths();
         }
 
         // 6. Analemmas (clean isolated loops without horizontal chords)
-        if (this.state.showAnalemmas) {
+        if (this.state.showAnalemmas && !this.state.isSketchOnlyMode) {
             this.drawAnalemmas();
         }
 
         // 7. Active Day Path
-        this.drawActiveDayPath();
+        if (!this.state.isSketchOnlyMode) {
+            this.drawActiveDayPath();
+        }
 
         // 8. Current Sun & Ray
-        this.drawCurrentSun();
+        if (!this.state.isSketchOnlyMode) {
+            this.drawCurrentSun();
+        }
 
         // 9. 4x Scaled House Footprint at Center
         this.drawCenterHouse4x();
@@ -940,12 +944,6 @@ export class PolarChart2D {
         ctx.moveTo(centerX, centerY - l / 2);
         ctx.lineTo(centerX, centerY + l / 2);
         ctx.stroke();
-
-        ctx.font = 'bold 9px "Roboto", sans-serif';
-        ctx.fillStyle = '#9ca3af';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        ctx.fillText('House (Zenith)', centerX, centerY + l / 2 + 5);
     }
 
     /**
