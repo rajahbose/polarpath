@@ -974,7 +974,23 @@ class SunDomeApp {
     }
 }
 
+// Synchronize accurate viewport height for iOS Safari & Chrome
+function updateAppHeight() {
+    const doc = document.documentElement;
+    const vh = window.innerHeight;
+    doc.style.setProperty('--app-height', `${vh}px`);
+    if (window.sunDomeApp) {
+        window.sunDomeApp.polarChart?.resize();
+        window.sunDomeApp.solarDome?.onResize();
+    }
+}
+window.addEventListener('resize', updateAppHeight, { passive: true });
+window.addEventListener('orientationchange', updateAppHeight, { passive: true });
+window.addEventListener('DOMContentLoaded', updateAppHeight);
+updateAppHeight();
+
 // Bootstrap on DOM loaded
 window.addEventListener('DOMContentLoaded', () => {
     window.sunDomeApp = new SunDomeApp();
+    updateAppHeight();
 });
