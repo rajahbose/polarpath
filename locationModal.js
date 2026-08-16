@@ -17,12 +17,13 @@ export class LocationModal {
         this.activeFilterCategory = 'all'; // 'all' | 'world' | 'us'
 
         this.initDom();
+        this.initMobileDom();
         this.setupMap();
         this.setupEventListeners();
     }
 
     initDom() {
-        // Modal Overlay Container
+        // Modal Overlay Container (Desktop Modal)
         this.overlay = document.createElement('div');
         this.overlay.className = 'location-modal-overlay';
         this.overlay.style.display = 'none';
@@ -116,7 +117,7 @@ export class LocationModal {
 
         document.body.appendChild(this.overlay);
 
-        // References
+        // References for Desktop Modal
         this.searchInput = this.overlay.querySelector('#locCitySearch');
         this.btnClear = this.overlay.querySelector('#btnLocClear');
         this.dropdownList = this.overlay.querySelector('#locDropdownList');
@@ -133,9 +134,92 @@ export class LocationModal {
         this.btnClose = this.overlay.querySelector('#btnLocClose');
     }
 
+    initMobileDom() {
+        const mobileContainer = document.getElementById('mobileLocationContainer');
+        if (!mobileContainer) return;
+
+        mobileContainer.innerHTML = `
+            <div class="mobile-loc-card">
+                <!-- Search Row -->
+                <div class="loc-search-row">
+                    <div class="loc-search-input-wrap">
+                        <svg class="loc-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="locCitySearchMobile" class="loc-search-input" placeholder="Search 350+ cities..." autocomplete="off" spellcheck="false">
+                        <button class="loc-search-clear" id="btnLocClearMobile" style="display:none;" title="Clear search">✕</button>
+                        <div class="loc-dropdown-list" id="locDropdownListMobile" style="display:none;"></div>
+                    </div>
+
+                    <!-- Category Filter Chips -->
+                    <div class="loc-filter-chips">
+                        <button class="loc-chip active" data-filter="all">All (${CITIES_DATABASE.length})</button>
+                        <button class="loc-chip" data-filter="world">World Top 100</button>
+                        <button class="loc-chip" data-filter="us">US States</button>
+                    </div>
+                </div>
+
+                <!-- World Map Container -->
+                <div class="mobile-loc-map-wrapper" id="locMapContainerMobile">
+                    <canvas id="locMapCanvasMobile" class="loc-map-canvas"></canvas>
+                    <div class="loc-map-crosshair" id="locCrosshairMobile">
+                        <div class="loc-pin-pulse"></div>
+                        <div class="loc-pin-point"></div>
+                        <div class="loc-pin-label" id="locPinLabelMobile">Santa Fe (35.7° N, 105.9° W)</div>
+                    </div>
+                </div>
+
+                <!-- Active Coordinates Status -->
+                <div class="mobile-loc-status">
+                    <div class="mobile-loc-status-coords" id="locStatusCoordsMobile">35.69° N, 105.94° W</div>
+                    <div class="mobile-loc-status-name" id="locStatusNameMobile">Santa Fe, NM, USA</div>
+                </div>
+            </div>
+
+            <!-- Quick Season Presets on Mobile Location Page -->
+            <div class="mobile-card-section">
+                <div class="mobile-section-header">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <h2 class="mobile-section-title">Quick Season Presets</h2>
+                </div>
+                <div class="mobile-season-grid">
+                    <button class="season-btn" data-date="summer">☀️ Summer Solstice</button>
+                    <button class="season-btn" data-date="winter">❄️ Winter Solstice</button>
+                    <button class="season-btn" data-date="equinox">🌱 Equinox</button>
+                    <button class="season-btn" data-date="today">📅 Today</button>
+                </div>
+            </div>
+        `;
+
+        // References for Mobile View
+        this.mobileSearchInput = mobileContainer.querySelector('#locCitySearchMobile');
+        this.mobileBtnClear = mobileContainer.querySelector('#btnLocClearMobile');
+        this.mobileDropdownList = mobileContainer.querySelector('#locDropdownListMobile');
+        this.mobileChipButtons = mobileContainer.querySelectorAll('.loc-chip');
+        this.mobileMapContainer = mobileContainer.querySelector('#locMapContainerMobile');
+        this.mobileMapCanvas = mobileContainer.querySelector('#locMapCanvasMobile');
+        this.mobileCrosshair = mobileContainer.querySelector('#locCrosshairMobile');
+        this.mobilePinLabel = mobileContainer.querySelector('#locPinLabelMobile');
+        this.mobileStatusCoords = mobileContainer.querySelector('#locStatusCoordsMobile');
+        this.mobileStatusName = mobileContainer.querySelector('#locStatusNameMobile');
+    }
+
     setupMap() {
         this.ctx = this.mapCanvas.getContext('2d');
-        // Initial resize will occur on modal open
+        if (this.mobileMapCanvas) {
+            this.mobileCtx = this.mobileMapCanvas.getContext('2d');
+        }
     }
 
     setupEventListeners() {
@@ -237,12 +321,12 @@ export class LocationModal {
             this.mapTooltip.style.display = 'none';
         });
 
-        // Apply Button
+        // Apply Button (Desktop modal)
         this.btnApply.addEventListener('click', () => {
             this.confirmSelection();
         });
 
-        // Resize observer for responsive canvas
+        // Resize observer for desktop canvas
         const resizeObserver = new ResizeObserver(() => {
             if (this.isOpen) {
                 this.resizeCanvas();
@@ -251,6 +335,99 @@ export class LocationModal {
             }
         });
         resizeObserver.observe(this.mapContainer);
+
+        // =========================================================
+        // MOBILE EVENT LISTENERS & TOUCH SUPPORT
+        // =========================================================
+        if (this.mobileSearchInput) {
+            this.mobileSearchInput.addEventListener('input', (e) => {
+                this.filterText = e.target.value.trim().toLowerCase();
+                this.mobileBtnClear.style.display = this.filterText.length > 0 ? 'block' : 'none';
+                this.renderDropdown();
+                this.renderMap();
+            });
+
+            this.mobileSearchInput.addEventListener('focus', () => {
+                this.renderDropdown();
+            });
+
+            this.mobileBtnClear.addEventListener('click', () => {
+                this.mobileSearchInput.value = '';
+                this.filterText = '';
+                this.mobileBtnClear.style.display = 'none';
+                this.renderDropdown();
+                this.renderMap();
+                this.mobileSearchInput.focus();
+            });
+        }
+
+        if (this.mobileChipButtons) {
+            this.mobileChipButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    this.mobileChipButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    this.activeFilterCategory = btn.dataset.filter;
+                    this.renderDropdown();
+                    this.renderMap();
+                });
+            });
+        }
+
+        if (this.mobileMapContainer && this.mobileMapCanvas) {
+            const handleMobileMapTouch = (clientX, clientY) => {
+                const rect = this.mobileMapCanvas.getBoundingClientRect();
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+                if (x < 0 || x > rect.width || y < 0 || y > rect.height) return;
+
+                const clickedCity = this.findCityAtScreenPos(x, y, rect.width, rect.height, 12);
+                if (clickedCity) {
+                    this.selectCity(clickedCity);
+                } else {
+                    const { lat, lon } = this.screenToGeo(x, y, rect.width, rect.height);
+                    this.selectCoordinates(lat, lon, `Custom (${lat.toFixed(1)}°, ${lon.toFixed(1)}°)`);
+                }
+                // On mobile, immediately broadcast location selection
+                if (this.onLocationSelected) {
+                    this.onLocationSelected({
+                        latitude: this.currentLat,
+                        longitude: this.currentLon,
+                        displayName: this.selectedCityName
+                    });
+                }
+            };
+
+            this.mobileMapContainer.addEventListener('click', (e) => {
+                if (e.target.closest('.loc-dropdown-list') || e.target.closest('.loc-search-row')) return;
+                handleMobileMapTouch(e.clientX, e.clientY);
+            });
+
+            this.mobileMapContainer.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches.length > 0) {
+                    const t = e.touches[0];
+                    handleMobileMapTouch(t.clientX, t.clientY);
+                }
+            }, { passive: true });
+
+            // Mobile Resize Observer
+            const mobileResizeObserver = new ResizeObserver(() => {
+                this.resizeMobileCanvas();
+                this.renderMap();
+                this.updatePinPosition();
+            });
+            mobileResizeObserver.observe(this.mobileMapContainer);
+        }
+    }
+
+    onMobileTabActive() {
+        // Called when user swipes to or clicks the Location Tab on mobile
+        requestAnimationFrame(() => {
+            this.resizeMobileCanvas();
+            this.renderMap();
+            this.updatePinPosition();
+            this.updateStatusReadout();
+            this.renderDropdown();
+        });
     }
 
     open(currentLat, currentLon, currentLabel = '') {
@@ -278,6 +455,7 @@ export class LocationModal {
         this.isOpen = false;
         this.overlay.style.display = 'none';
         this.dropdownList.style.display = 'none';
+        if (this.mobileDropdownList) this.mobileDropdownList.style.display = 'none';
     }
 
     confirmSelection() {
@@ -295,21 +473,42 @@ export class LocationModal {
         this.currentLat = city.lat;
         this.currentLon = city.lon;
         this.selectedCityName = getCityDisplayName(city);
-        this.searchInput.value = this.selectedCityName;
-        this.dropdownList.style.display = 'none';
+        if (this.searchInput) this.searchInput.value = this.selectedCityName;
+        if (this.mobileSearchInput) this.mobileSearchInput.value = this.selectedCityName;
+        if (this.dropdownList) this.dropdownList.style.display = 'none';
+        if (this.mobileDropdownList) this.mobileDropdownList.style.display = 'none';
         this.renderMap();
         this.updatePinPosition();
         this.updateStatusReadout();
+
+        // Broadcast if mobile mode
+        if (!this.isOpen && this.onLocationSelected) {
+            this.onLocationSelected({
+                latitude: this.currentLat,
+                longitude: this.currentLon,
+                displayName: this.selectedCityName
+            });
+        }
     }
 
     selectCoordinates(lat, lon, label) {
         this.currentLat = parseFloat(lat.toFixed(4));
         this.currentLon = parseFloat(lon.toFixed(4));
         this.selectedCityName = label || `${this.formatCoord(this.currentLat, true)}, ${this.formatCoord(this.currentLon, false)}`;
-        this.dropdownList.style.display = 'none';
+        if (this.dropdownList) this.dropdownList.style.display = 'none';
+        if (this.mobileDropdownList) this.mobileDropdownList.style.display = 'none';
         this.renderMap();
         this.updatePinPosition();
         this.updateStatusReadout();
+
+        // Broadcast if mobile mode
+        if (!this.isOpen && this.onLocationSelected) {
+            this.onLocationSelected({
+                latitude: this.currentLat,
+                longitude: this.currentLon,
+                displayName: this.selectedCityName
+            });
+        }
     }
 
     formatCoord(val, isLat) {
@@ -321,20 +520,56 @@ export class LocationModal {
     }
 
     updateStatusReadout() {
-        this.statusCoords.textContent = `${this.formatCoord(this.currentLat, true)}, ${this.formatCoord(this.currentLon, false)}`;
-        this.statusName.textContent = this.selectedCityName;
-        this.pinLabel.textContent = `${this.selectedCityName} (${this.formatCoord(this.currentLat, true)}, ${this.formatCoord(this.currentLon, false)})`;
+        const coordStr = `${this.formatCoord(this.currentLat, true)}, ${this.formatCoord(this.currentLon, false)}`;
+        if (this.statusCoords) this.statusCoords.textContent = coordStr;
+        if (this.statusName) this.statusName.textContent = this.selectedCityName;
+        if (this.pinLabel) this.pinLabel.textContent = `${this.selectedCityName} (${coordStr})`;
+
+        if (this.mobileStatusCoords) this.mobileStatusCoords.textContent = coordStr;
+        if (this.mobileStatusName) this.mobileStatusName.textContent = this.selectedCityName;
+        if (this.mobilePinLabel) this.mobilePinLabel.textContent = `${this.selectedCityName} (${coordStr})`;
     }
 
     updatePinPosition() {
-        const rect = this.mapCanvas.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
+        // Desktop Pin
+        if (this.mapCanvas && this.crosshair) {
+            const rect = this.mapCanvas.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+                const { x, y } = this.geoToScreen(this.currentLat, this.currentLon, rect.width, rect.height);
+                this.crosshair.style.left = `${x}px`;
+                this.crosshair.style.top = `${y}px`;
+            }
+        }
+
+        // Mobile Pin
+        if (this.mobileMapCanvas && this.mobileCrosshair) {
+            const rect = this.mobileMapCanvas.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+                const { x, y } = this.geoToScreen(this.currentLat, this.currentLon, rect.width, rect.height);
+                this.mobileCrosshair.style.left = `${x}px`;
+                this.mobileCrosshair.style.top = `${y}px`;
+            }
+        }
+    }
+
+    resizeMobileCanvas() {
+        if (!this.mobileMapCanvas || !this.mobileMapContainer) return;
+        const rect = this.mobileMapContainer.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        const width = Math.floor(rect.width);
+        const height = Math.floor(rect.height);
+
         if (width <= 0 || height <= 0) return;
 
-        const { x, y } = this.geoToScreen(this.currentLat, this.currentLon, width, height);
-        this.crosshair.style.left = `${x}px`;
-        this.crosshair.style.top = `${y}px`;
+        this.mobileMapCanvas.width = width * dpr;
+        this.mobileMapCanvas.height = height * dpr;
+        this.mobileMapCanvas.style.width = `${width}px`;
+        this.mobileMapCanvas.style.height = `${height}px`;
+
+        if (this.mobileCtx) {
+            this.mobileCtx.setTransform(1, 0, 0, 1, 0, 0);
+            this.mobileCtx.scale(dpr, dpr);
+        }
     }
 
     geoToScreen(lat, lon, width, height) {
@@ -393,52 +628,59 @@ export class LocationModal {
 
     renderDropdown() {
         const filtered = this.getFilteredCities();
-        if (filtered.length === 0) {
-            this.dropdownList.innerHTML = `<div class="loc-dropdown-empty">No cities matching "${this.filterText}". Click map to pick custom coordinates.</div>`;
-            this.dropdownList.style.display = 'block';
-            return;
-        }
-
         const maxItems = 12;
         const itemsToDisplay = filtered.slice(0, maxItems);
 
         let html = '';
-        itemsToDisplay.forEach((city, index) => {
-            const displayName = getCityDisplayName(city);
-            const isMatch = displayName.toLowerCase() === this.selectedCityName.toLowerCase();
-            const badgeType = city.category === 'us' ? (city.state || 'US') : 'Global';
-            const latStr = `${Math.abs(city.lat).toFixed(1)}°${city.lat >= 0 ? 'N' : 'S'}`;
-            const lonStr = `${Math.abs(city.lon).toFixed(1)}°${city.lon >= 0 ? 'E' : 'W'}`;
+        if (filtered.length === 0) {
+            html = `<div class="loc-dropdown-empty">No cities matching "${this.filterText}". Click map to pick custom coordinates.</div>`;
+        } else {
+            itemsToDisplay.forEach((city, index) => {
+                const displayName = getCityDisplayName(city);
+                const isMatch = displayName.toLowerCase() === this.selectedCityName.toLowerCase();
+                const badgeType = city.category === 'us' ? (city.state || 'US') : 'Global';
+                const latStr = `${Math.abs(city.lat).toFixed(1)}°${city.lat >= 0 ? 'N' : 'S'}`;
+                const lonStr = `${Math.abs(city.lon).toFixed(1)}°${city.lon >= 0 ? 'E' : 'W'}`;
 
-            html += `
-                <div class="loc-dropdown-item ${isMatch ? 'active' : ''}" data-index="${index}">
-                    <div class="loc-item-left">
-                        <span class="loc-item-tag ${city.category === 'us' ? 'us' : 'world'}">${badgeType}</span>
-                        <span class="loc-item-name">${displayName}</span>
+                html += `
+                    <div class="loc-dropdown-item ${isMatch ? 'active' : ''}" data-index="${index}">
+                        <div class="loc-item-left">
+                            <span class="loc-item-tag ${city.category === 'us' ? 'us' : 'world'}">${badgeType}</span>
+                            <span class="loc-item-name">${displayName}</span>
+                        </div>
+                        <span class="loc-item-coords">${latStr}, ${lonStr}</span>
                     </div>
-                    <span class="loc-item-coords">${latStr}, ${lonStr}</span>
-                </div>
-            `;
-        });
+                `;
+            });
 
-        if (filtered.length > maxItems) {
-            html += `<div class="loc-dropdown-footer">Showing top ${maxItems} of ${filtered.length} matching cities...</div>`;
+            if (filtered.length > maxItems) {
+                html += `<div class="loc-dropdown-footer">Showing top ${maxItems} of ${filtered.length} matching cities...</div>`;
+            }
         }
 
-        this.dropdownList.innerHTML = html;
-        this.dropdownList.style.display = 'block';
-
-        // Add click events to dropdown items
-        const itemEls = this.dropdownList.querySelectorAll('.loc-dropdown-item');
-        itemEls.forEach(el => {
-            el.addEventListener('click', (e) => {
-                const idx = parseInt(el.dataset.index, 10);
-                const city = itemsToDisplay[idx];
-                if (city) {
-                    this.selectCity(city);
-                }
+        // Render Desktop Dropdown
+        if (this.dropdownList) {
+            this.dropdownList.innerHTML = html;
+            this.dropdownList.style.display = 'block';
+            this.dropdownList.querySelectorAll('.loc-dropdown-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const idx = parseInt(el.dataset.index, 10);
+                    if (itemsToDisplay[idx]) this.selectCity(itemsToDisplay[idx]);
+                });
             });
-        });
+        }
+
+        // Render Mobile Dropdown
+        if (this.mobileDropdownList) {
+            this.mobileDropdownList.innerHTML = html;
+            this.mobileDropdownList.style.display = 'block';
+            this.mobileDropdownList.querySelectorAll('.loc-dropdown-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const idx = parseInt(el.dataset.index, 10);
+                    if (itemsToDisplay[idx]) this.selectCity(itemsToDisplay[idx]);
+                });
+            });
+        }
     }
 
     resizeCanvas() {
@@ -452,26 +694,37 @@ export class LocationModal {
     }
 
     renderMap() {
-        const rect = this.mapCanvas.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
-        if (width === 0 || height === 0) return;
+        // 1. Render Desktop Canvas
+        if (this.mapCanvas && this.ctx) {
+            const rect = this.mapCanvas.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+            if (width > 0 && height > 0) {
+                const ctx = this.ctx;
+                ctx.clearRect(0, 0, width, height);
+                ctx.fillStyle = '#0f131a';
+                ctx.fillRect(0, 0, width, height);
+                this.drawGraticule(ctx, width, height);
+                this.drawWorldContinents(ctx, width, height);
+                this.drawCityNodes(ctx, width, height);
+            }
+        }
 
-        const ctx = this.ctx;
-        ctx.clearRect(0, 0, width, height);
-
-        // 1. Ocean Background
-        ctx.fillStyle = '#0f131a';
-        ctx.fillRect(0, 0, width, height);
-
-        // 2. Graticule Lines (Longitude & Latitude Grid)
-        this.drawGraticule(ctx, width, height);
-
-        // 3. World Continents Geometry
-        this.drawWorldContinents(ctx, width, height);
-
-        // 4. City Dots
-        this.drawCityNodes(ctx, width, height);
+        // 2. Render Mobile Canvas
+        if (this.mobileMapCanvas && this.mobileCtx) {
+            const rect = this.mobileMapCanvas.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+            if (width > 0 && height > 0) {
+                const ctx = this.mobileCtx;
+                ctx.clearRect(0, 0, width, height);
+                ctx.fillStyle = '#0f131a';
+                ctx.fillRect(0, 0, width, height);
+                this.drawGraticule(ctx, width, height);
+                this.drawWorldContinents(ctx, width, height);
+                this.drawCityNodes(ctx, width, height);
+            }
+        }
     }
 
     drawGraticule(ctx, width, height) {
@@ -508,7 +761,7 @@ export class LocationModal {
             ctx.stroke();
         }
 
-        // Equator (0°) - Highlighted Amber/White
+        // Equator (0°) - Highlighted Amber
         const equatorY = (90 / 180) * height;
         ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
         ctx.lineWidth = 1.25;
@@ -544,24 +797,6 @@ export class LocationModal {
         ctx.stroke();
 
         ctx.restore();
-    }
-
-    updatePinPosition() {
-        const rect = this.mapCanvas.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
-        if (width <= 0 || height <= 0) return;
-
-        const { x, y } = this.geoToScreen(this.currentLat, this.currentLon, width, height);
-        this.crosshair.style.left = `${x}px`;
-        this.crosshair.style.top = `${y}px`;
-
-        // Adjust label position if too close to top edge of map
-        if (y < 36) {
-            this.pinLabel.style.top = '16px';
-        } else {
-            this.pinLabel.style.top = '-24px';
-        }
     }
 
     drawWorldContinents(ctx, width, height) {
@@ -631,3 +866,4 @@ export class LocationModal {
         ctx.restore();
     }
 }
+

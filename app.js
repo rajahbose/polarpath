@@ -57,6 +57,7 @@ class SunDomeApp {
         // Setup DOM Elements & Event Listeners
         this.initDomElements();
         this.setupEventListeners();
+        this.initMobileNavigation();
         this.setupSplitDivider();
         this.setupAnimationLoop();
 
@@ -93,6 +94,7 @@ class SunDomeApp {
         this.btnNextDay = document.getElementById('btnNextDay');
         this.speedSelect = document.getElementById('speedSelect');
 
+        // Display & Analysis (Desktop)
         this.chkMonths = document.getElementById('chkMonths');
         this.chkAnalemmas = document.getElementById('chkAnalemmas');
         this.chkTransparent = document.getElementById('chkTransparent');
@@ -100,6 +102,15 @@ class SunDomeApp {
         this.zoomScaleSlider = document.getElementById('zoomScaleSlider');
         this.zoomScaleReadout = document.getElementById('zoomScaleReadout');
 
+        // Display & Analysis (Mobile Page 2)
+        this.chkMonthsMobile = document.getElementById('chkMonthsMobile');
+        this.chkAnalemmasMobile = document.getElementById('chkAnalemmasMobile');
+        this.chkTransparentMobile = document.getElementById('chkTransparentMobile');
+        this.chkDimensionsMobile = document.getElementById('chkDimensionsMobile');
+        this.zoomScaleSliderMobile = document.getElementById('zoomScaleSliderMobile');
+        this.zoomScaleReadoutMobile = document.getElementById('zoomScaleReadoutMobile');
+
+        // Telemetry HUD (Desktop)
         this.hudElevation = document.getElementById('hudElevation');
         this.hudAzimuth = document.getElementById('hudAzimuth');
         this.hudDeclination = document.getElementById('hudDeclination');
@@ -107,7 +118,15 @@ class SunDomeApp {
         this.hudSunTimes = document.getElementById('hudSunTimes');
         this.hudDayLength = document.getElementById('hudDayLength');
 
-        this.cameraPresetBtns = document.querySelectorAll('#cameraPresets .view-btn');
+        // Telemetry HUD (Mobile Page 2)
+        this.hudElevationMobile = document.getElementById('hudElevationMobile');
+        this.hudAzimuthMobile = document.getElementById('hudAzimuthMobile');
+        this.hudDeclinationMobile = document.getElementById('hudDeclinationMobile');
+        this.hudShadowRatioMobile = document.getElementById('hudShadowRatioMobile');
+        this.hudSunTimesMobile = document.getElementById('hudSunTimesMobile');
+        this.hudDayLengthMobile = document.getElementById('hudDayLengthMobile');
+
+        this.cameraPresetBtns = document.querySelectorAll('#cameraPresets .view-btn, #cameraPresetsMobile .view-btn');
         this.seasonBtns = document.querySelectorAll('.season-btn');
 
         // Draw Massing & Manager Elements
@@ -174,10 +193,14 @@ class SunDomeApp {
             this.setUnitSystem('customary');
         });
 
-        // Open World Map Location Modal
+        // Open World Map Location Modal (Desktop Modal or Mobile Tab Switch)
         if (this.btnOpenLocationModal) {
             this.btnOpenLocationModal.addEventListener('click', () => {
-                this.locationModal.open(this.state.latitude, this.state.longitude, this.currentLocationLabel);
+                if (window.innerWidth <= 820) {
+                    this.scrollToMobilePage(2);
+                } else {
+                    this.locationModal.open(this.state.latitude, this.state.longitude, this.currentLocationLabel);
+                }
             });
         }
 
@@ -234,42 +257,41 @@ class SunDomeApp {
             this.state.playbackSpeed = parseFloat(e.target.value);
         });
 
-        // Layer & Display Toggles
-        this.chkMonths.addEventListener('change', (e) => {
-            this.state.showAllMonths = e.target.checked;
-            this.polarChart.updateState({ showAllMonths: this.state.showAllMonths });
-            this.solarDome.updateState({ showAllMonths: this.state.showAllMonths });
-        });
+        // Layer & Display Toggles (Synchronized Desktop & Mobile)
+        const bindToggle = (desktopEl, mobileEl, key) => {
+            const updateVal = (checked) => {
+                this.state[key] = checked;
+                if (desktopEl) desktopEl.checked = checked;
+                if (mobileEl) mobileEl.checked = checked;
+                this.polarChart.updateState({ [key]: checked });
+                this.solarDome.updateState({ [key]: checked });
+            };
 
-        this.chkAnalemmas.addEventListener('change', (e) => {
-            this.state.showAnalemmas = e.target.checked;
-            this.polarChart.updateState({ showAnalemmas: this.state.showAnalemmas });
-            this.solarDome.updateState({ showAnalemmas: this.state.showAnalemmas });
-        });
+            if (desktopEl) desktopEl.addEventListener('change', (e) => updateVal(e.target.checked));
+            if (mobileEl) mobileEl.addEventListener('change', (e) => updateVal(e.target.checked));
+        };
 
-        this.chkTransparent.addEventListener('change', (e) => {
-            this.state.transparentMassings = e.target.checked;
-            this.polarChart.updateState({ transparentMassings: this.state.transparentMassings });
-            this.solarDome.updateState({ transparentMassings: this.state.transparentMassings });
-        });
+        bindToggle(this.chkMonths, this.chkMonthsMobile, 'showAllMonths');
+        bindToggle(this.chkAnalemmas, this.chkAnalemmasMobile, 'showAnalemmas');
+        bindToggle(this.chkTransparent, this.chkTransparentMobile, 'transparentMassings');
+        bindToggle(this.chkDimensions, this.chkDimensionsMobile, 'showDimensions');
 
-        this.chkDimensions.addEventListener('change', (e) => {
-            this.state.showDimensions = e.target.checked;
-            this.polarChart.updateState({ showDimensions: this.state.showDimensions });
-            this.solarDome.updateState({ showDimensions: this.state.showDimensions });
-        });
+        // Viewport Zoom / Scale Slider (Synchronized Desktop & Mobile)
+        const updateZoom = (zoom) => {
+            this.state.zoomScale = zoom;
+            if (this.zoomScaleSlider) this.zoomScaleSlider.value = zoom;
+            if (this.zoomScaleSliderMobile) this.zoomScaleSliderMobile.value = zoom;
+            if (this.zoomScaleReadout) this.zoomScaleReadout.textContent = `${zoom.toFixed(2)}×`;
+            if (this.zoomScaleReadoutMobile) this.zoomScaleReadoutMobile.textContent = `${zoom.toFixed(2)}×`;
+            this.polarChart.updateState({ zoomScale: zoom });
+            this.solarDome.updateState({ zoomScale: zoom });
+        };
 
-        // Viewport Zoom / Scale Slider
         if (this.zoomScaleSlider) {
-            this.zoomScaleSlider.addEventListener('input', (e) => {
-                const zoom = parseFloat(e.target.value);
-                this.state.zoomScale = zoom;
-                if (this.zoomScaleReadout) {
-                    this.zoomScaleReadout.textContent = `${zoom.toFixed(2)}×`;
-                }
-                this.polarChart.updateState({ zoomScale: zoom });
-                this.solarDome.updateState({ zoomScale: zoom });
-            });
+            this.zoomScaleSlider.addEventListener('input', (e) => updateZoom(parseFloat(e.target.value)));
+        }
+        if (this.zoomScaleSliderMobile) {
+            this.zoomScaleSliderMobile.addEventListener('input', (e) => updateZoom(parseFloat(e.target.value)));
         }
 
         // Season Quick Presets
@@ -298,9 +320,14 @@ class SunDomeApp {
         // Camera Presets
         this.cameraPresetBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                this.cameraPresetBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
                 const preset = btn.getAttribute('data-preset');
+                this.cameraPresetBtns.forEach(b => {
+                    if (b.getAttribute('data-preset') === preset) {
+                        b.classList.add('active');
+                    } else {
+                        b.classList.remove('active');
+                    }
+                });
                 this.solarDome.setCameraPreset(preset);
             });
         });
@@ -334,6 +361,66 @@ class SunDomeApp {
                 this.renderMassingsList();
             }
         });
+    }
+
+    initMobileNavigation() {
+        this.mobileSwipeWrapper = document.getElementById('mobileSwipeWrapper');
+        this.mobileTabBtns = document.querySelectorAll('.mobile-tab-btn');
+
+        if (!this.mobileSwipeWrapper || this.mobileTabBtns.length === 0) return;
+
+        // Tab Button Clicks
+        this.mobileTabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const pageIndex = parseInt(btn.getAttribute('data-page'), 10);
+                this.scrollToMobilePage(pageIndex);
+            });
+        });
+
+        // Swipe Scroll Sync with Debounce
+        let scrollTimeout;
+        this.mobileSwipeWrapper.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const width = this.mobileSwipeWrapper.clientWidth;
+                if (width <= 0) return;
+                const pageIndex = Math.round(this.mobileSwipeWrapper.scrollLeft / width);
+                this.updateActiveMobileTab(pageIndex);
+            }, 60);
+        }, { passive: true });
+    }
+
+    scrollToMobilePage(pageIndex) {
+        if (!this.mobileSwipeWrapper) return;
+        const width = this.mobileSwipeWrapper.clientWidth;
+        this.mobileSwipeWrapper.scrollTo({
+            left: pageIndex * width,
+            behavior: 'smooth'
+        });
+        this.updateActiveMobileTab(pageIndex);
+    }
+
+    updateActiveMobileTab(pageIndex) {
+        if (!this.mobileTabBtns) return;
+        this.mobileTabBtns.forEach((btn, idx) => {
+            if (idx === pageIndex) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // If switched to Page 0 (Charts), trigger resize
+        if (pageIndex === 0) {
+            requestAnimationFrame(() => {
+                this.polarChart.resize();
+                this.solarDome.onResize();
+            });
+        }
+        // If switched to Page 2 (Location), trigger location map render
+        if (pageIndex === 2 && this.locationModal) {
+            this.locationModal.onMobileTabActive();
+        }
     }
 
     onLocationSelected(loc) {
@@ -681,28 +768,37 @@ class SunDomeApp {
             this.daylightBadge.className = 'sun-state-badge';
         }
 
-        // Telemetry HUD
-        this.hudElevation.textContent = `${pos.elevation >= 0 ? '+' : ''}${pos.elevation.toFixed(1)}°`;
-        this.hudAzimuth.textContent = `${pos.azimuth.toFixed(1)}°`;
-        this.hudDeclination.textContent = `${pos.declination >= 0 ? '+' : ''}${pos.declination.toFixed(1)}°`;
+        // Telemetry HUD (Desktop & Mobile Synchronized)
+        const elevStr = `${pos.elevation >= 0 ? '+' : ''}${pos.elevation.toFixed(1)}°`;
+        const azimStr = `${pos.azimuth.toFixed(1)}°`;
+        const declStr = `${pos.declination >= 0 ? '+' : ''}${pos.declination.toFixed(1)}°`;
+        const shadowStr = pos.elevation > 0 ? `${(1 / Math.tan(pos.elevation * Math.PI / 180)).toFixed(2)}x` : 'No Shadow';
 
-        if (pos.elevation > 0) {
-            const ratio = 1 / Math.tan(pos.elevation * Math.PI / 180);
-            this.hudShadowRatio.textContent = `${ratio.toFixed(2)}x`;
-        } else {
-            this.hudShadowRatio.textContent = 'No Shadow';
-        }
-
+        let sunTimesStr = '';
+        let dayLengthStr = '';
         if (times.hasSunrise && times.hasSunset) {
-            this.hudSunTimes.textContent = `${this.formatHoursToTime(times.sunrise)} • ${this.formatHoursToTime(times.sunset)}`;
-            this.hudDayLength.textContent = `${times.dayLength.toFixed(1)} hrs`;
+            sunTimesStr = `${this.formatHoursToTime(times.sunrise)} • ${this.formatHoursToTime(times.sunset)}`;
+            dayLengthStr = `${times.dayLength.toFixed(1)} hrs`;
         } else if (times.isMidnightSun) {
-            this.hudSunTimes.textContent = 'Midnight Sun (24h)';
-            this.hudDayLength.textContent = '24.0 hrs';
+            sunTimesStr = 'Midnight Sun (24h)';
+            dayLengthStr = '24.0 hrs';
         } else {
-            this.hudSunTimes.textContent = 'Polar Night (0h)';
-            this.hudDayLength.textContent = '0.0 hrs';
+            sunTimesStr = 'Polar Night (0h)';
+            dayLengthStr = '0.0 hrs';
         }
+
+        if (this.hudElevation) this.hudElevation.textContent = elevStr;
+        if (this.hudElevationMobile) this.hudElevationMobile.textContent = elevStr;
+        if (this.hudAzimuth) this.hudAzimuth.textContent = azimStr;
+        if (this.hudAzimuthMobile) this.hudAzimuthMobile.textContent = azimStr;
+        if (this.hudDeclination) this.hudDeclination.textContent = declStr;
+        if (this.hudDeclinationMobile) this.hudDeclinationMobile.textContent = declStr;
+        if (this.hudShadowRatio) this.hudShadowRatio.textContent = shadowStr;
+        if (this.hudShadowRatioMobile) this.hudShadowRatioMobile.textContent = shadowStr;
+        if (this.hudSunTimes) this.hudSunTimes.textContent = sunTimesStr;
+        if (this.hudSunTimesMobile) this.hudSunTimesMobile.textContent = sunTimesStr;
+        if (this.hudDayLength) this.hudDayLength.textContent = dayLengthStr;
+        if (this.hudDayLengthMobile) this.hudDayLengthMobile.textContent = dayLengthStr;
 
         // Update 2D Polar Chart
         this.polarChart.updateState({

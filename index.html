@@ -76,283 +76,436 @@
         </div>
     </header>
 
-    <!-- Main Split-Screen Workspace -->
-    <main class="split-container" id="splitContainer">
-        <!-- Left Panel: Polar Chart (Plan View) -->
-        <section class="viewport-panel" id="panel2D">
-            <div class="panel-header">
-                <span class="panel-title">Polar Chart</span>
-            </div>
+    <!-- Mobile Navigation Tab Bar (Visible on Mobile Viewports) -->
+    <nav class="mobile-nav-bar" id="mobileNavBar">
+        <button class="mobile-tab-btn active" data-page="0" id="tabBtn0">
+            <svg class="tab-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 2a10 10 0 0 1 10 10"/>
+                <path d="M12 12l7-7"/>
+            </svg>
+            <span>Charts</span>
+        </button>
+        <button class="mobile-tab-btn" data-page="1" id="tabBtn1">
+            <svg class="tab-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span>Analysis & Sun Data</span>
+        </button>
+        <button class="mobile-tab-btn" data-page="2" id="tabBtn2">
+            <svg class="tab-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <span>Location Map</span>
+        </button>
+    </nav>
 
-            <!-- Floating Massing & Sketching Manager Card (shifted down below viewport title) -->
-            <div class="floating-overlay top-left" style="top: 3.25rem; left: 0.85rem;">
-                <div class="massing-manager-card" id="massingManagerCard">
-                    <div class="massing-card-top-row">
-                        <div class="massing-title-group">
-                            <span class="massing-title">Massings</span>
-                            <span class="massing-count-badge" id="massingCountBadge">0</span>
-                        </div>
-                        <div class="massing-top-actions">
-                            <!-- Minimalist Draw Pen Icon Button -->
-                            <button class="draw-pen-btn" id="btnDrawMode" title="Draw Massing (Snaps to 90°, 45°, 30°)">
-                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
-                                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
-                                    <path d="M2 2l7.586 7.586"></path>
-                                    <circle cx="11" cy="11" r="2"></circle>
-                                </svg>
-                            </button>
+    <!-- Multi-Page Swipeable Wrapper -->
+    <div class="mobile-swipe-wrapper" id="mobileSwipeWrapper">
+        <!-- ========================================================
+             PAGE 1: Clean Split Screen Charts & Full-Width Sliders
+             ======================================================== -->
+        <div class="mobile-page" id="mobilePage1" data-page-index="0">
+            <!-- Main Split-Screen Workspace -->
+            <main class="split-container" id="splitContainer">
+                <!-- Left Panel: Polar Chart (Plan View) -->
+                <section class="viewport-panel" id="panel2D">
+                    <div class="panel-header">
+                        <span class="panel-title">Polar Chart</span>
+                    </div>
+
+                    <!-- Floating Massing & Sketching Manager Card -->
+                    <div class="floating-overlay top-left" style="top: 3.25rem; left: 0.85rem;">
+                        <div class="massing-manager-card" id="massingManagerCard">
+                            <div class="massing-card-top-row">
+                                <div class="massing-title-group">
+                                    <span class="massing-title">Massings</span>
+                                    <span class="massing-count-badge" id="massingCountBadge">0</span>
+                                </div>
+                                <div class="massing-top-actions">
+                                    <!-- Minimalist Draw Pen Icon Button -->
+                                    <button class="draw-pen-btn" id="btnDrawMode" title="Draw Massing (Snaps to 90°, 45°, 30°)">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                                            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                                            <path d="M2 2l7.586 7.586"></path>
+                                            <circle cx="11" cy="11" r="2"></circle>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Selected Massing Height Controls (visible when a massing is selected) -->
+                            <div class="selected-massing-controls" id="selectedMassingControls" style="display: none;">
+                                <div class="height-input-row">
+                                    <label for="massingHeightRange">Height:</label>
+                                    <span class="height-val" id="massingHeightVal">6.0 m</span>
+                                </div>
+                                <input type="range" id="massingHeightRange" min="1" max="40" step="0.5" value="6" class="custom-range">
+                            </div>
+
+                            <!-- Concise List of Currently Drawn Massings -->
+                            <div class="massings-list-section" id="massingsListSection">
+                                <div class="massings-items" id="massingsItems">
+                                    <div class="empty-massings-hint">No massings drawn. Click ✏️ to sketch.</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Selected Massing Height Controls (visible when a massing is selected) -->
-                    <div class="selected-massing-controls" id="selectedMassingControls" style="display: none;">
-                        <div class="height-input-row">
-                            <label for="massingHeightRange">Height:</label>
-                            <span class="height-val" id="massingHeightVal">6.0 m</span>
+                    <!-- Draw Mode Banner / Prompt -->
+                    <div class="draw-mode-banner" id="drawModeBanner" style="display: none;">
+                        <div class="draw-mode-status">
+                            <span class="draw-pulse"></span>
+                            <span><strong>Draw Mode:</strong> Click nodes (90°, 45°, 30° snapping). Click start node to auto-close.</span>
                         </div>
-                        <input type="range" id="massingHeightRange" min="1" max="40" step="0.5" value="6" class="custom-range">
+                        <div class="draw-actions">
+                            <button class="draw-btn" id="btnFinishPolygon">Finish</button>
+                            <button class="draw-btn cancel" id="btnCancelPolygon">Cancel</button>
+                        </div>
                     </div>
 
-                    <!-- Concise List of Currently Drawn Massings -->
-                    <div class="massings-list-section" id="massingsListSection">
-                        <div class="massings-items" id="massingsItems">
-                            <div class="empty-massings-hint">No massings drawn. Click ✏️ to sketch.</div>
+                    <!-- Legend Badge (Desktop only) -->
+                    <div class="floating-overlay bottom-left">
+                        <div class="legend-card">
+                            <div class="legend-item">
+                                <span class="legend-line" style="background: #f59e0b;"></span>
+                                <span>Active Date Path</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-line" style="background: #6b7280;"></span>
+                                <span>Jun / Dec Solstices</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-line" style="background: #9ca3af;"></span>
+                                <span>Mar / Sep Equinox</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-line" style="background: #374151; border-top: 1px dashed #6b7280;"></span>
+                                <span>Analemma Hour Curves</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Display Options Panel (Desktop only) -->
+                    <div class="floating-overlay top-right">
+                        <div class="options-panel">
+                            <div class="options-panel-title">Display & Analysis</div>
+                            <label class="toggle-option">
+                                <input type="checkbox" id="chkTransparent" checked>
+                                <span class="custom-chk"></span>
+                                <span>Transparent Buildings (50% Blue)</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="checkbox" id="chkDimensions">
+                                <span class="custom-chk"></span>
+                                <span>Turn on Dims & Area</span>
+                            </label>
+                            <div class="options-divider"></div>
+                            <label class="toggle-option">
+                                <input type="checkbox" id="chkMonths" checked>
+                                <span class="custom-chk"></span>
+                                <span>Month Curves</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="checkbox" id="chkAnalemmas" checked>
+                                <span class="custom-chk"></span>
+                                <span>Analemmas</span>
+                            </label>
+                            <div class="options-divider"></div>
+                            <div class="zoom-slider-container">
+                                <div class="zoom-label-row">
+                                    <span class="zoom-title">Viewport Scale</span>
+                                    <span class="zoom-readout" id="zoomScaleReadout">1.0×</span>
+                                </div>
+                                <input type="range" id="zoomScaleSlider" min="0.4" max="2.6" step="0.05" value="1.0" class="custom-range" title="Adjust synchronous scale of both viewports (house 5% to 50% area)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Container -->
+                    <div class="viewport-content" id="polarCanvasContainer"></div>
+                </section>
+
+                <!-- Split Resizer Bar -->
+                <div class="split-divider" id="splitDivider"></div>
+
+                <!-- Right Panel: 3D Shadow Study -->
+                <section class="viewport-panel" id="panel3D">
+                    <div class="panel-header">
+                        <span class="panel-title">3D Shadow Study</span>
+                    </div>
+
+                    <!-- Camera View Presets (Desktop only) -->
+                    <div class="floating-overlay top-right">
+                        <div class="view-presets" id="cameraPresets">
+                            <button class="view-btn active" data-preset="iso">Perspective</button>
+                            <button class="view-btn" data-preset="top">Top (Plan)</button>
+                            <button class="view-btn" data-preset="street">Street Eye</button>
+                            <button class="view-btn" data-preset="south">South Facing</button>
+                            <button class="view-btn" data-preset="north">North Facing</button>
+                        </div>
+                    </div>
+
+                    <!-- Solar Telemetry HUD (Desktop only) -->
+                    <div class="floating-overlay bottom-right">
+                        <div class="telemetry-card">
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">Solar Elevation (Altitude)</span>
+                                <span class="telemetry-value" id="hudElevation">--°</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">Solar Azimuth (Compass)</span>
+                                <span class="telemetry-value cyan" id="hudAzimuth">--°</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">Declination</span>
+                                <span class="telemetry-value" id="hudDeclination">--°</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">Shadow Ratio (H / L)</span>
+                                <span class="telemetry-value rose" id="hudShadowRatio">--</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">Sunrise • Sunset</span>
+                                <span class="telemetry-value green" id="hudSunTimes" style="font-size: 0.85rem;">-- • --</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">Day Length</span>
+                                <span class="telemetry-value cyan" id="hudDayLength" style="font-size: 0.85rem;">-- hrs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3D WebGL Three.js Container -->
+                    <div class="viewport-content" id="dome3DContainer"></div>
+                </section>
+            </main>
+
+            <!-- Bottom Control Station / Timeline Bar -->
+            <footer class="control-station" id="controlStation">
+                <!-- studioBOSE Branding (Bottom Left Corner - Desktop only) -->
+                <div class="app-branding-badge">
+                    <img src="studiobose-logo.png" alt="studioBOSE" class="app-brand-logo">
+                    <span class="brand-version-tag">V1.2</span>
+                </div>
+
+                <!-- Playback Controls (Speed dropdown - Desktop only) -->
+                <div class="playback-cluster">
+                    <div class="playback-buttons">
+                        <button class="icon-btn" id="btnPrevDay" title="Previous Day">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button class="icon-btn primary" id="btnPlayPause" title="Play / Pause Time Animation">
+                            <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            <svg id="pauseIcon" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                        </button>
+                        <button class="icon-btn" id="btnNextDay" title="Next Day">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                    <select class="speed-select" id="speedSelect" title="Simulation Speed">
+                        <option value="1">1x (Real)</option>
+                        <option value="10">10x Speed</option>
+                        <option value="30" selected>30x Speed</option>
+                        <option value="60">60x Speed</option>
+                        <option value="180">180x Fast</option>
+                    </select>
+                </div>
+
+                <!-- Dual Timeline Scrub Cluster (Full Width on Mobile) -->
+                <div class="timeline-cluster">
+                    <!-- Row 1: Time of Day Slider -->
+                    <div class="timeline-row">
+                        <div class="timeline-header">
+                            <div class="scrub-block">
+                                <span class="scrub-title">Time of Day</span>
+                                <div class="scrub-value-row">
+                                    <span class="time-readout" id="timeDisplay">12:00 PM</span>
+                                    <span class="sun-state-badge active-sun" id="daylightBadge">☀️ Daylight</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="timeSlider" class="custom-range" min="0" max="1439" step="1" value="720" title="Scrub Time of Day (0:00 to 23:59)">
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Day of Year Slider -->
+                    <div class="timeline-row">
+                        <div class="timeline-header">
+                            <div class="scrub-block">
+                                <span class="scrub-title">Day of Year</span>
+                                <div class="scrub-value-row">
+                                    <span class="date-readout" id="dateDisplay">Aug 14, 2026</span>
+                                    <span class="day-num-badge" id="dayNumBadge">Day 226 / 365</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Precision Month Ticks distributed cleanly across the full slider width -->
+                        <div class="month-ticks-grid">
+                            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="dayOfYearSlider" class="custom-range season-range" min="1" max="365" step="1" value="226" title="Scrub Days of the Year (Jan 1 to Dec 31)">
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Draw Mode Banner / Prompt -->
-            <div class="draw-mode-banner" id="drawModeBanner" style="display: none;">
-                <div class="draw-mode-status">
-                    <span class="draw-pulse"></span>
-                    <span><strong>Draw Mode:</strong> Click nodes (90°, 45°, 30° snapping). Click start node to auto-close.</span>
-                </div>
-                <div class="draw-actions">
-                    <button class="draw-btn" id="btnFinishPolygon">Finish</button>
-                    <button class="draw-btn cancel" id="btnCancelPolygon">Cancel</button>
-                </div>
-            </div>
+                <!-- Location & Presets Cluster (Desktop only) -->
+                <div class="location-cluster">
+                    <div class="date-coord-col">
+                        <!-- Date Picker -->
+                        <div class="input-field date-field">
+                            <label for="dateInput">Calendar Date</label>
+                            <input type="date" id="dateInput">
+                        </div>
 
-            <!-- Legend Badge -->
-            <div class="floating-overlay bottom-left">
-                <div class="legend-card">
-                    <div class="legend-item">
-                        <span class="legend-line" style="background: #f59e0b;"></span>
-                        <span>Active Date Path</span>
+                        <!-- Latitude & Longitude Readouts (Non-editable Data Display) -->
+                        <div class="coords-sub-row">
+                            <div class="coord-display-badge" title="Current Specified Latitude">
+                                <span class="coord-display-label">LAT</span>
+                                <span class="coord-display-val" id="latDisplay">35.7° N</span>
+                            </div>
+                            <div class="coord-display-badge" title="Current Specified Longitude">
+                                <span class="coord-display-label">LON</span>
+                                <span class="coord-display-val" id="lonDisplay">105.9° W</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="legend-item">
-                        <span class="legend-line" style="background: #6b7280;"></span>
-                        <span>Jun / Dec Solstices</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-line" style="background: #9ca3af;"></span>
-                        <span>Mar / Sep Equinox</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-line" style="background: #374151; border-top: 1px dashed #6b7280;"></span>
-                        <span>Analemma Hour Curves</span>
+
+                    <!-- Quick Season Presets -->
+                    <div class="season-btns">
+                        <button class="season-btn" data-date="summer">☀️ Summer Solstice</button>
+                        <button class="season-btn" data-date="winter">❄️ Winter Solstice</button>
+                        <button class="season-btn" data-date="equinox">🌱 Equinox</button>
+                        <button class="season-btn" data-date="today">📅 Today</button>
                     </div>
                 </div>
-            </div>
+            </footer>
+        </div>
 
-            <!-- Floating Display Options Panel -->
-            <div class="floating-overlay top-right">
-                <div class="options-panel">
-                    <div class="options-panel-title">Display & Analysis</div>
-                    <label class="toggle-option">
-                        <input type="checkbox" id="chkTransparent" checked>
-                        <span class="custom-chk"></span>
-                        <span>Transparent Buildings (50% Blue)</span>
-                    </label>
-                    <label class="toggle-option">
-                        <input type="checkbox" id="chkDimensions">
-                        <span class="custom-chk"></span>
-                        <span>Turn on Dims & Area</span>
-                    </label>
-                    <div class="options-divider"></div>
-                    <label class="toggle-option">
-                        <input type="checkbox" id="chkMonths" checked>
-                        <span class="custom-chk"></span>
-                        <span>Month Curves</span>
-                    </label>
-                    <label class="toggle-option">
-                        <input type="checkbox" id="chkAnalemmas" checked>
-                        <span class="custom-chk"></span>
-                        <span>Analemmas</span>
-                    </label>
-                    <div class="options-divider"></div>
-                    <div class="zoom-slider-container">
+        <!-- ========================================================
+             PAGE 2: Display & Analysis Modal + Solar Telemetry Data
+             ======================================================== -->
+        <div class="mobile-page" id="mobilePage2" data-page-index="1">
+            <div class="mobile-settings-page">
+                <!-- Section 1: Display & Analysis -->
+                <div class="mobile-card-section">
+                    <div class="mobile-section-header">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                        <h2 class="mobile-section-title">Display & Analysis Options</h2>
+                    </div>
+                    <div class="mobile-toggles-list">
+                        <label class="toggle-option mobile-toggle">
+                            <input type="checkbox" id="chkTransparentMobile" checked>
+                            <span class="custom-chk"></span>
+                            <span>Transparent Buildings (50% Blue)</span>
+                        </label>
+                        <label class="toggle-option mobile-toggle">
+                            <input type="checkbox" id="chkDimensionsMobile">
+                            <span class="custom-chk"></span>
+                            <span>Turn on Dims & Area</span>
+                        </label>
+                        <label class="toggle-option mobile-toggle">
+                            <input type="checkbox" id="chkMonthsMobile" checked>
+                            <span class="custom-chk"></span>
+                            <span>Month Curves</span>
+                        </label>
+                        <label class="toggle-option mobile-toggle">
+                            <input type="checkbox" id="chkAnalemmasMobile" checked>
+                            <span class="custom-chk"></span>
+                            <span>Analemma Hour Curves</span>
+                        </label>
+                    </div>
+                    <div class="mobile-zoom-block">
                         <div class="zoom-label-row">
                             <span class="zoom-title">Viewport Scale</span>
-                            <span class="zoom-readout" id="zoomScaleReadout">1.0×</span>
+                            <span class="zoom-readout" id="zoomScaleReadoutMobile">1.0×</span>
                         </div>
-                        <input type="range" id="zoomScaleSlider" min="0.4" max="2.6" step="0.05" value="1.0" class="custom-range" title="Adjust synchronous scale of both viewports (house 5% to 50% area)">
+                        <input type="range" id="zoomScaleSliderMobile" min="0.4" max="2.6" step="0.05" value="1.0" class="custom-range" title="Adjust synchronous scale of both viewports">
                     </div>
                 </div>
-            </div>
 
-            <!-- Canvas Container -->
-            <div class="viewport-content" id="polarCanvasContainer"></div>
-        </section>
-
-        <!-- Split Resizer Bar -->
-        <div class="split-divider" id="splitDivider"></div>
-
-        <!-- Right Panel: 3D Shadow Study -->
-        <section class="viewport-panel" id="panel3D">
-            <div class="panel-header">
-                <span class="panel-title">3D Shadow Study</span>
-            </div>
-
-            <!-- Camera View Presets -->
-            <div class="floating-overlay top-right">
-                <div class="view-presets" id="cameraPresets">
-                    <button class="view-btn active" data-preset="iso">Perspective</button>
-                    <button class="view-btn" data-preset="top">Top (Plan)</button>
-                    <button class="view-btn" data-preset="street">Street Eye</button>
-                    <button class="view-btn" data-preset="south">South Facing</button>
-                    <button class="view-btn" data-preset="north">North Facing</button>
-                </div>
-            </div>
-
-            <!-- Solar Telemetry HUD -->
-            <div class="floating-overlay bottom-right">
-                <div class="telemetry-card">
-                    <div class="telemetry-item">
-                        <span class="telemetry-label">Solar Elevation (Altitude)</span>
-                        <span class="telemetry-value" id="hudElevation">--°</span>
+                <!-- Section 2: Solar Telemetry & Sun Angles -->
+                <div class="mobile-card-section">
+                    <div class="mobile-section-header">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        <h2 class="mobile-section-title">Solar Telemetry & Sun Degrees</h2>
                     </div>
-                    <div class="telemetry-item">
-                        <span class="telemetry-label">Solar Azimuth (Compass)</span>
-                        <span class="telemetry-value cyan" id="hudAzimuth">--°</span>
-                    </div>
-                    <div class="telemetry-item">
-                        <span class="telemetry-label">Declination</span>
-                        <span class="telemetry-value" id="hudDeclination">--°</span>
-                    </div>
-                    <div class="telemetry-item">
-                        <span class="telemetry-label">Shadow Ratio (H / L)</span>
-                        <span class="telemetry-value rose" id="hudShadowRatio">--</span>
-                    </div>
-                    <div class="telemetry-item">
-                        <span class="telemetry-label">Sunrise • Sunset</span>
-                        <span class="telemetry-value green" id="hudSunTimes" style="font-size: 0.85rem;">-- • --</span>
-                    </div>
-                    <div class="telemetry-item">
-                        <span class="telemetry-label">Day Length</span>
-                        <span class="telemetry-value cyan" id="hudDayLength" style="font-size: 0.85rem;">-- hrs</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3D WebGL Three.js Container -->
-            <div class="viewport-content" id="dome3DContainer"></div>
-        </section>
-    </main>
-
-    <!-- Bottom Control Station / Timeline Bar -->
-    <footer class="control-station">
-        <!-- studioBOSE Branding (Bottom Left Corner) -->
-        <div class="app-branding-badge">
-            <img src="studiobose-logo.png" alt="studioBOSE" class="app-brand-logo">
-            <span class="brand-version-tag">V1.2</span>
-        </div>
-
-        <!-- Playback Controls (Speed dropdown placed below play controls) -->
-        <div class="playback-cluster">
-            <div class="playback-buttons">
-                <button class="icon-btn" id="btnPrevDay" title="Previous Day">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
-                </button>
-                <button class="icon-btn primary" id="btnPlayPause" title="Play / Pause Time Animation">
-                    <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    <svg id="pauseIcon" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-                </button>
-                <button class="icon-btn" id="btnNextDay" title="Next Day">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-                </button>
-            </div>
-            <select class="speed-select" id="speedSelect" title="Simulation Speed">
-                <option value="1">1x (Real)</option>
-                <option value="10">10x Speed</option>
-                <option value="30" selected>30x Speed</option>
-                <option value="60">60x Speed</option>
-                <option value="180">180x Fast</option>
-            </select>
-        </div>
-
-        <!-- Dual Timeline Scrub Cluster -->
-        <div class="timeline-cluster">
-            <!-- Row 1: Time of Day Slider -->
-            <div class="timeline-row">
-                <div class="timeline-header">
-                    <div class="scrub-block">
-                        <span class="scrub-title">Time of Day</span>
-                        <div class="scrub-value-row">
-                            <span class="time-readout" id="timeDisplay">12:00 PM</span>
-                            <span class="sun-state-badge active-sun" id="daylightBadge">☀️ Daylight</span>
+                    <div class="mobile-telemetry-grid">
+                        <div class="telemetry-item mobile-item">
+                            <span class="telemetry-label">Solar Elevation (Altitude)</span>
+                            <span class="telemetry-value" id="hudElevationMobile">--°</span>
+                        </div>
+                        <div class="telemetry-item mobile-item">
+                            <span class="telemetry-label">Solar Azimuth (Compass)</span>
+                            <span class="telemetry-value cyan" id="hudAzimuthMobile">--°</span>
+                        </div>
+                        <div class="telemetry-item mobile-item">
+                            <span class="telemetry-label">Declination</span>
+                            <span class="telemetry-value" id="hudDeclinationMobile">--°</span>
+                        </div>
+                        <div class="telemetry-item mobile-item">
+                            <span class="telemetry-label">Shadow Ratio (H / L)</span>
+                            <span class="telemetry-value rose" id="hudShadowRatioMobile">--</span>
+                        </div>
+                        <div class="telemetry-item mobile-item span-2">
+                            <span class="telemetry-label">Sunrise • Sunset</span>
+                            <span class="telemetry-value green" id="hudSunTimesMobile" style="font-size: 0.9rem;">-- • --</span>
+                        </div>
+                        <div class="telemetry-item mobile-item span-2">
+                            <span class="telemetry-label">Day Length</span>
+                            <span class="telemetry-value cyan" id="hudDayLengthMobile" style="font-size: 0.9rem;">-- hrs</span>
                         </div>
                     </div>
                 </div>
-                <div class="slider-container">
-                    <input type="range" id="timeSlider" class="custom-range" min="0" max="1439" step="1" value="720" title="Scrub Time of Day (0:00 to 23:59)">
-                </div>
-            </div>
 
-            <!-- Row 2: Day of Year Slider -->
-            <div class="timeline-row">
-                <div class="timeline-header">
-                    <div class="scrub-block">
-                        <span class="scrub-title">Day of Year</span>
-                        <div class="scrub-value-row">
-                            <span class="date-readout" id="dateDisplay">Aug 14, 2026</span>
-                            <span class="day-num-badge" id="dayNumBadge">Day 226 / 365</span>
-                        </div>
+                <!-- Section 3: 3D Camera Views -->
+                <div class="mobile-card-section">
+                    <div class="mobile-section-header">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                        <h2 class="mobile-section-title">3D View Presets</h2>
                     </div>
-                </div>
-                <!-- Precision Month Ticks distributed cleanly across the full slider width -->
-                <div class="month-ticks-grid">
-                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
-                </div>
-                <div class="slider-container">
-                    <input type="range" id="dayOfYearSlider" class="custom-range season-range" min="1" max="365" step="1" value="226" title="Scrub Days of the Year (Jan 1 to Dec 31)">
+                    <div class="mobile-camera-grid" id="cameraPresetsMobile">
+                        <button class="view-btn active" data-preset="iso">Perspective</button>
+                        <button class="view-btn" data-preset="top">Top (Plan)</button>
+                        <button class="view-btn" data-preset="street">Street Eye</button>
+                        <button class="view-btn" data-preset="south">South Facing</button>
+                        <button class="view-btn" data-preset="north">North Facing</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Location & Presets Cluster -->
-        <div class="location-cluster">
-            <div class="date-coord-col">
-                <!-- Date Picker -->
-                <div class="input-field date-field">
-                    <label for="dateInput">Calendar Date</label>
-                    <input type="date" id="dateInput">
-                </div>
-
-                <!-- Latitude & Longitude Readouts (Non-editable Data Display) -->
-                <div class="coords-sub-row">
-                    <div class="coord-display-badge" title="Current Specified Latitude">
-                        <span class="coord-display-label">LAT</span>
-                        <span class="coord-display-val" id="latDisplay">35.7° N</span>
-                    </div>
-                    <div class="coord-display-badge" title="Current Specified Longitude">
-                        <span class="coord-display-label">LON</span>
-                        <span class="coord-display-val" id="lonDisplay">105.9° W</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Season Presets -->
-            <div class="season-btns">
-                <button class="season-btn" data-date="summer">☀️ Summer Solstice</button>
-                <button class="season-btn" data-date="winter">❄️ Winter Solstice</button>
-                <button class="season-btn" data-date="equinox">🌱 Equinox</button>
-                <button class="season-btn" data-date="today">📅 Today</button>
+        <!-- ========================================================
+             PAGE 3: Location Map Modal Page
+             ======================================================== -->
+        <div class="mobile-page" id="mobilePage3" data-page-index="2">
+            <div class="mobile-location-page" id="mobileLocationContainer">
+                <!-- Location Map UI is dynamically mounted here -->
             </div>
         </div>
-    </footer>
+    </div>
 
     <!-- Main Controller Script -->
     <script type="module" src="app.js"></script>
