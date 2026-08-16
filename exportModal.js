@@ -25,6 +25,7 @@ export class ExportModal {
         };
 
         this.initDom();
+        this.initMobileDom();
         this.setupEventListeners();
     }
 
@@ -140,31 +141,29 @@ export class ExportModal {
 
                 <!-- Footer Actions -->
                 <div class="export-modal-footer">
-                    <div class="export-footer-info">
-                        <span>Format: PNG-24 with alpha channel (Lossless)</span>
-                    </div>
-                    <div class="export-footer-buttons">
-                        <button class="export-btn secondary" id="btnExportCancel">Cancel</button>
-                        <button class="export-btn primary" id="btnExportDownload">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            <span>Download High-Res PNG</span>
-                        </button>
-                    </div>
+                    <button class="export-btn secondary" id="btnExportCancel">Cancel</button>
+                    <button class="export-btn primary" id="btnTriggerExport">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span>Download 300 DPI PNG</span>
+                    </button>
                 </div>
             </div>
         `;
 
         document.body.appendChild(this.overlay);
 
-        // References
-        this.previewCanvas = this.overlay.querySelector('#exportPreviewCanvas');
+        // References (Desktop Modal)
+        this.btnClose = this.overlay.querySelector('#btnExportClose');
+        this.btnCancel = this.overlay.querySelector('#btnExportCancel');
+        this.btnDownload = this.overlay.querySelector('#btnTriggerExport');
         this.previewBox = this.overlay.querySelector('#exportPreviewBox');
-        this.bgChips = this.overlay.querySelectorAll('[data-bg]');
-        this.lineChips = this.overlay.querySelectorAll('[data-line]');
+        this.previewCanvas = this.overlay.querySelector('#exportPreviewCanvas');
+        this.bgChips = this.overlay.querySelectorAll('.export-chip[data-bg]');
+        this.lineChips = this.overlay.querySelectorAll('.export-chip[data-line]');
         this.customColorInput = this.overlay.querySelector('#exportCustomColorInput');
         this.customColorPreview = this.overlay.querySelector('#customColorPreview');
 
@@ -173,10 +172,115 @@ export class ExportModal {
         this.chkExpAnalemmas = this.overlay.querySelector('#chkExpAnalemmas');
         this.chkExpMassings = this.overlay.querySelector('#chkExpMassings');
         this.chkExpWatermark = this.overlay.querySelector('#chkExpWatermark');
+    }
 
-        this.btnClose = this.overlay.querySelector('#btnExportClose');
-        this.btnCancel = this.overlay.querySelector('#btnExportCancel');
-        this.btnDownload = this.overlay.querySelector('#btnExportDownload');
+    initMobileDom() {
+        const container = document.getElementById('mobileExportContainer');
+        if (!container) return;
+
+        container.innerHTML = `
+            <div class="mobile-export-card">
+                <div class="mobile-section-header">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <h2 class="mobile-section-title">Export 2D Polar Sun Chart</h2>
+                </div>
+
+                <!-- Preview Box on Mobile -->
+                <div class="mobile-export-preview-wrap">
+                    <div class="export-preview-box mobile-box" id="exportPreviewBoxMobile">
+                        <canvas id="exportPreviewCanvasMobile" width="280" height="280"></canvas>
+                    </div>
+                    <span class="export-spec-tag">3000 × 3000 px • 300 DPI Square Output</span>
+                </div>
+
+                <!-- Settings -->
+                <div class="mobile-export-settings">
+                    <!-- Background -->
+                    <div class="export-form-group">
+                        <label class="export-group-label">Background</label>
+                        <div class="export-chip-group">
+                            <button class="export-chip active mobile-bg-chip" data-bg="transparent">Clear / Transparent</button>
+                            <button class="export-chip mobile-bg-chip" data-bg="dark">Dark</button>
+                            <button class="export-chip mobile-bg-chip" data-bg="white">White</button>
+                        </div>
+                    </div>
+
+                    <!-- Line Color -->
+                    <div class="export-form-group">
+                        <label class="export-group-label">Chart Lines Color</label>
+                        <div class="export-chip-group line-color-group">
+                            <button class="export-chip active mobile-line-chip" data-line="white">White</button>
+                            <button class="export-chip mobile-line-chip" data-line="black">Black</button>
+                            <button class="export-chip custom-color-chip mobile-line-chip" data-line="custom">
+                                <span class="custom-color-circle" id="customColorPreviewMobile" style="background:#38bdf8;"></span>
+                                <span>Custom</span>
+                                <input type="color" id="exportCustomColorInputMobile" value="#38bdf8" class="export-color-picker-input">
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Inclusions -->
+                    <div class="export-form-group">
+                        <label class="export-group-label">Inclusions</label>
+                        <div class="export-checks-grid">
+                            <label class="export-check-item">
+                                <input type="checkbox" id="chkExpSunPathMobile" checked>
+                                <span class="export-chk-custom"></span>
+                                <span>Active Sun & Sun Path</span>
+                            </label>
+                            <label class="export-check-item">
+                                <input type="checkbox" id="chkExpSolsticesMobile" checked>
+                                <span class="export-chk-custom"></span>
+                                <span>Solstices & Equinoxes</span>
+                            </label>
+                            <label class="export-check-item">
+                                <input type="checkbox" id="chkExpAnalemmasMobile" checked>
+                                <span class="export-chk-custom"></span>
+                                <span>Analemma Curves</span>
+                            </label>
+                            <label class="export-check-item">
+                                <input type="checkbox" id="chkExpMassingsMobile" checked>
+                                <span class="export-chk-custom"></span>
+                                <span>Drawn Massings</span>
+                            </label>
+                            <label class="export-check-item">
+                                <input type="checkbox" id="chkExpWatermarkMobile" checked>
+                                <span class="export-chk-custom"></span>
+                                <span>Location & Date Badge</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Download Action Button -->
+                    <button class="export-btn primary mobile-download-btn" id="btnTriggerExportMobile">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span>Download 300 DPI Export</span>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        this.mobilePreviewBox = container.querySelector('#exportPreviewBoxMobile');
+        this.mobilePreviewCanvas = container.querySelector('#exportPreviewCanvasMobile');
+        this.mobileBgChips = container.querySelectorAll('.mobile-bg-chip');
+        this.mobileLineChips = container.querySelectorAll('.mobile-line-chip');
+        this.mobileCustomColorInput = container.querySelector('#exportCustomColorInputMobile');
+        this.mobileCustomColorPreview = container.querySelector('#customColorPreviewMobile');
+        this.mobileBtnDownload = container.querySelector('#btnTriggerExportMobile');
+
+        this.chkExpSunPathMobile = container.querySelector('#chkExpSunPathMobile');
+        this.chkExpSolsticesMobile = container.querySelector('#chkExpSolsticesMobile');
+        this.chkExpAnalemmasMobile = container.querySelector('#chkExpAnalemmasMobile');
+        this.chkExpMassingsMobile = container.querySelector('#chkExpMassingsMobile');
+        this.chkExpWatermarkMobile = container.querySelector('#chkExpWatermarkMobile');
     }
 
     setupEventListeners() {
@@ -187,80 +291,127 @@ export class ExportModal {
         });
 
         window.addEventListener('keydown', (e) => {
-            if (this.isOpen && e.key === 'Escape') this.close();
+            if (this.isOpen && e.key === 'Escape') {
+                this.close();
+            }
         });
 
-        // Background selection
+        // Background chip selections (Synchronized Desktop & Mobile)
+        const handleBgChange = (bg) => {
+            this.options.background = bg;
+            this.bgChips.forEach(c => c.classList.toggle('active', c.dataset.bg === bg));
+            if (this.mobileBgChips) {
+                this.mobileBgChips.forEach(c => c.classList.toggle('active', c.dataset.bg === bg));
+            }
+            this.updatePreviewBoxBg();
+            this.renderPreview();
+        };
+
         this.bgChips.forEach(chip => {
-            chip.addEventListener('click', () => {
-                this.bgChips.forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-                this.options.background = chip.dataset.bg;
-                
-                // Auto-adjust default line color if contrast requires
-                if (this.options.background === 'white' && this.options.lineColorMode === 'white') {
-                    this.setLineColorMode('black');
-                } else if (this.options.background === 'dark' && this.options.lineColorMode === 'black') {
-                    this.setLineColorMode('white');
-                }
-
-                this.updatePreviewBoxBg();
-                this.renderPreview();
-            });
+            chip.addEventListener('click', () => handleBgChange(chip.dataset.bg));
         });
+        if (this.mobileBgChips) {
+            this.mobileBgChips.forEach(chip => {
+                chip.addEventListener('click', () => handleBgChange(chip.dataset.bg));
+            });
+        }
 
-        // Line color selection
+        // Line color chip selections (Synchronized Desktop & Mobile)
+        const handleLineChange = (line) => {
+            this.setLineColorMode(line);
+            this.renderPreview();
+        };
+
         this.lineChips.forEach(chip => {
-            chip.addEventListener('click', (e) => {
-                if (chip.classList.contains('custom-color-chip') && e.target === this.customColorInput) {
-                    return; // Color picker will handle input
-                }
-                const mode = chip.dataset.line;
-                this.setLineColorMode(mode);
-                this.renderPreview();
-            });
+            chip.addEventListener('click', () => handleLineChange(chip.dataset.line));
         });
+        if (this.mobileLineChips) {
+            this.mobileLineChips.forEach(chip => {
+                chip.addEventListener('click', () => handleLineChange(chip.dataset.line));
+            });
+        }
 
-        // Custom color input picker
-        this.customColorInput.addEventListener('input', (e) => {
-            this.options.customLineColor = e.target.value;
-            this.customColorPreview.style.background = e.target.value;
+        // Custom color input picker (Synchronized Desktop & Mobile)
+        const handleCustomColor = (color) => {
+            this.options.customLineColor = color;
+            if (this.customColorPreview) this.customColorPreview.style.background = color;
+            if (this.mobileCustomColorPreview) this.mobileCustomColorPreview.style.background = color;
+            if (this.customColorInput) this.customColorInput.value = color;
+            if (this.mobileCustomColorInput) this.mobileCustomColorInput.value = color;
             this.setLineColorMode('custom');
             this.renderPreview();
-        });
+        };
 
-        // Inclusions checkboxes
-        [this.chkExpSunPath, this.chkExpSolstices, this.chkExpAnalemmas, this.chkExpMassings, this.chkExpWatermark].forEach(chk => {
-            chk.addEventListener('change', () => {
-                this.options.includeSunPath = this.chkExpSunPath.checked;
-                this.options.includeSolstices = this.chkExpSolstices.checked;
-                this.options.includeAnalemmas = this.chkExpAnalemmas.checked;
-                this.options.includeMassings = this.chkExpMassings.checked;
-                this.options.includeWatermark = this.chkExpWatermark.checked;
-                this.renderPreview();
-            });
-        });
+        this.customColorInput.addEventListener('input', (e) => handleCustomColor(e.target.value));
+        if (this.mobileCustomColorInput) {
+            this.mobileCustomColorInput.addEventListener('input', (e) => handleCustomColor(e.target.value));
+        }
+
+        // Inclusions checkboxes sync
+        const syncCheckboxes = (key, val) => {
+            this.options[key] = val;
+            this.renderPreview();
+        };
+
+        const bindChk = (desktopEl, mobileEl, key) => {
+            if (desktopEl) {
+                desktopEl.addEventListener('change', () => {
+                    if (mobileEl) mobileEl.checked = desktopEl.checked;
+                    syncCheckboxes(key, desktopEl.checked);
+                });
+            }
+            if (mobileEl) {
+                mobileEl.addEventListener('change', () => {
+                    if (desktopEl) desktopEl.checked = mobileEl.checked;
+                    syncCheckboxes(key, mobileEl.checked);
+                });
+            }
+        };
+
+        bindChk(this.chkExpSunPath, this.chkExpSunPathMobile, 'includeSunPath');
+        bindChk(this.chkExpSolstices, this.chkExpSolsticesMobile, 'includeSolstices');
+        bindChk(this.chkExpAnalemmas, this.chkExpAnalemmasMobile, 'includeAnalemmas');
+        bindChk(this.chkExpMassings, this.chkExpMassingsMobile, 'includeMassings');
+        bindChk(this.chkExpWatermark, this.chkExpWatermarkMobile, 'includeWatermark');
 
         // Download trigger
         this.btnDownload.addEventListener('click', () => {
             this.triggerHighResDownload();
         });
+        if (this.mobileBtnDownload) {
+            this.mobileBtnDownload.addEventListener('click', () => {
+                this.triggerHighResDownload();
+            });
+        }
+    }
+
+    onMobileTabActive() {
+        this.updatePreviewBoxBg();
+        requestAnimationFrame(() => {
+            this.renderPreview();
+        });
     }
 
     setLineColorMode(mode) {
         this.options.lineColorMode = mode;
-        this.lineChips.forEach(c => {
-            c.classList.toggle('active', c.dataset.line === mode);
-        });
+        this.lineChips.forEach(c => c.classList.toggle('active', c.dataset.line === mode));
+        if (this.mobileLineChips) {
+            this.mobileLineChips.forEach(c => c.classList.toggle('active', c.dataset.line === mode));
+        }
     }
 
     updatePreviewBoxBg() {
-        if (this.options.background === 'transparent') {
-            this.previewBox.className = 'export-preview-box checkerboard-bg';
-        } else if (this.options.background === 'white') {
-            this.previewBox.className = 'export-preview-box white-bg';
-        } else {
-            this.previewBox.className = 'export-preview-box dark-bg';
+        const getBoxClass = (base) => {
+            if (this.options.background === 'transparent') return `${base} checkerboard-bg`;
+            if (this.options.background === 'white') return `${base} white-bg`;
+            return `${base} dark-bg`;
+        };
+
+        if (this.previewBox) {
+            this.previewBox.className = getBoxClass('export-preview-box');
+        }
+        if (this.mobilePreviewBox) {
+            this.mobilePreviewBox.className = getBoxClass('export-preview-box mobile-box');
         }
     }
 
@@ -576,8 +727,12 @@ export class ExportModal {
     }
 
     renderPreview() {
-        if (!this.previewCanvas) return;
-        this.renderPolarChartToCanvas(this.previewCanvas, 420);
+        if (this.previewCanvas) {
+            this.renderPolarChartToCanvas(this.previewCanvas, 420);
+        }
+        if (this.mobilePreviewCanvas) {
+            this.renderPolarChartToCanvas(this.mobilePreviewCanvas, 280);
+        }
     }
 
     triggerHighResDownload() {

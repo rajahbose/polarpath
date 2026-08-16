@@ -2249,6 +2249,134 @@ header {
         display: none !important;
     }
 
+    /* Header hidden on mobile vertical mode */
+    header,
+    header.app-header {
+        display: none !important;
+    }
+
+    /* 5-Tab Mobile Top Navigation Bar */
+    .mobile-nav-bar {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        background: #10141c;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.35rem 0.4rem;
+        gap: 0.25rem;
+        z-index: 200;
+        height: 50px;
+        flex-shrink: 0;
+    }
+
+    .mobile-tab-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.15rem;
+        background: transparent;
+        border: none;
+        border-radius: 6px;
+        color: var(--text-muted);
+        padding: 0.35rem 0.15rem;
+        font-size: 0.68rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+    }
+
+    .mobile-tab-btn .tab-icon {
+        opacity: 0.7;
+    }
+
+    .mobile-tab-btn:hover {
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .mobile-tab-btn.active {
+        color: var(--accent-sun);
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.28);
+    }
+
+    .mobile-tab-btn.active .tab-icon {
+        opacity: 1;
+        stroke: var(--accent-sun);
+    }
+
+    /* Swipe Container and Pages */
+    .mobile-swipe-wrapper {
+        display: flex;
+        flex-direction: row;
+        width: 100vw;
+        height: calc(100vh - 50px);
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+
+    .mobile-page {
+        flex: 0 0 100vw;
+        width: 100vw;
+        height: calc(100vh - 50px);
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Hide desktop-only floating panels on mobile page 1 */
+    .desktop-only,
+    #panel2D .massing-manager-card,
+    #panel2D .draw-mode-banner {
+        display: none !important;
+    }
+
+    /* Split Container on Page 1: Vertical Stack */
+    .split-container {
+        flex-direction: column;
+        height: calc(100vh - 50px - 110px);
+        flex: 1;
+    }
+
+    .viewport-panel {
+        width: 100% !important;
+        height: 50% !important;
+        flex: 1;
+    }
+
+    .split-divider {
+        width: 100%;
+        height: 4px;
+        cursor: row-resize;
+    }
+
+    /* Page 1 Floating Overlays hidden for clean view */
+    #mobilePage1 .floating-overlay {
+        display: none !important;
+    }
+
+    /* Simplified Timeline on Page 1 */
+    .control-station {
+        min-height: 100px;
+        height: auto;
+        padding: 0.5rem 0.85rem 0.65rem 0.85rem;
+        gap: 0;
+        border-top: 1px solid var(--border-color);
+        background: #10141c;
+        z-index: 50;
+    }
+
     /* Let the 2 key sliders span the whole width of the screen */
     .timeline-cluster {
         flex: 1;
@@ -2280,14 +2408,110 @@ header {
     }
 
     /* =========================================================
-       PAGE 2: Display & Analysis + Solar Telemetry Mobile Page
+       PAGE 2: Dedicated Massings & 2D Sketching Mobile Page
+       ========================================================= */
+    .mobile-massings-page {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    #massingsMobileTopCard {
+        flex-shrink: 0;
+        padding: 0.75rem 0.85rem;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        background: #141820;
+        border-bottom: 1px solid var(--border-color);
+        max-height: 46%;
+        overflow-y: auto;
+    }
+
+    .mobile-massing-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .mobile-massing-actions .draw-pen-btn,
+    #btnDrawModeMobile {
+        width: auto !important;
+        height: auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.45rem !important;
+        padding: 0.5rem 0.85rem !important;
+        border-radius: 6px !important;
+        background: var(--accent-sun) !important;
+        color: #000000 !important;
+        font-weight: 700 !important;
+        font-size: 0.82rem !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
+
+    .mobile-massing-hint {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+    }
+
+    #selectedMassingControlsMobile {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        margin-top: 0.75rem;
+        padding-top: 0.65rem;
+        border-top: 1px solid #232a38;
+    }
+
+    .mobile-massings-chart-box {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        background: #0d0f12;
+        overflow: hidden;
+        min-height: 280px;
+    }
+
+    .mobile-chart-header-bar {
+        padding: 0.35rem 0.75rem;
+        background: #12161f;
+        border-bottom: 1px solid #1f2633;
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        letter-spacing: 0.02em;
+    }
+
+    .mobile-canvas-container {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .mobile-canvas-container .polar-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* =========================================================
+       PAGE 3: Units, Display & Analysis + Telemetry Page
        ========================================================= */
     .mobile-settings-page {
         padding: 0.85rem;
         display: flex;
         flex-direction: column;
         gap: 0.85rem;
-        padding-bottom: 2rem;
+        padding-bottom: 2.5rem;
     }
 
     .mobile-card-section {
@@ -2312,6 +2536,21 @@ header {
         font-weight: 700;
         color: var(--text-primary);
         letter-spacing: -0.01em;
+    }
+
+    .mobile-unit-toggle {
+        display: flex;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .mobile-unit-toggle .unit-btn {
+        flex: 1;
+        padding: 0.55rem 0.5rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-align: center;
+        justify-content: center;
     }
 
     .mobile-toggles-list {
@@ -2365,7 +2604,7 @@ header {
     }
 
     /* =========================================================
-       PAGE 3: Location Map Mobile Page
+       PAGE 4: Location Map Mobile Page
        ========================================================= */
     .mobile-location-page {
         padding: 0.85rem;
@@ -2436,6 +2675,69 @@ header {
         font-size: 0.75rem;
         text-align: center;
         justify-content: center;
+    }
+
+    /* =========================================================
+       PAGE 5: Dedicated PDF / PNG Export Page
+       ========================================================= */
+    .mobile-export-page {
+        padding: 0.85rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        padding-bottom: 2.5rem;
+    }
+
+    .mobile-export-card {
+        background: #141820;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.95rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+    }
+
+    .mobile-export-preview-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.45rem;
+        margin: 0.35rem 0;
+    }
+
+    .export-preview-box.mobile-box {
+        width: 280px;
+        height: 280px;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #283140;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .export-preview-box.mobile-box canvas {
+        width: 280px;
+        height: 280px;
+        display: block;
+    }
+
+    .mobile-export-settings {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .mobile-download-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem;
+        font-size: 0.88rem;
+        font-weight: 700;
+        margin-top: 0.5rem;
+        border-radius: 6px;
     }
 }
 

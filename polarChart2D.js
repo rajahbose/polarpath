@@ -42,9 +42,11 @@ export class PolarChart2D {
         };
 
         // Scale: 1 meter in 3D = 10.0 pixels on 2D canvas at 1.0x zoom
+        // On mobile mode, default scale is 0.26 so the 25'x45' house takes exactly ~10% of chart width
+        const isMobileMode = typeof window !== 'undefined' && window.innerWidth <= 820;
         this.basePixelsPerMeter = 10.0;
-        this.pixelsPerMeter = 10.0;
-        this.zoomScale = 1.0;
+        this.zoomScale = isMobileMode ? 0.26 : 1.0;
+        this.pixelsPerMeter = this.basePixelsPerMeter * this.zoomScale;
 
         // House bounding box in 3D: width = 25 ft (7.62m), length = 45 ft (13.716m)
         this.house3DWidth = 7.62;
@@ -735,7 +737,9 @@ export class PolarChart2D {
 
             const segments = this.drawContiguousDaylightSegments(path.points, strokeColor, lineW);
 
-            if (segments.length > 0 && segments[0].length > 0) {
+            // Solstice & Equinox labels (Only shown on wider desktop screens; omitted on mobile for clean spacing)
+            const isMobile = this.width < 520 || (typeof window !== 'undefined' && window.innerWidth <= 820);
+            if (!isMobile && segments.length > 0 && segments[0].length > 0) {
                 const peak = segments[0].reduce((max, p) => p.elevation > max.elevation ? p : max, segments[0][0]);
                 if (peak && peak.elevation > 4) {
                     const pt = this.polarToCanvas(peak.elevation, peak.azimuth);

@@ -25,7 +25,7 @@ class SunDomeApp {
             transparentMassings: true,
             showDimensions: false,
             unitSystem: 'customary', // 'metric' | 'customary' (default: customary Ft In)
-            zoomScale: 1.0,
+            zoomScale: (typeof window !== 'undefined' && window.innerWidth <= 820) ? 0.26 : 1.0,
             isPlaying: false,
             playbackSpeed: 30,
             isDrawMode: false,
@@ -66,9 +66,11 @@ class SunDomeApp {
     }
 
     initDomElements() {
-        // Unit Toggle Buttons
+        // Unit Toggle Buttons (Desktop & Mobile)
         this.btnMetric = document.getElementById('btnMetric');
         this.btnCustomary = document.getElementById('btnCustomary');
+        this.btnMetricMobile = document.getElementById('btnMetricMobile');
+        this.btnCustomaryMobile = document.getElementById('btnCustomaryMobile');
 
         this.timeSlider = document.getElementById('timeSlider');
         this.timeDisplay = document.getElementById('timeDisplay');
@@ -102,7 +104,7 @@ class SunDomeApp {
         this.zoomScaleSlider = document.getElementById('zoomScaleSlider');
         this.zoomScaleReadout = document.getElementById('zoomScaleReadout');
 
-        // Display & Analysis (Mobile Page 2)
+        // Display & Analysis (Mobile Page 3)
         this.chkMonthsMobile = document.getElementById('chkMonthsMobile');
         this.chkAnalemmasMobile = document.getElementById('chkAnalemmasMobile');
         this.chkTransparentMobile = document.getElementById('chkTransparentMobile');
@@ -118,7 +120,7 @@ class SunDomeApp {
         this.hudSunTimes = document.getElementById('hudSunTimes');
         this.hudDayLength = document.getElementById('hudDayLength');
 
-        // Telemetry HUD (Mobile Page 2)
+        // Telemetry HUD (Mobile Page 3)
         this.hudElevationMobile = document.getElementById('hudElevationMobile');
         this.hudAzimuthMobile = document.getElementById('hudAzimuthMobile');
         this.hudDeclinationMobile = document.getElementById('hudDeclinationMobile');
@@ -129,7 +131,7 @@ class SunDomeApp {
         this.cameraPresetBtns = document.querySelectorAll('#cameraPresets .view-btn, #cameraPresetsMobile .view-btn');
         this.seasonBtns = document.querySelectorAll('.season-btn');
 
-        // Draw Massing & Manager Elements
+        // Draw Massing & Manager Elements (Desktop)
         this.btnDrawMode = document.getElementById('btnDrawMode');
         this.massingCountBadge = document.getElementById('massingCountBadge');
         this.selectedMassingControls = document.getElementById('selectedMassingControls');
@@ -139,6 +141,17 @@ class SunDomeApp {
         this.drawModeBanner = document.getElementById('drawModeBanner');
         this.btnFinishPolygon = document.getElementById('btnFinishPolygon');
         this.btnCancelPolygon = document.getElementById('btnCancelPolygon');
+
+        // Draw Massing & Manager Elements (Mobile Page 2)
+        this.btnDrawModeMobile = document.getElementById('btnDrawModeMobile');
+        this.massingCountBadgeMobile = document.getElementById('massingCountBadgeMobile');
+        this.selectedMassingControlsMobile = document.getElementById('selectedMassingControlsMobile');
+        this.massingHeightRangeMobile = document.getElementById('massingHeightRangeMobile');
+        this.massingHeightValMobile = document.getElementById('massingHeightValMobile');
+        this.massingsItemsMobile = document.getElementById('massingsItemsMobile');
+        this.drawModeBannerMobile = document.getElementById('drawModeBannerMobile');
+        this.btnFinishPolygonMobile = document.getElementById('btnFinishPolygonMobile');
+        this.btnCancelPolygonMobile = document.getElementById('btnCancelPolygonMobile');
 
         // Set initial inputs & unit system
         this.setUnitSystem('customary');
@@ -184,20 +197,18 @@ class SunDomeApp {
     }
 
     setupEventListeners() {
-        // Unit Toggle Buttons
-        this.btnMetric.addEventListener('click', () => {
-            this.setUnitSystem('metric');
-        });
-
-        this.btnCustomary.addEventListener('click', () => {
-            this.setUnitSystem('customary');
-        });
+        // Unit Toggle Buttons (Desktop & Mobile Synchronized)
+        const setUnits = (u) => this.setUnitSystem(u);
+        if (this.btnMetric) this.btnMetric.addEventListener('click', () => setUnits('metric'));
+        if (this.btnCustomary) this.btnCustomary.addEventListener('click', () => setUnits('customary'));
+        if (this.btnMetricMobile) this.btnMetricMobile.addEventListener('click', () => setUnits('metric'));
+        if (this.btnCustomaryMobile) this.btnCustomaryMobile.addEventListener('click', () => setUnits('customary'));
 
         // Open World Map Location Modal (Desktop Modal or Mobile Tab Switch)
         if (this.btnOpenLocationModal) {
             this.btnOpenLocationModal.addEventListener('click', () => {
                 if (window.innerWidth <= 820) {
-                    this.scrollToMobilePage(2);
+                    this.scrollToMobilePage(3);
                 } else {
                     this.locationModal.open(this.state.latitude, this.state.longitude, this.currentLocationLabel);
                 }
@@ -207,7 +218,11 @@ class SunDomeApp {
         // Open 300 DPI Export PNG Modal
         if (this.btnExportPng) {
             this.btnExportPng.addEventListener('click', () => {
-                this.exportModal.open();
+                if (window.innerWidth <= 820) {
+                    this.scrollToMobilePage(4);
+                } else {
+                    this.exportModal.open();
+                }
             });
         }
 
@@ -332,27 +347,53 @@ class SunDomeApp {
             });
         });
 
-        // Draw Pen Tool Button (Toggle Draw Mode)
-        this.btnDrawMode.addEventListener('click', () => {
-            this.toggleDrawMode(!this.state.isDrawMode);
-        });
+        // Draw Pen Tool Button (Desktop & Mobile)
+        if (this.btnDrawMode) {
+            this.btnDrawMode.addEventListener('click', () => {
+                this.toggleDrawMode(!this.state.isDrawMode);
+            });
+        }
+        if (this.btnDrawModeMobile) {
+            this.btnDrawModeMobile.addEventListener('click', () => {
+                this.toggleDrawMode(!this.state.isDrawMode);
+            });
+        }
 
-        this.btnFinishPolygon.addEventListener('click', () => {
-            this.polarChart.finishCurrentDrawing();
-        });
+        if (this.btnFinishPolygon) {
+            this.btnFinishPolygon.addEventListener('click', () => {
+                this.polarChart.finishCurrentDrawing();
+            });
+        }
+        if (this.btnFinishPolygonMobile) {
+            this.btnFinishPolygonMobile.addEventListener('click', () => {
+                this.polarChart.finishCurrentDrawing();
+            });
+        }
 
-        this.btnCancelPolygon.addEventListener('click', () => {
-            this.toggleDrawMode(false);
-            this.polarChart.cancelCurrentDrawing();
-        });
+        if (this.btnCancelPolygon) {
+            this.btnCancelPolygon.addEventListener('click', () => {
+                this.toggleDrawMode(false);
+                this.polarChart.cancelCurrentDrawing();
+            });
+        }
+        if (this.btnCancelPolygonMobile) {
+            this.btnCancelPolygonMobile.addEventListener('click', () => {
+                this.toggleDrawMode(false);
+                this.polarChart.cancelCurrentDrawing();
+            });
+        }
 
-        // Massing Height Slider
-        this.massingHeightRange.addEventListener('input', (e) => {
-            let heightM = parseFloat(e.target.value);
+        // Massing Height Slider (Desktop & Mobile)
+        const updateMassingHeight = (rawVal) => {
+            let heightM = parseFloat(rawVal);
             if (this.state.unitSystem === 'customary') {
                 heightM = heightM / 3.28084;
             }
-            this.massingHeightVal.textContent = this.formatHeight(heightM);
+            const heightFormatted = this.formatHeight(heightM);
+            if (this.massingHeightVal) this.massingHeightVal.textContent = heightFormatted;
+            if (this.massingHeightValMobile) this.massingHeightValMobile.textContent = heightFormatted;
+            if (this.massingHeightRange) this.massingHeightRange.value = rawVal;
+            if (this.massingHeightRangeMobile) this.massingHeightRangeMobile.value = rawVal;
 
             const selected = this.state.massings.find(m => m.id === this.state.selectedMassingId);
             if (selected) {
@@ -360,7 +401,14 @@ class SunDomeApp {
                 this.syncMassings();
                 this.renderMassingsList();
             }
-        });
+        };
+
+        if (this.massingHeightRange) {
+            this.massingHeightRange.addEventListener('input', (e) => updateMassingHeight(e.target.value));
+        }
+        if (this.massingHeightRangeMobile) {
+            this.massingHeightRangeMobile.addEventListener('input', (e) => updateMassingHeight(e.target.value));
+        }
     }
 
     initMobileNavigation() {
@@ -410,17 +458,252 @@ class SunDomeApp {
             }
         });
 
-        // If switched to Page 0 (Charts), trigger resize
+        const p2DContainer = document.getElementById('polarCanvasContainer');
+        const pMassingsContainer = document.getElementById('polarCanvasContainerMassings');
+
+        // Page 0: Charts
         if (pageIndex === 0) {
+            if (p2DContainer && this.polarChart.canvas.parentNode !== p2DContainer) {
+                p2DContainer.appendChild(this.polarChart.canvas);
+            }
             requestAnimationFrame(() => {
                 this.polarChart.resize();
                 this.solarDome.onResize();
             });
         }
-        // If switched to Page 2 (Location), trigger location map render
-        if (pageIndex === 2 && this.locationModal) {
+        // Page 1: Massings & Sketching
+        else if (pageIndex === 1) {
+            if (pMassingsContainer && this.polarChart.canvas.parentNode !== pMassingsContainer) {
+                pMassingsContainer.appendChild(this.polarChart.canvas);
+            }
+            requestAnimationFrame(() => {
+                this.polarChart.resize();
+            });
+        }
+        // Page 3: Location Map
+        else if (pageIndex === 3 && this.locationModal) {
             this.locationModal.onMobileTabActive();
         }
+        // Page 4: PDF / PNG Export
+        else if (pageIndex === 4 && this.exportModal) {
+            this.exportModal.onMobileTabActive();
+        }
+    }
+
+    onLocationSelected(loc) {
+        this.state.latitude = loc.latitude;
+        this.state.longitude = loc.longitude;
+        this.currentLocationLabel = loc.displayName;
+
+        this.updateCoordinateDisplays();
+        if (this.currentLocationName) this.currentLocationName.textContent = loc.displayName;
+
+        this.syncState();
+    }
+
+    updateCoordinateDisplays() {
+        const lat = this.state.latitude;
+        const lon = this.state.longitude;
+        const latStr = `${Math.abs(lat).toFixed(1)}° ${lat >= 0 ? 'N' : 'S'}`;
+        const lonStr = `${Math.abs(lon).toFixed(1)}° ${lon >= 0 ? 'E' : 'W'}`;
+
+        if (this.latDisplay) this.latDisplay.textContent = latStr;
+        if (this.lonDisplay) this.lonDisplay.textContent = lonStr;
+    }
+
+    setUnitSystem(unit) {
+        this.state.unitSystem = unit;
+        if (unit === 'metric') {
+            if (this.btnMetric) this.btnMetric.classList.add('active');
+            if (this.btnMetricMobile) this.btnMetricMobile.classList.add('active');
+            if (this.btnCustomary) this.btnCustomary.classList.remove('active');
+            if (this.btnCustomaryMobile) this.btnCustomaryMobile.classList.remove('active');
+            if (this.massingHeightRange) {
+                this.massingHeightRange.min = '1';
+                this.massingHeightRange.max = '40';
+                this.massingHeightRange.step = '0.5';
+            }
+            if (this.massingHeightRangeMobile) {
+                this.massingHeightRangeMobile.min = '1';
+                this.massingHeightRangeMobile.max = '40';
+                this.massingHeightRangeMobile.step = '0.5';
+            }
+        } else {
+            if (this.btnMetric) this.btnMetric.classList.remove('active');
+            if (this.btnMetricMobile) this.btnMetricMobile.classList.remove('active');
+            if (this.btnCustomary) this.btnCustomary.classList.add('active');
+            if (this.btnCustomaryMobile) this.btnCustomaryMobile.classList.add('active');
+            if (this.massingHeightRange) {
+                this.massingHeightRange.min = '3';
+                this.massingHeightRange.max = '130';
+                this.massingHeightRange.step = '1';
+            }
+            if (this.massingHeightRangeMobile) {
+                this.massingHeightRangeMobile.min = '3';
+                this.massingHeightRangeMobile.max = '130';
+                this.massingHeightRangeMobile.step = '1';
+            }
+        }
+
+        const selected = this.state.massings.find(m => m.id === this.state.selectedMassingId);
+        if (selected) {
+            this.updateHeightControlForSelected(selected);
+        }
+
+        this.polarChart.updateState({ unitSystem: unit });
+        this.solarDome.updateState({ unitSystem: unit });
+        this.renderMassingsList();
+    }
+
+    toggleDrawMode(enabled) {
+        this.state.isDrawMode = enabled;
+        this.polarChart.setDrawMode(enabled);
+
+        if (enabled) {
+            if (this.btnDrawMode) this.btnDrawMode.classList.add('active');
+            if (this.btnDrawModeMobile) this.btnDrawModeMobile.classList.add('active');
+            if (this.drawModeBanner) this.drawModeBanner.style.display = 'flex';
+            if (this.drawModeBannerMobile) this.drawModeBannerMobile.style.display = 'flex';
+            this.state.selectedMassingId = null;
+            if (this.selectedMassingControls) this.selectedMassingControls.style.display = 'none';
+            if (this.selectedMassingControlsMobile) this.selectedMassingControlsMobile.style.display = 'none';
+            this.polarChart.updateState({ selectedMassingId: null });
+        } else {
+            if (this.btnDrawMode) this.btnDrawMode.classList.remove('active');
+            if (this.btnDrawModeMobile) this.btnDrawModeMobile.classList.remove('active');
+            if (this.drawModeBanner) this.drawModeBanner.style.display = 'none';
+            if (this.drawModeBannerMobile) this.drawModeBannerMobile.style.display = 'none';
+        }
+        this.renderMassingsList();
+    }
+
+    onPolygonCompleted(points2D) {
+        const points3D = points2D.map(p => this.polarChart.canvasTo3DWorld(p.x, p.y));
+        const newMassing = {
+            id: Date.now(),
+            points: points2D,
+            points3D: points3D,
+            height: 6.0
+        };
+
+        this.state.massings.push(newMassing);
+        this.state.selectedMassingId = newMassing.id;
+
+        this.toggleDrawMode(false);
+        this.onMassingSelected(newMassing);
+        this.syncMassings();
+        this.renderMassingsList();
+    }
+
+    onMassingSelected(massing) {
+        if (massing) {
+            this.state.selectedMassingId = massing.id;
+            if (this.selectedMassingControls) this.selectedMassingControls.style.display = 'flex';
+            if (this.selectedMassingControlsMobile) this.selectedMassingControlsMobile.style.display = 'flex';
+            this.updateHeightControlForSelected(massing);
+        } else {
+            this.state.selectedMassingId = null;
+            if (this.selectedMassingControls) this.selectedMassingControls.style.display = 'none';
+            if (this.selectedMassingControlsMobile) this.selectedMassingControlsMobile.style.display = 'none';
+        }
+        this.polarChart.updateState({ selectedMassingId: this.state.selectedMassingId });
+        this.renderMassingsList();
+    }
+
+    updateHeightControlForSelected(massing) {
+        let displayStr = '';
+        let rangeVal = massing.height;
+        if (this.state.unitSystem === 'customary') {
+            const ft = massing.height * 3.28084;
+            rangeVal = Math.round(ft);
+            displayStr = this.formatHeight(massing.height);
+        } else {
+            displayStr = `${massing.height.toFixed(1)} m`;
+        }
+
+        if (this.massingHeightRange) this.massingHeightRange.value = rangeVal;
+        if (this.massingHeightRangeMobile) this.massingHeightRangeMobile.value = rangeVal;
+        if (this.massingHeightVal) this.massingHeightVal.textContent = displayStr;
+        if (this.massingHeightValMobile) this.massingHeightValMobile.textContent = displayStr;
+    }
+
+    onMassingMoved(massing) {
+        massing.points3D = massing.points.map(p => this.polarChart.canvasTo3DWorld(p.x, p.y));
+        this.syncMassings();
+    }
+
+    deleteMassing(id) {
+        this.state.massings = this.state.massings.filter(m => m.id !== id);
+        if (this.state.selectedMassingId === id) {
+            this.state.selectedMassingId = null;
+            if (this.selectedMassingControls) this.selectedMassingControls.style.display = 'none';
+            if (this.selectedMassingControlsMobile) this.selectedMassingControlsMobile.style.display = 'none';
+        }
+        this.syncMassings();
+        this.renderMassingsList();
+    }
+
+    renderMassingsList() {
+        const count = this.state.massings.length;
+        if (this.massingCountBadge) this.massingCountBadge.textContent = count;
+        if (this.massingCountBadgeMobile) this.massingCountBadgeMobile.textContent = count;
+
+        if (count === 0) {
+            const emptyDesktop = `<div class="empty-massings-hint">No massings drawn. Click ✏️ to sketch.</div>`;
+            const emptyMobile = `<div class="empty-massings-hint">No massings drawn yet. Tap ✏️ to sketch on the chart below.</div>`;
+            if (this.massingsItems) this.massingsItems.innerHTML = emptyDesktop;
+            if (this.massingsItemsMobile) this.massingsItemsMobile.innerHTML = emptyMobile;
+            return;
+        }
+
+        let html = '';
+        this.state.massings.forEach((m, idx) => {
+            const isSelected = m.id === this.state.selectedMassingId;
+            const areaM2 = this.polarChart.calculatePolygonAreaM2(m.points);
+            const areaStr = this.formatArea(areaM2);
+            const heightStr = this.formatHeight(m.height);
+
+            html += `
+                <div class="massing-item ${isSelected ? 'selected' : ''}" data-id="${m.id}">
+                    <div class="massing-item-info">
+                        <span class="massing-item-name">Massing #${idx + 1}</span>
+                        <span class="massing-item-meta">H: ${heightStr} • Area: ${areaStr}</span>
+                    </div>
+                    <button class="massing-item-delete" data-del-id="${m.id}" title="Delete this massing">
+                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+        });
+
+        const bindListEvents = (containerEl) => {
+            if (!containerEl) return;
+            containerEl.innerHTML = html;
+            containerEl.querySelectorAll('.massing-item').forEach(itemEl => {
+                itemEl.addEventListener('click', (e) => {
+                    if (e.target.closest('.massing-item-delete')) return;
+                    const id = parseInt(itemEl.getAttribute('data-id'), 10);
+                    const massing = this.state.massings.find(m => m.id === id);
+                    if (massing) {
+                        this.onMassingSelected(massing);
+                    }
+                });
+            });
+
+            containerEl.querySelectorAll('.massing-item-delete').forEach(delBtn => {
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(delBtn.getAttribute('data-del-id'), 10);
+                    this.deleteMassing(id);
+                });
+            });
+        };
+
+        bindListEvents(this.massingsItems);
+        bindListEvents(this.massingsItemsMobile);
     }
 
     onLocationSelected(loc) {
