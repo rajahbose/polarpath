@@ -339,6 +339,28 @@ export class SolarDome3D {
         this.haloMesh = new THREE.Mesh(haloGeo, haloMat);
         this.sunGroup.add(this.haloMesh);
 
+        // Floating Sun Label (Time of Day & Time of Year in subtle architectural typography)
+        this.sunLabelCanvas = document.createElement('canvas');
+        this.sunLabelCanvas.width = 512;
+        this.sunLabelCanvas.height = 256;
+        this.sunLabelCtx = this.sunLabelCanvas.getContext('2d');
+        this.sunLabelTexture = new THREE.CanvasTexture(this.sunLabelCanvas);
+        this.sunLabelTexture.minFilter = THREE.LinearFilter;
+        this.sunLabelTexture.magFilter = THREE.LinearFilter;
+
+        const labelMat = new THREE.SpriteMaterial({
+            map: this.sunLabelTexture,
+            depthTest: false,
+            depthWrite: false,
+            transparent: true
+        });
+        this.sunLabelSprite = new THREE.Sprite(labelMat);
+        this.sunLabelSprite.scale.set(4.6, 2.3, 1);
+        this.sunLabelSprite.position.set(0, -3.2, 0);
+        this.sunLabelSprite.renderOrder = 999;
+        this.sunGroup.add(this.sunLabelSprite);
+        this.updateSunLabel();
+
         const rayGeo = new THREE.BufferGeometry().setFromPoints([
             new THREE.Vector3(0, 0, 0),
             new THREE.Vector3(0, 0, 0)
@@ -728,6 +750,7 @@ export class SolarDome3D {
             this.sunLight.target.position.set(0, 0, 0);
             this.sunLight.intensity = 2.4;
             this.sunGroup.visible = true;
+            this.updateSunLabel();
         } else {
             this.sunLight.intensity = 0.05;
             this.sunGroup.visible = false;
@@ -735,6 +758,59 @@ export class SolarDome3D {
 
         this.trajectoryCurvesGroup.visible = !!this.state.showAllMonths;
         this.analemmaCurvesGroup.visible = !!this.state.showAnalemmas;
+    }
+
+    updateSunLabel() {
+        if (!this.sunLabelCtx || !this.sunLabelTexture) return;
+
+        const ctx = this.sunLabelCtx;
+        const d = this.state.date;
+
+        const hours = d.getHours();
+        const mins = d.getMinutes();
+        const period = hours >= 12 ? 'PM' : 'AM';
+        const displayH = hours % 12 === 0 ? 12 : hours % 12;
+        const displayM = mins.toString().padStart(2, '0');
+        const timeStr = `${displayH}:${displayM} ${period}`;
+
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const dateStr = `${monthNames[d.getMonth()]} ${d.getDate()}`;
+
+        ctx.clearRect(0, 0, 512, 256);
+
+        // Badge Container Box
+        const w = 310;
+        const h = 104;
+        const x = (512 - w) / 2;
+        const y = (256 - h) / 2;
+        const radius = 14;
+
+        ctx.beginPath();
+        if (typeof ctx.roundRect === 'function') {
+            ctx.roundRect(x, y, w, h, radius);
+        } else {
+            ctx.rect(x, y, w, h);
+        }
+        ctx.fillStyle = 'rgba(15, 20, 28, 0.88)';
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // Line 1: Time of Day (Subtle Golden Amber Accent)
+        ctx.font = '700 32px "Roboto Mono", monospace';
+        ctx.fillStyle = '#f59e0b';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(timeStr, 256, y + 34);
+
+        // Line 2: Time of Year (Subtle Neutral Gray Font)
+        ctx.font = '500 24px "Roboto Mono", monospace';
+        ctx.fillStyle = '#9ca3af';
+        ctx.fillText(dateStr, 256, y + 74);
+
+        this.sunLabelTexture.needsUpdate = true;
     }
 
     setCameraPreset(presetName) {
@@ -792,6 +868,9 @@ export class SolarDome3D {
     animate() {
         requestAnimationFrame(this.animate);
         this.controls.update();
+        if (this.haloMesh && this.sunGroup.visible) {
+            this.haloMesh.quaternion.copy(this.camera.quaternion);
+        }
         this.renderer.render(this.scene, this.camera);
     }
 }
