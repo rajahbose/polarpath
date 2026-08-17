@@ -2489,6 +2489,17 @@ header {
         margin-top: 0.15rem;
     }
 
+    /* Fixed Subbadge below Polar Chart Title on Mobile */
+    .polar-chart-mobile-subbadge {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        color: var(--accent-sun);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        margin-top: 1px;
+    }
+
     /* =========================================================
        PAGE 2: Dedicated Massings & 2D Sketching Mobile Page
        ========================================================= */
@@ -2498,76 +2509,48 @@ header {
         height: 100%;
         width: 100%;
         overflow: hidden;
+        position: relative;
     }
 
-    #massingsMobileTopCard {
-        flex-shrink: 0;
-        padding: 0.75rem 0.85rem;
-        border-radius: 0;
-        border-left: none;
-        border-right: none;
-        border-top: none;
-        background: #141820;
-        border-bottom: 1px solid var(--border-color);
-        max-height: 46%;
-        overflow-y: auto;
-    }
-
-    .mobile-massing-actions {
+    /* Minimalist Floating Pen Button in Top Left */
+    .mobile-floating-draw-btn {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 100;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #181c24;
+        color: var(--accent-sun);
+        border: 1.5px solid rgba(245, 158, 11, 0.45);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65), 0 0 10px rgba(245, 158, 11, 0.25);
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
 
-    .mobile-massing-actions .draw-pen-btn,
-    #btnDrawModeMobile {
-        width: auto !important;
-        height: auto !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 0.45rem !important;
-        padding: 0.5rem 0.85rem !important;
-        border-radius: 6px !important;
+    .mobile-floating-draw-btn:active,
+    .mobile-floating-draw-btn.active {
         background: var(--accent-sun) !important;
         color: #000000 !important;
-        font-weight: 700 !important;
-        font-size: 0.82rem !important;
-        border: none !important;
-        cursor: pointer !important;
-    }
-
-    .mobile-massing-hint {
-        font-size: 0.72rem;
-        color: var(--text-muted);
-    }
-
-    #selectedMassingControlsMobile {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-        margin-top: 0.75rem;
-        padding-top: 0.65rem;
-        border-top: 1px solid #232a38;
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 16px rgba(245, 158, 11, 0.7) !important;
+        transform: scale(1.05);
     }
 
     .mobile-massings-chart-box {
-        flex: 1;
+        flex: 1 1 auto;
+        width: 100%;
+        height: 100%;
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         position: relative;
         background: #0d0f12;
         overflow: hidden;
-        min-height: 280px;
-    }
-
-    .mobile-chart-header-bar {
-        padding: 0.35rem 0.75rem;
-        background: #12161f;
-        border-bottom: 1px solid #1f2633;
-        font-size: 0.68rem;
-        font-weight: 600;
-        color: var(--text-muted);
-        letter-spacing: 0.02em;
     }
 
     .mobile-canvas-container {
@@ -2583,6 +2566,62 @@ header {
         left: 0;
         width: 100%;
         height: 100%;
+    }
+
+    /* =========================================================
+       Touch-Friendly Display & Analysis Toggle Buttons
+       ========================================================= */
+    .analysis-toggle-buttons-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        margin-top: 0.5rem;
+    }
+
+    .analysis-toggle-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        min-height: 44px;
+        padding: 0.65rem 0.85rem;
+        background: #181c24;
+        border: 1.5px solid #262b36;
+        border-radius: 8px;
+        color: var(--text-secondary);
+        font-family: inherit;
+        font-size: 0.82rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-align: left;
+    }
+
+    .analysis-toggle-btn.active {
+        background: rgba(245, 158, 11, 0.08);
+        border-color: var(--accent-sun);
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .analysis-toggle-btn .toggle-indicator {
+        width: 22px;
+        height: 22px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        background: #232a38;
+        color: var(--text-muted);
+        flex-shrink: 0;
+        transition: all 0.15s ease;
+    }
+
+    .analysis-toggle-btn.active .toggle-indicator {
+        background: var(--accent-sun);
+        color: #000000;
     }
 
     /* =========================================================

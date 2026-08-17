@@ -876,7 +876,10 @@ export class PolarChart2D {
         ctx.fill();
         ctx.restore();
 
-        // 2-Line Floating Sun Info Badge: Centered Underneath the Sun Dot/Ring
+        // 2-Line Floating Sun Info Badge: Centered Underneath the Sun Dot/Ring (Desktop only; on mobile it is fixed below the chart title)
+        const isMobile = (typeof window !== 'undefined' && window.innerWidth <= 820) || this.width < 520;
+        if (isMobile) return;
+
         const hours = this.state.date.getHours();
         const mins = this.state.date.getMinutes();
         const period = hours >= 12 ? 'PM' : 'AM';

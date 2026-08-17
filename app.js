@@ -273,23 +273,35 @@ class SunDomeApp {
         });
 
         // Layer & Display Toggles (Synchronized Desktop & Mobile)
-        const bindToggle = (desktopEl, mobileEl, key) => {
+        const bindToggle = (desktopEl, key) => {
             const updateVal = (checked) => {
                 this.state[key] = checked;
                 if (desktopEl) desktopEl.checked = checked;
-                if (mobileEl) mobileEl.checked = checked;
+
+                // Sync mobile button state
+                const mobileBtn = document.querySelector(`.analysis-toggle-btn[data-toggle="${key}"]`);
+                if (mobileBtn) {
+                    mobileBtn.classList.toggle('active', checked);
+                    const ind = mobileBtn.querySelector('.toggle-indicator');
+                    if (ind) ind.textContent = checked ? '✓' : '—';
+                }
+
                 this.polarChart.updateState({ [key]: checked });
                 this.solarDome.updateState({ [key]: checked });
             };
 
             if (desktopEl) desktopEl.addEventListener('change', (e) => updateVal(e.target.checked));
-            if (mobileEl) mobileEl.addEventListener('change', (e) => updateVal(e.target.checked));
+
+            const mobileBtn = document.querySelector(`.analysis-toggle-btn[data-toggle="${key}"]`);
+            if (mobileBtn) {
+                mobileBtn.addEventListener('click', () => updateVal(!this.state[key]));
+            }
         };
 
-        bindToggle(this.chkMonths, this.chkMonthsMobile, 'showAllMonths');
-        bindToggle(this.chkAnalemmas, this.chkAnalemmasMobile, 'showAnalemmas');
-        bindToggle(this.chkTransparent, this.chkTransparentMobile, 'transparentMassings');
-        bindToggle(this.chkDimensions, this.chkDimensionsMobile, 'showDimensions');
+        bindToggle(this.chkMonths, 'showAllMonths');
+        bindToggle(this.chkAnalemmas, 'showAnalemmas');
+        bindToggle(this.chkTransparent, 'transparentMassings');
+        bindToggle(this.chkDimensions, 'showDimensions');
 
         // Viewport Zoom / Scale Slider (Synchronized Desktop & Mobile)
         const updateZoom = (zoom) => {
@@ -925,6 +937,13 @@ class SunDomeApp {
         if (this.hudSunTimesMobile) this.hudSunTimesMobile.textContent = sunTimesStr;
         if (this.hudDayLength) this.hudDayLength.textContent = dayLengthStr;
         if (this.hudDayLengthMobile) this.hudDayLengthMobile.textContent = dayLengthStr;
+
+        // Update Fixed Polar Chart Subbadge on Mobile (Replaces canvas floating badge)
+        const subbadgeEl = document.getElementById('polarChartMobileSubbadge');
+        if (subbadgeEl) {
+            const curHours = this.state.date.getHours() + this.state.date.getMinutes() / 60;
+            subbadgeEl.textContent = `${elevStr} | ${azimStr} • ${this.formatHoursToTime(curHours)}`;
+        }
 
         // Separate 2D scale and 3D scale on mobile mode:
         // 2D chart stays at compact 0.26 (house ~10% width), 3D dome is boosted ~300% to 0.85 for clear presence

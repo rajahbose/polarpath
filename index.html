@@ -130,6 +130,7 @@
                 <section class="viewport-panel" id="panel2D">
                     <div class="panel-header">
                         <span class="panel-title">Polar Chart</span>
+                        <div class="polar-chart-mobile-subbadge" id="polarChartMobileSubbadge">--° el | --° az • --:-- --</div>
                     </div>
 
                     <!-- Floating Massing & Sketching Manager Card (Desktop only) -->
@@ -417,67 +418,18 @@
              ======================================================== -->
         <div class="mobile-page" id="mobilePageMassings" data-page-index="2">
             <div class="mobile-massings-page">
-                <!-- Top Card: Massings Controls -->
-                <div class="mobile-card-section" id="massingsMobileTopCard">
-                    <div class="mobile-section-header">
-                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--accent-sun)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 19l7-7 3 3-7 7-3-3z"/>
-                            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
-                            <path d="M2 2l7.586 7.586"/>
-                            <circle cx="11" cy="11" r="2"/>
-                        </svg>
-                        <h2 class="mobile-section-title">Massings & 3D Sketching</h2>
-                        <span class="massing-count-badge" id="massingCountBadgeMobile" style="margin-left: auto;">0</span>
-                    </div>
+                <!-- Floating Circular Pen Tool Button in Top Left -->
+                <button class="mobile-floating-draw-btn" id="btnDrawModeMobile" title="Draw Massing (Snaps to 90°, 45°, 30°)">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                        <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                        <path d="M2 2l7.586 7.586"></path>
+                        <circle cx="11" cy="11" r="2"></circle>
+                    </svg>
+                </button>
 
-                    <!-- Action Bar with Minimalist Draw Pen Button -->
-                    <div class="mobile-massing-actions">
-                        <button class="draw-pen-btn" id="btnDrawModeMobile" title="Draw Massing (Snaps to 90°, 45°, 30°)">
-                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
-                                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
-                                <path d="M2 2l7.586 7.586"></path>
-                                <circle cx="11" cy="11" r="2"></circle>
-                            </svg>
-                            <span>Sketch Massing</span>
-                        </button>
-                        <span class="mobile-massing-hint">Snaps to 90°, 45°, 30° angles</span>
-                    </div>
-
-                    <!-- Massing Height Controls -->
-                    <div class="selected-massing-controls" id="selectedMassingControlsMobile" style="display: flex; margin-top: 0.75rem;">
-                        <div class="height-input-row">
-                            <label for="massingHeightRangeMobile">Massing Height:</label>
-                            <span class="height-val" id="massingHeightValMobile">20′ 0″</span>
-                        </div>
-                        <input type="range" id="massingHeightRangeMobile" min="3" max="130" step="1" value="20" class="custom-range">
-                    </div>
-
-                    <!-- Draw Mode Banner on Mobile -->
-                    <div class="draw-mode-banner" id="drawModeBannerMobile" style="display: none; margin-top: 0.75rem;">
-                        <div class="draw-mode-status">
-                            <span class="draw-pulse"></span>
-                            <span><strong>Draw Mode:</strong> Tap points on chart below. Tap start node to close.</span>
-                        </div>
-                        <div class="draw-actions">
-                            <button class="draw-btn" id="btnFinishPolygonMobile">Finish</button>
-                            <button class="draw-btn cancel" id="btnCancelPolygonMobile">Cancel</button>
-                        </div>
-                    </div>
-
-                    <!-- Concise List of Massings on Mobile -->
-                    <div class="massings-list-section" style="margin-top: 0.75rem;">
-                        <div class="massings-items" id="massingsItemsMobile">
-                            <div class="empty-massings-hint">No massings drawn yet. Tap ✏️ to sketch on the chart below.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bottom Viewport: 2D Polar Chart for Sketching -->
+                <!-- Fullscreen Centered 2D Polar Chart for Sketching -->
                 <div class="mobile-massings-chart-box">
-                    <div class="mobile-chart-header-bar">
-                        <span>2D Polar Chart (Plan View) • Touch to Draw & Drag</span>
-                    </div>
                     <div class="mobile-canvas-container" id="polarCanvasContainerMassings"></div>
                 </div>
             </div>
@@ -502,7 +454,7 @@
                     </div>
                 </div>
 
-                <!-- Section 2: Display & Analysis -->
+                <!-- Section 2: Display & Analysis Options (Touch-Friendly Buttons) -->
                 <div class="mobile-card-section">
                     <div class="mobile-section-header">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
@@ -511,34 +463,32 @@
                         </svg>
                         <h2 class="mobile-section-title">Display & Analysis Options</h2>
                     </div>
-                    <div class="mobile-toggles-list">
-                        <label class="toggle-option mobile-toggle">
-                            <input type="checkbox" id="chkTransparentMobile" checked>
-                            <span class="custom-chk"></span>
+                    <div class="analysis-toggle-buttons-grid">
+                        <button type="button" class="analysis-toggle-btn active" data-toggle="transparentMassings" id="btnTogTransparentMobile">
+                            <span class="toggle-indicator">✓</span>
                             <span>Transparent Buildings (50% Blue)</span>
-                        </label>
-                        <label class="toggle-option mobile-toggle">
-                            <input type="checkbox" id="chkDimensionsMobile">
-                            <span class="custom-chk"></span>
+                        </button>
+                        <button type="button" class="analysis-toggle-btn" data-toggle="showDimensions" id="btnTogDimensionsMobile">
+                            <span class="toggle-indicator">—</span>
                             <span>Turn on Dims & Area</span>
-                        </label>
-                        <label class="toggle-option mobile-toggle">
-                            <input type="checkbox" id="chkMonthsMobile" checked>
-                            <span class="custom-chk"></span>
+                        </button>
+                        <button type="button" class="analysis-toggle-btn active" data-toggle="showAllMonths" id="btnTogMonthsMobile">
+                            <span class="toggle-indicator">✓</span>
                             <span>Month Curves</span>
-                        </label>
-                        <label class="toggle-option mobile-toggle">
-                            <input type="checkbox" id="chkAnalemmasMobile" checked>
-                            <span class="custom-chk"></span>
+                        </button>
+                        <button type="button" class="analysis-toggle-btn active" data-toggle="showAnalemmas" id="btnTogAnalemmasMobile">
+                            <span class="toggle-indicator">✓</span>
                             <span>Analemma Hour Curves</span>
-                        </label>
+                        </button>
                     </div>
-                    <div class="mobile-zoom-block">
+                    <div class="mobile-zoom-block" style="margin-top: 1rem;">
                         <div class="zoom-label-row">
                             <span class="zoom-title">Viewport Scale</span>
                             <span class="zoom-readout" id="zoomScaleReadoutMobile">0.26×</span>
                         </div>
                         <input type="range" id="zoomScaleSliderMobile" min="0.1" max="2.6" step="0.02" value="0.26" class="custom-range" title="Adjust synchronous scale of both viewports">
+                    </div>
+                </div>viewports">
                     </div>
                 </div>
 
