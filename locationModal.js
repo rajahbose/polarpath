@@ -167,31 +167,74 @@ export class LocationModal {
                     <div class="mobile-loc-status-coords" id="locStatusCoordsMobile">35.69° N, 105.94° W</div>
                     <div class="mobile-loc-status-name" id="locStatusNameMobile">Santa Fe, NM, USA</div>
                 </div>
-            </div>
 
-            <!-- Quick Season Presets on Mobile Location Page -->
-            <div class="mobile-card-section">
-                <div class="mobile-section-header">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
-                        <circle cx="12" cy="12" r="5"/>
-                        <line x1="12" y1="1" x2="12" y2="3"/>
-                        <line x1="12" y1="21" x2="12" y2="23"/>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                        <line x1="1" y1="12" x2="3" y2="12"/>
-                        <line x1="21" y1="12" x2="23" y2="12"/>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                    </svg>
-                    <h2 class="mobile-section-title">Quick Season Presets</h2>
+                <!-- Quick Season Presets on Mobile Location Page -->
+                <div class="mobile-card-section">
+                    <div class="mobile-section-header">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        <h2 class="mobile-section-title">Quick Season Presets</h2>
+                    </div>
+                    <div class="mobile-season-grid">
+                        <button class="season-btn" data-date="summer">☀️ Summer Solstice</button>
+                        <button class="season-btn" data-date="winter">❄️ Winter Solstice</button>
+                        <button class="season-btn" data-date="equinox">🌱 Equinox</button>
+                        <button class="season-btn" data-date="today">📅 Today</button>
+                    </div>
                 </div>
-                <div class="mobile-season-grid">
-                    <button class="season-btn" data-date="summer">☀️ Summer Solstice</button>
-                    <button class="season-btn" data-date="winter">❄️ Winter Solstice</button>
-                    <button class="season-btn" data-date="equinox">🌱 Equinox</button>
-                    <button class="season-btn" data-date="today">📅 Today</button>
+
+                <!-- Solar Telemetry & Sun Degrees on Mobile Location Page -->
+                <div class="mobile-card-section">
+                    <div class="mobile-section-header">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        <h2 class="mobile-section-title">Solar Telemetry & Sun Degrees</h2>
+                    </div>
+                    <div class="mobile-telemetry-grid">
+                        <div class="telemetry-item mobile-item">
+                            <span class="telemetry-label">Solar Elevation (Altitude)</span>
+                            <span class="telemetry-value" id="hudElevationMobile">--°</span>
+                        </div>
+                        <div class="telemetry-item mobile-item">
+                            <span class="telemetry-label">Solar Azimuth (Compass)</span>
+                            <span class="telemetry-value cyan" id="hudAzimuthMobile">--°</span>
+                        </div>
+                        <div class="telemetry-item mobile-item">
+                            <span class="telemetry-label">Declination</span>
+                            <span class="telemetry-value" id="hudDeclinationMobile">--°</span>
+                        </div>
+                        <div class="telemetry-item mobile-item">
+                            <span class="telemetry-label">Shadow Ratio (H / L)</span>
+                            <span class="telemetry-value rose" id="hudShadowRatioMobile">--</span>
+                        </div>
+                        <div class="telemetry-item mobile-item span-2">
+                            <span class="telemetry-label">Sunrise • Sunset</span>
+                            <span class="telemetry-value green" id="hudSunTimesMobile" style="font-size: 0.9rem;">-- • --</span>
+                        </div>
+                        <div class="telemetry-item mobile-item span-2">
+                            <span class="telemetry-label">Day Length</span>
+                            <span class="telemetry-value cyan" id="hudDayLengthMobile" style="font-size: 0.9rem;">-- hrs</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
         `;
 
         // References for Mobile View

@@ -130,8 +130,10 @@
                 <section class="viewport-panel" id="panel2D">
                     <div class="panel-header">
                         <span class="panel-title">Polar Chart</span>
-                        <div class="polar-chart-mobile-subbadge" id="polarChartMobileSubbadge">--° el | --° az • --:-- --</div>
                     </div>
+
+                    <!-- Sun angles & time label permanently placed in bottom-left corner of Polar Chart frame on mobile -->
+                    <div class="polar-chart-mobile-subbadge" id="polarChartMobileSubbadge">--° el | --° az • --:-- --</div>
 
                     <!-- Floating Massing & Sketching Manager Card (Desktop only) -->
                     <div class="floating-overlay top-left desktop-only" style="top: 3.25rem; left: 0.85rem;">
@@ -432,11 +434,16 @@
                 <div class="mobile-massings-chart-box">
                     <div class="mobile-canvas-container" id="polarCanvasContainerMassings"></div>
                 </div>
+
+                <!-- Minimalist Massings List Footer below Chart with Delete Button -->
+                <div class="mobile-massings-footer-bar" id="mobileMassingsFooterBar">
+                    <div class="mobile-massings-items" id="massingsItemsMobile"></div>
+                </div>
             </div>
         </div>
 
         <!-- ========================================================
-             PAGE 4: Units, Display & Analysis + Solar Telemetry Data (Position 3)
+             PAGE 4: Units, Display & Analysis (Position 3)
              ======================================================== -->
         <div class="mobile-page" id="mobilePageAnalysis" data-page-index="3">
             <div class="mobile-settings-page">
@@ -480,77 +487,6 @@
                             <span class="toggle-indicator">✓</span>
                             <span>Analemma Hour Curves</span>
                         </button>
-                    </div>
-                    <div class="mobile-zoom-block" style="margin-top: 1rem;">
-                        <div class="zoom-label-row">
-                            <span class="zoom-title">Viewport Scale</span>
-                            <span class="zoom-readout" id="zoomScaleReadoutMobile">0.26×</span>
-                        </div>
-                        <input type="range" id="zoomScaleSliderMobile" min="0.1" max="2.6" step="0.02" value="0.26" class="custom-range" title="Adjust synchronous scale of both viewports">
-                    </div>
-                </div>viewports">
-                    </div>
-                </div>
-
-                <!-- Section 3: Solar Telemetry & Sun Angles -->
-                <div class="mobile-card-section">
-                    <div class="mobile-section-header">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
-                            <circle cx="12" cy="12" r="5"/>
-                            <line x1="12" y1="1" x2="12" y2="3"/>
-                            <line x1="12" y1="21" x2="12" y2="23"/>
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                            <line x1="1" y1="12" x2="3" y2="12"/>
-                            <line x1="21" y1="12" x2="23" y2="12"/>
-                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                        </svg>
-                        <h2 class="mobile-section-title">Solar Telemetry & Sun Degrees</h2>
-                    </div>
-                    <div class="mobile-telemetry-grid">
-                        <div class="telemetry-item mobile-item">
-                            <span class="telemetry-label">Solar Elevation (Altitude)</span>
-                            <span class="telemetry-value" id="hudElevationMobile">--°</span>
-                        </div>
-                        <div class="telemetry-item mobile-item">
-                            <span class="telemetry-label">Solar Azimuth (Compass)</span>
-                            <span class="telemetry-value cyan" id="hudAzimuthMobile">--°</span>
-                        </div>
-                        <div class="telemetry-item mobile-item">
-                            <span class="telemetry-label">Declination</span>
-                            <span class="telemetry-value" id="hudDeclinationMobile">--°</span>
-                        </div>
-                        <div class="telemetry-item mobile-item">
-                            <span class="telemetry-label">Shadow Ratio (H / L)</span>
-                            <span class="telemetry-value rose" id="hudShadowRatioMobile">--</span>
-                        </div>
-                        <div class="telemetry-item mobile-item span-2">
-                            <span class="telemetry-label">Sunrise • Sunset</span>
-                            <span class="telemetry-value green" id="hudSunTimesMobile" style="font-size: 0.9rem;">-- • --</span>
-                        </div>
-                        <div class="telemetry-item mobile-item span-2">
-                            <span class="telemetry-label">Day Length</span>
-                            <span class="telemetry-value cyan" id="hudDayLengthMobile" style="font-size: 0.9rem;">-- hrs</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 4: 3D Camera Views -->
-                <div class="mobile-card-section">
-                    <div class="mobile-section-header">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                            <circle cx="12" cy="13" r="4"/>
-                        </svg>
-                        <h2 class="mobile-section-title">3D View Presets</h2>
-                    </div>
-                    <div class="mobile-camera-grid" id="cameraPresetsMobile">
-                        <button class="view-btn active" data-preset="iso">Perspective</button>
-                        <button class="view-btn" data-preset="top">Top (Plan)</button>
-                        <button class="view-btn" data-preset="street">Street Eye</button>
-                        <button class="view-btn" data-preset="south">South Facing</button>
-                        <button class="view-btn" data-preset="north">North Facing</button>
                     </div>
                 </div>
             </div>

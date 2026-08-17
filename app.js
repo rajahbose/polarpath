@@ -655,13 +655,17 @@ class SunDomeApp {
         if (this.massingCountBadge) this.massingCountBadge.textContent = count;
         if (this.massingCountBadgeMobile) this.massingCountBadgeMobile.textContent = count;
 
+        const mobileFooterBar = document.getElementById('mobileMassingsFooterBar');
+
         if (count === 0) {
             const emptyDesktop = `<div class="empty-massings-hint">No massings drawn. Click ✏️ to sketch.</div>`;
-            const emptyMobile = `<div class="empty-massings-hint">No massings drawn yet. Tap ✏️ to sketch on the chart below.</div>`;
             if (this.massingsItems) this.massingsItems.innerHTML = emptyDesktop;
-            if (this.massingsItemsMobile) this.massingsItemsMobile.innerHTML = emptyMobile;
+            if (this.massingsItemsMobile) this.massingsItemsMobile.innerHTML = '';
+            if (mobileFooterBar) mobileFooterBar.style.display = 'none';
             return;
         }
+
+        if (mobileFooterBar) mobileFooterBar.style.display = 'block';
 
         let html = '';
         this.state.massings.forEach((m, idx) => {
@@ -926,17 +930,28 @@ class SunDomeApp {
         }
 
         if (this.hudElevation) this.hudElevation.textContent = elevStr;
-        if (this.hudElevationMobile) this.hudElevationMobile.textContent = elevStr;
+        const hudElevM = this.hudElevationMobile || document.getElementById('hudElevationMobile');
+        if (hudElevM) hudElevM.textContent = elevStr;
+
         if (this.hudAzimuth) this.hudAzimuth.textContent = azimStr;
-        if (this.hudAzimuthMobile) this.hudAzimuthMobile.textContent = azimStr;
+        const hudAzimM = this.hudAzimuthMobile || document.getElementById('hudAzimuthMobile');
+        if (hudAzimM) hudAzimM.textContent = azimStr;
+
         if (this.hudDeclination) this.hudDeclination.textContent = declStr;
-        if (this.hudDeclinationMobile) this.hudDeclinationMobile.textContent = declStr;
+        const hudDeclM = this.hudDeclinationMobile || document.getElementById('hudDeclinationMobile');
+        if (hudDeclM) hudDeclM.textContent = declStr;
+
         if (this.hudShadowRatio) this.hudShadowRatio.textContent = shadowStr;
-        if (this.hudShadowRatioMobile) this.hudShadowRatioMobile.textContent = shadowStr;
+        const hudShadowM = this.hudShadowRatioMobile || document.getElementById('hudShadowRatioMobile');
+        if (hudShadowM) hudShadowM.textContent = shadowStr;
+
         if (this.hudSunTimes) this.hudSunTimes.textContent = sunTimesStr;
-        if (this.hudSunTimesMobile) this.hudSunTimesMobile.textContent = sunTimesStr;
+        const hudSunTimesM = this.hudSunTimesMobile || document.getElementById('hudSunTimesMobile');
+        if (hudSunTimesM) hudSunTimesM.textContent = sunTimesStr;
+
         if (this.hudDayLength) this.hudDayLength.textContent = dayLengthStr;
-        if (this.hudDayLengthMobile) this.hudDayLengthMobile.textContent = dayLengthStr;
+        const hudDayLengthM = this.hudDayLengthMobile || document.getElementById('hudDayLengthMobile');
+        if (hudDayLengthM) hudDayLengthM.textContent = dayLengthStr;
 
         // Update Fixed Polar Chart Subbadge on Mobile (Replaces canvas floating badge)
         const subbadgeEl = document.getElementById('polarChartMobileSubbadge');
