@@ -522,34 +522,34 @@ export class PolarChart2D {
         ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
         ctx.fill();
 
-        // 3. Grid
+        // 3. 4x Scaled House Footprint at Center (rendered underneath grid, paths, massings, and info labels)
+        this.drawCenterHouse4x();
+
+        // 4. Grid
         this.drawGrid();
 
-        // 4. Drawn Polygon Massings & To-Scale Dimensions
+        // 5. Drawn Polygon Massings & To-Scale Dimensions
         this.drawMassings();
 
-        // 5. Monthly Paths
+        // 6. Monthly Paths
         if (this.state.showAllMonths && !this.state.isSketchOnlyMode) {
             this.drawMonthlyPaths();
         }
 
-        // 6. Analemmas (clean isolated loops without horizontal chords)
+        // 7. Analemmas (clean isolated loops without horizontal chords)
         if (this.state.showAnalemmas && !this.state.isSketchOnlyMode) {
             this.drawAnalemmas();
         }
 
-        // 7. Active Day Path
+        // 8. Active Day Path
         if (!this.state.isSketchOnlyMode) {
             this.drawActiveDayPath();
         }
 
-        // 8. Current Sun & Ray
+        // 9. Current Sun & Ray
         if (!this.state.isSketchOnlyMode) {
             this.drawCurrentSun();
         }
-
-        // 9. 4x Scaled House Footprint at Center
-        this.drawCenterHouse4x();
 
         // 10. Active Drawing
         if (this.state.isDrawMode) {
