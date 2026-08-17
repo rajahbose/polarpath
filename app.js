@@ -412,12 +412,12 @@ class SunDomeApp {
     }
 
     initMobileNavigation() {
-        this.mobileSwipeWrapper = document.getElementById('mobileSwipeWrapper');
         this.mobileTabBtns = document.querySelectorAll('.mobile-tab-btn');
+        this.mobilePages = document.querySelectorAll('.mobile-page');
 
-        if (!this.mobileSwipeWrapper || this.mobileTabBtns.length === 0) return;
+        if (!this.mobileTabBtns.length || !this.mobilePages.length) return;
 
-        // Tab Button Clicks: smoothly slide to the selected page
+        // Tab Button Clicks: Instant page change without animation glitches
         this.mobileTabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const pageIndex = parseInt(btn.getAttribute('data-page'), 10);
@@ -427,25 +427,26 @@ class SunDomeApp {
     }
 
     scrollToMobilePage(pageIndex) {
-        if (!this.mobileSwipeWrapper) return;
-        const width = this.mobileSwipeWrapper.clientWidth;
-        this.mobileSwipeWrapper.scrollTo({
-            left: pageIndex * width,
-            behavior: 'smooth'
+        if (!this.mobileTabBtns || !this.mobilePages) {
+            this.mobileTabBtns = document.querySelectorAll('.mobile-tab-btn');
+            this.mobilePages = document.querySelectorAll('.mobile-page');
+        }
+
+        // 1. Toggle active state on tabs
+        this.mobileTabBtns.forEach((btn, idx) => {
+            btn.classList.toggle('active', idx === pageIndex);
         });
+
+        // 2. Toggle active visibility on pages (instant display: flex / display: none)
+        this.mobilePages.forEach((page, idx) => {
+            page.classList.toggle('active', idx === pageIndex);
+        });
+
+        // 3. Mount canvases and fire appropriate render callbacks
         this.updateActiveMobileTab(pageIndex);
     }
 
     updateActiveMobileTab(pageIndex) {
-        if (!this.mobileTabBtns) return;
-        this.mobileTabBtns.forEach((btn, idx) => {
-            if (idx === pageIndex) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-
         const p2DContainer = document.getElementById('polarCanvasContainer');
         const pMassingsContainer = document.getElementById('polarCanvasContainerMassings');
 
