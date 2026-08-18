@@ -439,19 +439,23 @@ class SunDomeApp {
     }
 
     scrollToMobilePage(pageIndex) {
-        if (!this.mobileTabBtns || !this.mobilePages) {
+        if (!this.mobileTabBtns || !this.mobileTabBtns.length) {
             this.mobileTabBtns = document.querySelectorAll('.mobile-tab-btn');
+        }
+        if (!this.mobilePages || !this.mobilePages.length) {
             this.mobilePages = document.querySelectorAll('.mobile-page');
         }
 
         // 1. Toggle active state on tabs
         this.mobileTabBtns.forEach((btn, idx) => {
-            btn.classList.toggle('active', idx === pageIndex);
+            const pIdx = btn.hasAttribute('data-page') ? parseInt(btn.getAttribute('data-page'), 10) : idx;
+            btn.classList.toggle('active', pIdx === pageIndex);
         });
 
         // 2. Toggle active visibility on pages (instant display: flex / display: none)
         this.mobilePages.forEach((page, idx) => {
-            page.classList.toggle('active', idx === pageIndex);
+            const pIdx = page.hasAttribute('data-page-index') ? parseInt(page.getAttribute('data-page-index'), 10) : idx;
+            page.classList.toggle('active', pIdx === pageIndex);
         });
 
         // 3. Mount canvases and fire appropriate render callbacks
