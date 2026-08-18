@@ -944,13 +944,6 @@ export class PolarChart2D {
         ctx.strokeStyle = '#0d0f12';
         ctx.lineWidth = 1.2;
         ctx.strokeRect(centerX - w / 2, centerY - l / 2, w, l);
-
-        ctx.strokeStyle = '#262b36';
-        ctx.lineWidth = 1.8;
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY - l / 2);
-        ctx.lineTo(centerX, centerY + l / 2);
-        ctx.stroke();
     }
 
     /**
