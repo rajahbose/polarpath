@@ -751,10 +751,6 @@ export class PolarChart2D {
                 const peak = segments[0].reduce((max, p) => p.elevation > max.elevation ? p : max, segments[0][0]);
                 if (peak && peak.elevation > 4) {
                     const pt = this.polarToCanvas(peak.elevation, peak.azimuth);
-                    ctx.font = '8px "Roboto", sans-serif';
-                    ctx.fillStyle = '#9ca3af';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'bottom';
                     
                     let label = '';
                     if (path.name.includes('Jun 21')) label = 'Jun 21 (Solstice)';
@@ -762,7 +758,32 @@ export class PolarChart2D {
                     else if (path.name.includes('Equinox')) label = 'Mar/Sep 21 (Equinox)';
                     
                     if (label) {
-                        ctx.fillText(label, pt.x, pt.y - 3);
+                        ctx.font = '500 8px "Roboto", sans-serif';
+                        const textMetrics = ctx.measureText(label);
+                        const btnW = Math.round(textMetrics.width + 10);
+                        const btnH = 14;
+                        const btnX = Math.round(pt.x - btnW / 2);
+                        const btnY = Math.round(pt.y - btnH / 2);
+
+                        // Subtle dark grey button background
+                        ctx.fillStyle = '#161922';
+                        ctx.strokeStyle = '#2d3545';
+                        ctx.lineWidth = 1;
+
+                        ctx.beginPath();
+                        if (ctx.roundRect) {
+                            ctx.roundRect(btnX, btnY, btnW, btnH, 3);
+                        } else {
+                            ctx.rect(btnX, btnY, btnW, btnH);
+                        }
+                        ctx.fill();
+                        ctx.stroke();
+
+                        // Centered text vertically on the line
+                        ctx.fillStyle = '#9ca3af';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(label, pt.x, pt.y + 0.5);
                     }
                 }
             }
