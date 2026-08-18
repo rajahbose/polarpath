@@ -60,7 +60,10 @@ class SunDomeApp {
         );
 
         // Initialize Floating Settings Modal (Theme, House Color, Units, Labels, Display)
-        this.settingsModal = new SettingsModal((key, val) => this.onSettingChange(key, val));
+        this.settingsModal = new SettingsModal(
+            () => this.state,
+            (key, val) => this.onSettingChange(key, val)
+        );
 
         // Setup DOM Elements & Event Listeners
         this.initDomElements();

@@ -10,8 +10,8 @@
 
 export class SettingsModal {
     constructor(getAppState, onSettingChange) {
-        this.getAppState = getAppState;
-        this.onSettingChange = onSettingChange;
+        this.getAppState = typeof getAppState === 'function' ? getAppState : () => ({});
+        this.onSettingChange = typeof onSettingChange === 'function' ? onSettingChange : () => {};
         this.isOpen = false;
 
         this.presetColors = [
@@ -278,7 +278,7 @@ export class SettingsModal {
         document.querySelectorAll('.unit-chip').forEach(chip => {
             chip.addEventListener('click', () => {
                 const unit = chip.getAttribute('data-unit');
-                this.onSettingChange('units', unit);
+                this.onSettingChange('unitSystem', unit);
             });
         });
 
@@ -338,8 +338,8 @@ export class SettingsModal {
         }, 200);
     }
 
-    syncUiWithState() {
-        const state = this.getAppState();
+    syncUiWithState(externalState) {
+        const state = externalState || (typeof this.getAppState === 'function' ? this.getAppState() : null);
         if (!state) return;
 
         // Theme Chips
@@ -372,7 +372,7 @@ export class SettingsModal {
         // Units Chips
         document.querySelectorAll('.unit-chip').forEach(chip => {
             const u = chip.getAttribute('data-unit');
-            chip.classList.toggle('active', u === state.units);
+            chip.classList.toggle('active', u === (state.unitSystem || 'customary'));
         });
 
         // Checkbox Toggles

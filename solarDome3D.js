@@ -23,7 +23,9 @@ export class SolarDome3D {
             showSunRays: true,
             transparentMassings: true,
             showDimensions: false,
-            unitSystem: 'metric',
+            unitSystem: 'customary',
+            theme: 'dark',
+            houseColor: '#ffffff',
             massings: []
         };
 
@@ -125,16 +127,16 @@ export class SolarDome3D {
         const isLight = this.state.theme === 'light';
 
         const canvas = document.createElement('canvas');
-        canvas.width = 2048;
-        canvas.height = 2048;
+        canvas.width = 1024;
+        canvas.height = 1024;
         const ctx = canvas.getContext('2d');
-        const cx = 1024;
-        const cy = 1024;
-        const r = 940;
+        const cx = 512;
+        const cy = 512;
+        const r = 470;
 
         ctx.fillStyle = isLight ? '#ffffff' : '#101318';
         ctx.beginPath();
-        ctx.arc(cx, cy, 1020, 0, Math.PI * 2);
+        ctx.arc(cx, cy, 510, 0, Math.PI * 2);
         ctx.fill();
 
         for (let el = 0; el <= 80; el += 10) {
@@ -142,23 +144,23 @@ export class SolarDome3D {
             ctx.beginPath();
             ctx.arc(cx, cy, circleR, 0, Math.PI * 2);
             if (el === 0) {
-                ctx.lineWidth = 6;
+                ctx.lineWidth = 3;
                 ctx.strokeStyle = isLight ? '#94a3b8' : '#475063';
             } else {
-                ctx.lineWidth = el % 30 === 0 ? 3 : 1.5;
+                ctx.lineWidth = el % 30 === 0 ? 1.8 : 1.0;
                 ctx.strokeStyle = isLight ? (el % 30 === 0 ? '#cbd5e1' : '#e2e8f0') : (el % 30 === 0 ? '#262b36' : '#181c24');
             }
             ctx.stroke();
 
             if (el > 0) {
-                ctx.font = 'bold 22px "Roboto Mono", monospace';
+                ctx.font = 'bold 12px "Roboto Mono", monospace';
                 ctx.fillStyle = isLight ? '#64748b' : '#6b7280';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 // North segment
-                ctx.fillText(`${el}°`, cx, cy - circleR + 26);
+                ctx.fillText(`${el}°`, cx, cy - circleR + 14);
                 // South segment
-                ctx.fillText(`${el}°`, cx, cy + circleR - 26);
+                ctx.fillText(`${el}°`, cx, cy + circleR - 14);
             }
         }
 
@@ -174,21 +176,21 @@ export class SolarDome3D {
             ctx.lineTo(xOuter, yOuter);
 
             if (isCardinal) {
-                ctx.lineWidth = 3.5;
+                ctx.lineWidth = 2.0;
                 ctx.strokeStyle = isLight ? '#94a3b8' : '#374151';
             } else if (isMajor) {
-                ctx.lineWidth = 2.0;
+                ctx.lineWidth = 1.2;
                 ctx.strokeStyle = isLight ? '#cbd5e1' : '#262b36';
             } else {
-                ctx.lineWidth = 1.0;
+                ctx.lineWidth = 0.8;
                 ctx.strokeStyle = isLight ? '#e2e8f0' : '#181c24';
             }
             ctx.stroke();
 
             if (isMajor && !isCardinal) {
-                const xT = cx + (r + 38) * Math.sin(rad);
-                const yT = cy - (r + 38) * Math.cos(rad);
-                ctx.font = '20px "Roboto Mono", monospace';
+                const xT = cx + (r + 20) * Math.sin(rad);
+                const yT = cy - (r + 20) * Math.cos(rad);
+                ctx.font = '11px "Roboto Mono", monospace';
                 ctx.fillStyle = isLight ? '#64748b' : '#6b7280';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
@@ -205,9 +207,9 @@ export class SolarDome3D {
 
         cardinals.forEach(c => {
             const rad = c.deg * Math.PI / 180;
-            const xT = cx + (r - 65) * Math.sin(rad);
-            const yT = cy - (r - 65) * Math.cos(rad);
-            ctx.font = 'bold 32px "Roboto", sans-serif';
+            const xT = cx + (r - 34) * Math.sin(rad);
+            const yT = cy - (r - 34) * Math.cos(rad);
+            ctx.font = 'bold 16px "Roboto", sans-serif';
             ctx.fillStyle = c.color;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -215,7 +217,7 @@ export class SolarDome3D {
         });
 
         const texture = new THREE.CanvasTexture(canvas);
-        texture.anisotropy = 8;
+        texture.anisotropy = 4;
 
         if (this.groundMesh) {
             this.groundMesh.material.map?.dispose();
