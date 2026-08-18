@@ -318,12 +318,27 @@ export class PolarChart2D {
             const baseDayOfYear = SolarCalc.getDayOfYear(baseDate);
             const baseMinutes = baseDate.getHours() * 60 + baseDate.getMinutes() + baseDate.getSeconds() / 60;
 
-            // Dragging Left/Right changes Time of Day (1px = 1.8 mins)
-            let newMinutes = baseMinutes + deltaX * 1.8;
+            // 1. Horizontal Drag (Left/Right) -> Time of Day
+            // Sun moves from East (Right) in morning to West (Left) in afternoon.
+            // Dragging RIGHT (deltaX > 0) moves sun RIGHT (earlier morning time).
+            // Dragging LEFT (deltaX < 0) moves sun LEFT (later afternoon time).
+            let newMinutes = baseMinutes - deltaX * 1.8;
             newMinutes = (newMinutes % 1440 + 1440) % 1440;
 
-            // Dragging Up/Down changes Day of Year (1px = 1.0 day; dragging up increases day of year)
-            let newDayOfYear = Math.round(baseDayOfYear - deltaY * 1.0);
+            // 2. Vertical Drag (Up/Down) -> Season / Day of Year
+            // Dragging UP (deltaY < 0) moves the sun UP (towards Summer Solstice / Zenith).
+            // Dragging DOWN (deltaY > 0) moves the sun DOWN (towards Winter Solstice / Horizon).
+            const isNorthern = this.state.latitude >= 0;
+            let dayDirection = 1;
+            if (isNorthern) {
+                // In Northern Hemisphere: Jan-Jun (1..172) increases towards summer; Jul-Dec (173..365) decreases towards summer
+                dayDirection = baseDayOfYear <= 172 ? 1 : -1;
+            } else {
+                // In Southern Hemisphere: Jul-Dec (173..355) increases towards summer; Jan-Jun (1..172) decreases towards summer
+                dayDirection = baseDayOfYear >= 172 ? 1 : -1;
+            }
+
+            let newDayOfYear = Math.round(baseDayOfYear + (-deltaY * 1.0) * dayDirection);
             newDayOfYear = ((newDayOfYear - 1) % 365 + 365) % 365 + 1;
 
             const year = baseDate.getFullYear();
