@@ -240,7 +240,7 @@ export class SolarDome3D {
 
         const ringGeo = new THREE.RingGeometry(groundRadius - 0.1, groundRadius + 0.3, 64);
         const ringMat = new THREE.MeshBasicMaterial({
-            color: isLight ? 0x94a3b8 : 0x475063,
+            color: 0x475063,
             side: THREE.DoubleSide
         });
         const baseRing = new THREE.Mesh(ringGeo, ringMat);

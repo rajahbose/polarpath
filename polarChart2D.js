@@ -734,13 +734,13 @@ export class PolarChart2D {
             
             // Lineweight & color hierarchy
             if (is30) {
-                ctx.strokeStyle = isLight ? '#64748b' : '#4b5563';
+                ctx.strokeStyle = '#4b5563';
                 ctx.lineWidth = 1.0;
             } else if (is10) {
-                ctx.strokeStyle = isLight ? '#94a3b8' : '#374151';
+                ctx.strokeStyle = '#374151';
                 ctx.lineWidth = 0.75;
             } else {
-                ctx.strokeStyle = isLight ? '#cbd5e1' : '#262b36';
+                ctx.strokeStyle = '#262b36';
                 ctx.lineWidth = 0.5;
             }
             ctx.stroke();
@@ -750,7 +750,7 @@ export class PolarChart2D {
                 const xText = centerX + (radius + 15) * Math.sin(rad);
                 const yText = centerY - (radius + 15) * Math.cos(rad);
                 ctx.font = '8px "Roboto Mono", monospace';
-                ctx.fillStyle = isLight ? '#64748b' : '#6b7280';
+                ctx.fillStyle = '#6b7280';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(`${az}°`, xText, yText);
@@ -759,10 +759,10 @@ export class PolarChart2D {
 
         // Cardinal Labels
         const cardinals = [
-            { label: 'N', deg: 0, color: isLight ? '#0f172a' : '#f3f4f6' },
-            { label: 'E', deg: 90, color: isLight ? '#475569' : '#9ca3af' },
-            { label: 'S', deg: 180, color: isLight ? '#475569' : '#9ca3af' },
-            { label: 'W', deg: 270, color: isLight ? '#475569' : '#9ca3af' }
+            { label: 'N', deg: 0, color: '#f3f4f6' },
+            { label: 'E', deg: 90, color: '#9ca3af' },
+            { label: 'S', deg: 180, color: '#9ca3af' },
+            { label: 'W', deg: 270, color: '#9ca3af' }
         ];
 
         cardinals.forEach(item => {
@@ -931,7 +931,7 @@ export class PolarChart2D {
                     ctx.lineTo(firstPt.x, firstPt.y);
                 }
 
-                ctx.strokeStyle = isLight ? '#cbd5e1' : '#374151';
+                ctx.strokeStyle = '#374151';
                 ctx.lineWidth = 0.8;
                 ctx.stroke();
                 ctx.setLineDash([]);
@@ -944,7 +944,7 @@ export class PolarChart2D {
                 if (midPt && midPt.elevation > 8) {
                     const pt = this.polarToCanvas(midPt.elevation, midPt.azimuth);
                     ctx.font = '8px "Roboto Mono", monospace';
-                    ctx.fillStyle = isLight ? '#64748b' : '#6b7280';
+                    ctx.fillStyle = '#6b7280';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(curve.label, pt.x, pt.y);
