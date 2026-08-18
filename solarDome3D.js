@@ -24,7 +24,6 @@ export class SolarDome3D {
             transparentMassings: true,
             showDimensions: false,
             unitSystem: 'customary',
-            theme: 'dark',
             houseColor: '#ffffff',
             massings: []
         };
@@ -124,7 +123,6 @@ export class SolarDome3D {
 
     buildPolarBase() {
         const groundRadius = 38;
-        const isLight = this.state.theme === 'light';
 
         const canvas = document.createElement('canvas');
         canvas.width = 1024;
@@ -134,7 +132,7 @@ export class SolarDome3D {
         const cy = 512;
         const r = 470;
 
-        ctx.fillStyle = isLight ? '#ffffff' : '#101318';
+        ctx.fillStyle = '#101318';
         ctx.beginPath();
         ctx.arc(cx, cy, 510, 0, Math.PI * 2);
         ctx.fill();
@@ -145,16 +143,16 @@ export class SolarDome3D {
             ctx.arc(cx, cy, circleR, 0, Math.PI * 2);
             if (el === 0) {
                 ctx.lineWidth = 3;
-                ctx.strokeStyle = isLight ? '#94a3b8' : '#475063';
+                ctx.strokeStyle = '#475063';
             } else {
                 ctx.lineWidth = el % 30 === 0 ? 1.8 : 1.0;
-                ctx.strokeStyle = isLight ? (el % 30 === 0 ? '#cbd5e1' : '#e2e8f0') : (el % 30 === 0 ? '#262b36' : '#181c24');
+                ctx.strokeStyle = el % 30 === 0 ? '#262b36' : '#181c24';
             }
             ctx.stroke();
 
             if (el > 0) {
                 ctx.font = 'bold 12px "Roboto Mono", monospace';
-                ctx.fillStyle = isLight ? '#64748b' : '#6b7280';
+                ctx.fillStyle = '#6b7280';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 // North segment
@@ -177,13 +175,13 @@ export class SolarDome3D {
 
             if (isCardinal) {
                 ctx.lineWidth = 2.0;
-                ctx.strokeStyle = isLight ? '#94a3b8' : '#374151';
+                ctx.strokeStyle = '#374151';
             } else if (isMajor) {
                 ctx.lineWidth = 1.2;
-                ctx.strokeStyle = isLight ? '#cbd5e1' : '#262b36';
+                ctx.strokeStyle = '#262b36';
             } else {
                 ctx.lineWidth = 0.8;
-                ctx.strokeStyle = isLight ? '#e2e8f0' : '#181c24';
+                ctx.strokeStyle = '#181c24';
             }
             ctx.stroke();
 
@@ -191,7 +189,7 @@ export class SolarDome3D {
                 const xT = cx + (r + 20) * Math.sin(rad);
                 const yT = cy - (r + 20) * Math.cos(rad);
                 ctx.font = '11px "Roboto Mono", monospace';
-                ctx.fillStyle = isLight ? '#64748b' : '#6b7280';
+                ctx.fillStyle = '#6b7280';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(`${az}°`, xT, yT);
@@ -199,10 +197,10 @@ export class SolarDome3D {
         }
 
         const cardinals = [
-            { label: 'NORTH', deg: 0, color: isLight ? '#0f172a' : '#f3f4f6' },
-            { label: 'EAST', deg: 90, color: isLight ? '#475569' : '#9ca3af' },
-            { label: 'SOUTH', deg: 180, color: isLight ? '#475569' : '#9ca3af' },
-            { label: 'WEST', deg: 270, color: isLight ? '#475569' : '#9ca3af' }
+            { label: 'NORTH', deg: 0, color: '#f3f4f6' },
+            { label: 'EAST', deg: 90, color: '#9ca3af' },
+            { label: 'SOUTH', deg: 180, color: '#9ca3af' },
+            { label: 'WEST', deg: 270, color: '#9ca3af' }
         ];
 
         cardinals.forEach(c => {
@@ -466,19 +464,11 @@ export class SolarDome3D {
         const oldLon = this.state.longitude;
         const oldDate = this.state.date;
         const oldZoom = this.state.zoomScale;
-        const oldTheme = this.state.theme;
 
         this.state = { ...this.state, ...newState };
 
         if (newState.houseColor !== undefined && this.houseMesh) {
             this.houseMesh.material.color.set(this.state.houseColor);
-        }
-
-        if (newState.theme !== undefined && newState.theme !== oldTheme) {
-            const isLight = this.state.theme === 'light';
-            this.renderer.setClearColor(isLight ? 0xf8fafc : 0x0a0c10, 1);
-            this.scene.background = new THREE.Color(isLight ? 0xf8fafc : 0x0a0c10);
-            this.buildPolarBase();
         }
 
         if (newState.zoomScale !== undefined && newState.zoomScale !== oldZoom) {

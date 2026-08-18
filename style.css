@@ -19,47 +19,6 @@
     --font-mono: 'Roboto Mono', monospace;
 }
 
-[data-theme="light"],
-html.light-mode {
-    --bg-main: #f8fafc;
-    --bg-surface: #ffffff;
-    --bg-card: #f1f5f9;
-    --bg-card-hover: #e2e8f0;
-    --bg-input: #ffffff;
-    --border-color: #cbd5e1;
-    --border-active: #94a3b8;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #64748b;
-    --accent-sun: #d97706;
-    --accent-sun-dim: #b45309;
-    --accent-active: #1e293b;
-}
-
-[data-theme="light"] header {
-    background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-[data-theme="light"] .control-station {
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
-}
-
-[data-theme="light"] .custom-range {
-    background: #cbd5e1;
-}
-
-[data-theme="light"] .mobile-nav-bar {
-    background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-[data-theme="light"] .mobile-card-section {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-}
-
 @supports (height: 100dvh) {
     :root {
         --app-height: 100dvh;
@@ -2268,18 +2227,19 @@ header {
     gap: 0.45rem;
 }
 
-/* Theme Chips */
-.theme-toggle-chips, .unit-toggle-chips {
+/* Measurement Units Chips */
+.unit-toggle-chips {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
 }
 
-.theme-chip, .unit-chip {
+.unit-chip {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.15rem;
     padding: 0.65rem 0.85rem;
     background: var(--bg-card);
     border: 1.5px solid var(--border-color);
@@ -2290,12 +2250,6 @@ header {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.15s;
-}
-
-.unit-chip {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.15rem;
 }
 
 .unit-chip-title {
@@ -2309,12 +2263,12 @@ header {
     font-family: var(--font-mono);
 }
 
-.theme-chip:hover, .unit-chip:hover {
+.unit-chip:hover {
     background: var(--bg-card-hover);
     color: var(--text-primary);
 }
 
-.theme-chip.active, .unit-chip.active {
+.unit-chip.active {
     border-color: var(--accent-sun);
     background: rgba(245, 158, 11, 0.1);
     color: var(--text-primary);

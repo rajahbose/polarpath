@@ -27,7 +27,6 @@ class SunDomeApp {
             transparentMassings: true,
             showDimensions: false,
             unitSystem: 'customary', // 'metric' | 'customary' (default: customary Ft In)
-            theme: 'dark', // 'dark' | 'light'
             houseColor: '#ffffff',
             zoomScale: (typeof window !== 'undefined' && window.innerWidth <= 820) ? 0.26 : 1.0,
             isPlaying: false,
@@ -239,11 +238,6 @@ class SunDomeApp {
         }
 
         // Mobile Settings Page Controls
-        const btnDarkMobile = document.getElementById('btnThemeDarkMobile');
-        const btnLightMobile = document.getElementById('btnThemeLightMobile');
-        if (btnDarkMobile) btnDarkMobile.addEventListener('click', () => this.onSettingChange('theme', 'dark'));
-        if (btnLightMobile) btnLightMobile.addEventListener('click', () => this.onSettingChange('theme', 'light'));
-
         const inputHouseColorMob = document.getElementById('inputHouseColorMobile');
         if (inputHouseColorMob) {
             inputHouseColorMob.addEventListener('input', (e) => this.onSettingChange('houseColor', e.target.value));
@@ -585,14 +579,7 @@ class SunDomeApp {
     onSettingChange(key, value) {
         this.state[key] = value;
 
-        if (key === 'theme') {
-            document.documentElement.setAttribute('data-theme', value);
-            if (value === 'light') {
-                document.documentElement.classList.add('light-mode');
-            } else {
-                document.documentElement.classList.remove('light-mode');
-            }
-        } else if (key === 'unitSystem') {
+        if (key === 'unitSystem') {
             this.setUnitSystem(value);
         }
 
@@ -603,14 +590,7 @@ class SunDomeApp {
     }
 
     syncMobileSettingsUi() {
-        // 1. Theme Chips
-        const isDark = this.state.theme === 'dark';
-        const btnDarkMob = document.getElementById('btnThemeDarkMobile');
-        const btnLightMob = document.getElementById('btnThemeLightMobile');
-        if (btnDarkMob) btnDarkMob.classList.toggle('active', isDark);
-        if (btnLightMob) btnLightMob.classList.toggle('active', !isDark);
-
-        // 2. Building Color
+        // 1. Building Color
         const color = (this.state.houseColor || '#ffffff').toUpperCase();
         const inputHouseColorMob = document.getElementById('inputHouseColorMobile');
         const colorSwatchMob = document.getElementById('colorPreviewSwatchMobile');
@@ -1113,7 +1093,6 @@ class SunDomeApp {
             transparentMassings: this.state.transparentMassings,
             showDimensions: this.state.showDimensions,
             unitSystem: this.state.unitSystem,
-            theme: this.state.theme,
             houseColor: this.state.houseColor,
             zoomScale: polarZoom,
             massings: this.state.massings,
@@ -1130,7 +1109,6 @@ class SunDomeApp {
             transparentMassings: this.state.transparentMassings,
             showDimensions: this.state.showDimensions,
             unitSystem: this.state.unitSystem,
-            theme: this.state.theme,
             houseColor: this.state.houseColor,
             zoomScale: domeZoom,
             massings: this.state.massings

@@ -60,44 +60,7 @@ export class SettingsModal {
 
                 <!-- Modal Body -->
                 <div class="settings-modal-body">
-                    <!-- SECTION 1: Appearance & Theme -->
-                    <div class="settings-section">
-                        <h3 class="settings-section-title">
-                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="5"/>
-                                <line x1="12" y1="1" x2="12" y2="3"/>
-                                <line x1="12" y1="21" x2="12" y2="23"/>
-                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                                <line x1="1" y1="12" x2="3" y2="12"/>
-                                <line x1="21" y1="12" x2="23" y2="12"/>
-                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                            </svg>
-                            Appearance & Theme
-                        </h3>
-                        <div class="settings-theme-row">
-                            <div class="theme-toggle-chips">
-                                <button type="button" class="theme-chip active" data-theme="dark" id="btnThemeDark">
-                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                                    </svg>
-                                    Dark Mode
-                                </button>
-                                <button type="button" class="theme-chip" data-theme="light" id="btnThemeLight">
-                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="5"/>
-                                        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                                        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-                                    </svg>
-                                    Light Mode
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SECTION 2: Building Color -->
+                    <!-- SECTION 1: Building Color -->
                     <div class="settings-section">
                         <h3 class="settings-section-title">
                             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
@@ -243,14 +206,6 @@ export class SettingsModal {
             }
         });
 
-        // Theme Toggle Chips (Desktop Modal & Mobile Tab)
-        document.querySelectorAll('.theme-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
-                const theme = chip.getAttribute('data-theme');
-                this.onSettingChange('theme', theme);
-            });
-        });
-
         // Building Color Picker Input
         const houseColorInput = document.getElementById('inputHouseColor');
         const houseColorInputMobile = document.getElementById('inputHouseColorMobile');
@@ -341,12 +296,6 @@ export class SettingsModal {
     syncUiWithState(externalState) {
         const state = externalState || (typeof this.getAppState === 'function' ? this.getAppState() : null);
         if (!state) return;
-
-        // Theme Chips
-        document.querySelectorAll('.theme-chip').forEach(chip => {
-            const t = chip.getAttribute('data-theme');
-            chip.classList.toggle('active', t === (state.theme || 'dark'));
-        });
 
         // House Color
         const houseColor = state.houseColor || '#ffffff';
