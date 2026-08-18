@@ -339,10 +339,10 @@ export class SolarDome3D {
         this.haloMesh = new THREE.Mesh(haloGeo, haloMat);
         this.sunGroup.add(this.haloMesh);
 
-        // Floating Sun Label (Time of Day & Time of Year in subtle architectural typography)
+        // Floating Sun Info Badge: Matching 2D Polar Chart style, font, color, and dimensions
         this.sunLabelCanvas = document.createElement('canvas');
         this.sunLabelCanvas.width = 512;
-        this.sunLabelCanvas.height = 256;
+        this.sunLabelCanvas.height = 128;
         this.sunLabelCtx = this.sunLabelCanvas.getContext('2d');
         this.sunLabelTexture = new THREE.CanvasTexture(this.sunLabelCanvas);
         this.sunLabelTexture.minFilter = THREE.LinearFilter;
@@ -355,8 +355,8 @@ export class SolarDome3D {
             transparent: true
         });
         this.sunLabelSprite = new THREE.Sprite(labelMat);
-        this.sunLabelSprite.scale.set(4.6, 2.3, 1);
-        this.sunLabelSprite.position.set(0, -3.2, 0);
+        this.sunLabelSprite.scale.set(4.4, 1.1, 1);
+        this.sunLabelSprite.position.set(0, -2.5, 0);
         this.sunLabelSprite.renderOrder = 999;
         this.sunGroup.add(this.sunLabelSprite);
         this.updateSunLabel();
@@ -750,7 +750,7 @@ export class SolarDome3D {
             this.sunLight.target.position.set(0, 0, 0);
             this.sunLight.intensity = 2.4;
             this.sunGroup.visible = true;
-            this.updateSunLabel();
+            this.updateSunLabel(pos);
         } else {
             this.sunLight.intensity = 0.05;
             this.sunGroup.visible = false;
@@ -760,9 +760,10 @@ export class SolarDome3D {
         this.analemmaCurvesGroup.visible = !!this.state.showAnalemmas;
     }
 
-    updateSunLabel() {
+    updateSunLabel(pos) {
         if (!this.sunLabelCtx || !this.sunLabelTexture) return;
 
+        const solarPos = pos || SolarCalc.getSolarPosition(this.state.date, this.state.latitude, this.state.longitude);
         const ctx = this.sunLabelCtx;
         const d = this.state.date;
 
@@ -773,42 +774,35 @@ export class SolarDome3D {
         const displayM = mins.toString().padStart(2, '0');
         const timeStr = `${displayH}:${displayM} ${period}`;
 
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const dateStr = `${monthNames[d.getMonth()]} ${d.getDate()}`;
+        const line1 = `${solarPos.elevation.toFixed(1)}° el | ${solarPos.azimuth.toFixed(1)}° az`;
+        const line2 = timeStr;
 
-        ctx.clearRect(0, 0, 512, 256);
+        ctx.clearRect(0, 0, 512, 128);
 
-        // Badge Container Box
-        const w = 310;
-        const h = 104;
-        const x = (512 - w) / 2;
-        const y = (256 - h) / 2;
-        const radius = 14;
+        // Rectangular Info Badge Matching 2D Polar Chart exactly
+        const tagW = 440;
+        const tagH = 96;
+        const tagX = (512 - tagW) / 2;
+        const tagY = (128 - tagH) / 2;
+        const textCenterX = 256;
 
-        ctx.beginPath();
-        if (typeof ctx.roundRect === 'function') {
-            ctx.roundRect(x, y, w, h, radius);
-        } else {
-            ctx.rect(x, y, w, h);
-        }
-        ctx.fillStyle = 'rgba(15, 20, 28, 0.88)';
-        ctx.fill();
+        ctx.fillStyle = 'rgba(24, 28, 36, 0.94)';
+        ctx.strokeStyle = '#2d3545';
+        ctx.lineWidth = 2;
+        ctx.fillRect(tagX, tagY, tagW, tagH);
+        ctx.strokeRect(tagX, tagY, tagW, tagH);
 
-        ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-
-        // Line 1: Time of Day (Subtle Golden Amber Accent)
-        ctx.font = '700 32px "Roboto Mono", monospace';
-        ctx.fillStyle = '#f59e0b';
+        // Line 1: Solar angles (Matching #f3f4f6, 500 weight "Roboto Mono")
         ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(timeStr, 256, y + 34);
+        ctx.fillStyle = '#f3f4f6';
+        ctx.font = '500 32px "Roboto Mono", monospace';
+        ctx.textBaseline = 'top';
+        ctx.fillText(line1, textCenterX, tagY + 13);
 
-        // Line 2: Time of Year (Subtle Neutral Gray Font)
-        ctx.font = '500 24px "Roboto Mono", monospace';
-        ctx.fillStyle = '#9ca3af';
-        ctx.fillText(dateStr, 256, y + 74);
+        // Line 2: Time of day (Matching #f59e0b, 700 weight "Roboto Mono")
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = '700 32px "Roboto Mono", monospace';
+        ctx.fillText(line2, textCenterX, tagY + 53);
 
         this.sunLabelTexture.needsUpdate = true;
     }
