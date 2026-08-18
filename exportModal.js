@@ -498,6 +498,10 @@ export class ExportModal {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
             ctx.fillText(`${el}°`, centerX, centerY - r - 2);
+
+            // Elevation label (South spoke)
+            ctx.textBaseline = 'top';
+            ctx.fillText(`${el}°`, centerX, centerY + r + 2);
         }
 
         // Horizon Ring (0° Elevation)

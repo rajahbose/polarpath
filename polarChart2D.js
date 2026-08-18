@@ -582,7 +582,10 @@ export class PolarChart2D {
                 ctx.fillStyle = '#6b7280';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
+                // North segment (between center and North)
                 ctx.fillText(`${el}°`, centerX, centerY - r + 8);
+                // South segment (between center and South)
+                ctx.fillText(`${el}°`, centerX, centerY + r - 8);
             }
         });
 
