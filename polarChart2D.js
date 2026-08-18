@@ -8,7 +8,7 @@
 import { SolarCalc } from './solarCalc.js';
 
 export class PolarChart2D {
-    constructor(canvasContainerId, onSelectTimeCallback, onPolygonCompletedCallback, onMassingSelectedCallback, onMassingMovedCallback) {
+    constructor(canvasContainerId, onSelectTimeCallback, onPolygonCompletedCallback, onMassingSelectedCallback, onMassingMovedCallback, onSunDraggedCallback) {
         this.container = document.getElementById(canvasContainerId);
         this.canvas = document.createElement('canvas');
         this.canvas.className = 'polar-canvas';
@@ -19,6 +19,7 @@ export class PolarChart2D {
         this.onPolygonCompletedCallback = onPolygonCompletedCallback;
         this.onMassingSelectedCallback = onMassingSelectedCallback;
         this.onMassingMovedCallback = onMassingMovedCallback;
+        this.onSunDraggedCallback = onSunDraggedCallback;
 
         this.state = {
             date: new Date(),
@@ -26,6 +27,7 @@ export class PolarChart2D {
             longitude: -105.9378,
             showAnalemmas: true,
             showAllMonths: true,
+            showHourAndEventLabels: true,
             transparentMassings: true,
             showDimensions: false,
             unitSystem: 'customary', // 'metric' (m, m²) | 'customary' (ft, sq ft)
@@ -38,7 +40,10 @@ export class PolarChart2D {
             massings: [],
             selectedMassingId: null,
             isDraggingMassing: false,
-            dragStartPos: null
+            dragStartPos: null,
+            isDraggingSun: false,
+            sunDragStartPos: null,
+            sunDragStartDate: null
         };
 
         // Scale: 1 meter in 3D = 10.0 pixels on 2D canvas at 1.0x zoom
@@ -279,19 +284,70 @@ export class PolarChart2D {
         return `${m2.toFixed(1)} m²`;
     }
 
+    isNearCurrentSun(pos) {
+        if (this.state.isSketchOnlyMode) return false;
+        const solPos = SolarCalc.getSolarPosition(this.state.date, this.state.latitude, this.state.longitude);
+        if (solPos.elevation < 0) return false;
+        const sunPt = this.polarToCanvas(solPos.elevation, solPos.azimuth);
+        const dist = Math.hypot(pos.x - sunPt.x, pos.y - sunPt.y);
+        const isMobile = (typeof window !== 'undefined' && window.innerWidth <= 820) || this.width < 520;
+        const threshold = isMobile ? 36 : 24; // Generous touch target
+        return dist <= threshold;
+    }
+
     setupEventListeners() {
         let isScrubbing = false;
 
         const getPos = (e) => {
             const rect = this.canvas.getBoundingClientRect();
+            const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+            const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
             return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
+                x: clientX - rect.left,
+                y: clientY - rect.top
             };
+        };
+
+        const handleSunDrag = (pos) => {
+            if (!this.state.isDraggingSun || !this.state.sunDragStartPos || !this.state.sunDragStartDate) return;
+
+            const deltaX = pos.x - this.state.sunDragStartPos.x;
+            const deltaY = pos.y - this.state.sunDragStartPos.y;
+
+            const baseDate = this.state.sunDragStartDate;
+            const baseDayOfYear = SolarCalc.getDayOfYear(baseDate);
+            const baseMinutes = baseDate.getHours() * 60 + baseDate.getMinutes() + baseDate.getSeconds() / 60;
+
+            // Dragging Left/Right changes Time of Day (1px = 1.8 mins)
+            let newMinutes = baseMinutes + deltaX * 1.8;
+            newMinutes = (newMinutes % 1440 + 1440) % 1440;
+
+            // Dragging Up/Down changes Day of Year (1px = 1.0 day; dragging up increases day of year)
+            let newDayOfYear = Math.round(baseDayOfYear - deltaY * 1.0);
+            newDayOfYear = ((newDayOfYear - 1) % 365 + 365) % 365 + 1;
+
+            const year = baseDate.getFullYear();
+            const newDate = new Date(year, 0, 1);
+            newDate.setDate(newDayOfYear);
+            const h = Math.floor(newMinutes / 60);
+            const min = Math.floor(newMinutes % 60);
+            const s = Math.floor((newMinutes * 60) % 60);
+            newDate.setHours(h, min, s);
+
+            this.canvas.style.cursor = 'grabbing';
+            if (this.onSunDraggedCallback) {
+                this.onSunDraggedCallback(newDate);
+            }
         };
 
         this.canvas.addEventListener('mousemove', (e) => {
             const pos = getPos(e);
+
+            // If dragging sun
+            if (this.state.isDraggingSun) {
+                handleSunDrag(pos);
+                return;
+            }
 
             // If dragging an existing selected massing
             if (this.state.isDraggingMassing && this.state.selectedMassingId) {
@@ -362,11 +418,15 @@ export class PolarChart2D {
             }
 
             // Normal mode
-            const hoveredMassing = this.getMassingAtPoint(pos.x, pos.y);
-            if (hoveredMassing) {
-                this.canvas.style.cursor = 'move';
+            if (this.isNearCurrentSun(pos)) {
+                this.canvas.style.cursor = 'grab';
             } else {
-                this.canvas.style.cursor = 'default';
+                const hoveredMassing = this.getMassingAtPoint(pos.x, pos.y);
+                if (hoveredMassing) {
+                    this.canvas.style.cursor = 'move';
+                } else {
+                    this.canvas.style.cursor = 'default';
+                }
             }
 
             const polar = this.canvasToPolar(pos.x, pos.y);
@@ -393,6 +453,15 @@ export class PolarChart2D {
                 const targetPoint = this.state.hoverPoint || pos;
                 this.state.activePolygon.push({ x: targetPoint.x, y: targetPoint.y });
                 this.render();
+                return;
+            }
+
+            // Check if user clicked the Sun to drag it
+            if (this.isNearCurrentSun(pos)) {
+                this.state.isDraggingSun = true;
+                this.state.sunDragStartPos = pos;
+                this.state.sunDragStartDate = new Date(this.state.date.getTime());
+                this.canvas.style.cursor = 'grabbing';
                 return;
             }
 
@@ -423,6 +492,33 @@ export class PolarChart2D {
             }
         });
 
+        // Touch event handlers for mobile gesture control
+        this.canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                const pos = getPos(e);
+                if (!this.state.isDrawMode && this.isNearCurrentSun(pos)) {
+                    this.state.isDraggingSun = true;
+                    this.state.sunDragStartPos = pos;
+                    this.state.sunDragStartDate = new Date(this.state.date.getTime());
+                    e.preventDefault();
+                }
+            }
+        }, { passive: false });
+
+        this.canvas.addEventListener('touchmove', (e) => {
+            if (this.state.isDraggingSun && e.touches.length === 1) {
+                e.preventDefault();
+                const pos = getPos(e);
+                handleSunDrag(pos);
+            }
+        }, { passive: false });
+
+        const endTouch = () => {
+            this.state.isDraggingSun = false;
+        };
+        this.canvas.addEventListener('touchend', endTouch);
+        this.canvas.addEventListener('touchcancel', endTouch);
+
         this.canvas.addEventListener('dblclick', () => {
             if (this.state.isDrawMode && this.state.activePolygon.length >= 3) {
                 this.finishCurrentDrawing();
@@ -432,6 +528,7 @@ export class PolarChart2D {
         window.addEventListener('mouseup', () => {
             isScrubbing = false;
             this.state.isDraggingMassing = false;
+            this.state.isDraggingSun = false;
         });
 
         window.addEventListener('keydown', (e) => {
@@ -849,8 +946,9 @@ export class PolarChart2D {
                 ctx.setLineDash([]);
             });
 
-            // Hour Label (only when labels are enabled)
-            if (showLabels && segments.length > 0 && segments[0].length > 4) {
+            // Hour Label (only when labels are enabled and NOT on mobile screens)
+            const isMobile = this.width < 520 || (typeof window !== 'undefined' && window.innerWidth <= 820);
+            if (!isMobile && showLabels && segments.length > 0 && segments[0].length > 4) {
                 const midPt = segments[0][Math.floor(segments[0].length / 2)];
                 if (midPt && midPt.elevation > 8) {
                     const pt = this.polarToCanvas(midPt.elevation, midPt.azimuth);

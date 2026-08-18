@@ -43,7 +43,8 @@ class SunDomeApp {
             (minutes) => this.setTimeMinutes(minutes),
             (points2D) => this.onPolygonCompleted(points2D),
             (massing) => this.onMassingSelected(massing),
-            (massing) => this.onMassingMoved(massing)
+            (massing) => this.onMassingMoved(massing),
+            (newDate) => this.onSunDragged(newDate)
         );
 
         // Initialize 3D Solar Dome
@@ -948,6 +949,12 @@ class SunDomeApp {
         this.syncState();
     }
 
+    onSunDragged(newDate) {
+        this.state.date = newDate;
+        this.updateDateInputs();
+        this.syncState();
+    }
+
     setDayOfYear(dayOfYear) {
         const y = this.state.date.getFullYear();
         const curH = this.state.date.getHours();
@@ -1080,12 +1087,11 @@ class SunDomeApp {
         const hudDayLengthM = this.hudDayLengthMobile || document.getElementById('hudDayLengthMobile');
         if (hudDayLengthM) hudDayLengthM.textContent = dayLengthStr;
 
-        // Update Fixed Polar Chart Subbadge on Mobile (Replaces canvas floating badge)
-        const subbadgeEl = document.getElementById('polarChartMobileSubbadge');
-        if (subbadgeEl) {
-            const curHours = this.state.date.getHours() + this.state.date.getMinutes() / 60;
-            subbadgeEl.textContent = `${elevStr} | ${azimStr} • ${this.formatHoursToTime(curHours)}`;
-        }
+        // Update Solar Angle Degree Data Points in Top-Right Corner of Bottom Slider Strip
+        const stripElevEl = document.getElementById('stripElevationVal');
+        if (stripElevEl) stripElevEl.textContent = `${elevStr} el`;
+        const stripAzimEl = document.getElementById('stripAzimuthVal');
+        if (stripAzimEl) stripAzimEl.textContent = `${azimStr} az`;
 
         // Separate 2D scale and 3D scale on mobile mode:
         // 2D chart stays at compact 0.26 (house ~10% width), 3D dome is boosted ~300% to 0.85 for clear presence

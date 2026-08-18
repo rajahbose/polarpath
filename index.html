@@ -132,9 +132,6 @@
                         <span class="panel-title">Polar Chart</span>
                     </div>
 
-                    <!-- Sun angles & time label permanently placed in bottom-left corner of Polar Chart frame on mobile -->
-                    <div class="polar-chart-mobile-subbadge" id="polarChartMobileSubbadge">--° el | --° az • --:-- --</div>
-
                     <!-- Floating Massing & Sketching Manager Card (Desktop only) -->
                     <div class="floating-overlay top-left desktop-only" style="top: 3.25rem; left: 0.85rem;">
                         <div class="massing-manager-card" id="massingManagerCard">
@@ -311,6 +308,12 @@
                                     <span class="time-readout" id="timeDisplay">12:00 PM</span>
                                     <span class="sun-state-badge active-sun" id="daylightBadge">☀️ Daylight</span>
                                 </div>
+                            </div>
+                            <!-- Solar Angle Degree Data Points in Top-Right Corner of Bottom Slider Strip -->
+                            <div class="slider-strip-angles-badge" id="sliderStripAngles" title="Solar Altitude (Elevation) & Compass Azimuth">
+                                <span class="strip-angle-val" id="stripElevationVal">--° el</span>
+                                <span class="strip-angle-sep">•</span>
+                                <span class="strip-angle-val" id="stripAzimuthVal">--° az</span>
                             </div>
                         </div>
                         <div class="slider-container">
