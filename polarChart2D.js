@@ -63,10 +63,11 @@ export class PolarChart2D {
     }
 
     resize() {
+        if (!this.container) return;
         const rect = this.container.getBoundingClientRect();
         const dpr = window.devicePixelRatio || 1;
-        this.width = rect.width || 500;
-        this.height = rect.height || 500;
+        this.width = rect.width > 0 ? rect.width : (this.container.parentElement?.getBoundingClientRect().width || 500);
+        this.height = rect.height > 0 ? rect.height : (this.container.parentElement?.getBoundingClientRect().height || 500);
 
         this.canvas.width = this.width * dpr;
         this.canvas.height = this.height * dpr;
@@ -78,7 +79,7 @@ export class PolarChart2D {
 
         this.centerX = this.width / 2;
         this.centerY = this.height / 2;
-        this.radius = Math.min(this.centerX, this.centerY) - 36;
+        this.radius = Math.max(20, Math.min(this.centerX, this.centerY) - 32);
 
         this.render();
     }

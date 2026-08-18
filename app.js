@@ -471,6 +471,7 @@ class SunDomeApp {
             if (p2DContainer && this.polarChart.canvas.parentNode !== p2DContainer) {
                 p2DContainer.appendChild(this.polarChart.canvas);
             }
+            if (p2DContainer) this.polarChart.container = p2DContainer;
             this.polarChart.updateState({ isSketchOnlyMode: false });
             requestAnimationFrame(() => {
                 this.polarChart.resize();
@@ -486,6 +487,7 @@ class SunDomeApp {
             if (pMassingsContainer && this.polarChart.canvas.parentNode !== pMassingsContainer) {
                 pMassingsContainer.appendChild(this.polarChart.canvas);
             }
+            if (pMassingsContainer) this.polarChart.container = pMassingsContainer;
             this.polarChart.updateState({ isSketchOnlyMode: true });
             requestAnimationFrame(() => {
                 this.polarChart.resize();
