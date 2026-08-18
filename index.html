@@ -40,15 +40,6 @@
         </div>
 
         <div class="header-actions">
-            <!-- Metric / Customary Unit Toggle -->
-            <div class="unit-toggle-group">
-                <span class="unit-label">Units:</span>
-                <div class="unit-toggle-buttons">
-                    <button class="unit-btn" id="btnMetric" data-unit="metric" title="Use Metric Units (meters, m²)">M</button>
-                    <button class="unit-btn active" id="btnCustomary" data-unit="customary" title="Use Customary Units (feet/inches, sq ft)">Ft In</button>
-                </div>
-            </div>
-
             <!-- Location Selector Modal Button -->
             <div class="location-selector">
                 <button class="location-trigger-btn" id="btnOpenLocationModal" title="Open World Map Location Picker">
@@ -63,6 +54,15 @@
                     </svg>
                 </button>
             </div>
+
+            <!-- Settings Modal Button -->
+            <button class="header-icon-btn" id="btnOpenSettingsModal" title="Settings (Theme, Building Color, Units, Labels, Display)">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Settings</span>
+            </button>
 
             <!-- Export PNG Button -->
             <button class="export-png-btn" id="btnExportPng" title="Export 2D Polar Chart (300 DPI Square PNG)">
@@ -106,7 +106,7 @@
                 <circle cx="12" cy="12" r="3"/>
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
             </svg>
-            <span>Analysis</span>
+            <span>Settings</span>
         </button>
         <button class="mobile-tab-btn" data-page="4" id="tabBtn4">
             <svg class="tab-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
@@ -208,41 +208,7 @@
                         </div>
                     </div>
 
-                    <!-- Floating Display Options Panel (Desktop only) -->
-                    <div class="floating-overlay top-right">
-                        <div class="options-panel">
-                            <div class="options-panel-title">Display & Analysis</div>
-                            <label class="toggle-option">
-                                <input type="checkbox" id="chkTransparent" checked>
-                                <span class="custom-chk"></span>
-                                <span>Transparent Buildings (50% Blue)</span>
-                            </label>
-                            <label class="toggle-option">
-                                <input type="checkbox" id="chkDimensions">
-                                <span class="custom-chk"></span>
-                                <span>Turn on Dims & Area</span>
-                            </label>
-                            <div class="options-divider"></div>
-                            <label class="toggle-option">
-                                <input type="checkbox" id="chkMonths" checked>
-                                <span class="custom-chk"></span>
-                                <span>Month Curves</span>
-                            </label>
-                            <label class="toggle-option">
-                                <input type="checkbox" id="chkAnalemmas" checked>
-                                <span class="custom-chk"></span>
-                                <span>Analemmas</span>
-                            </label>
-                            <div class="options-divider"></div>
-                            <div class="zoom-slider-container">
-                                <div class="zoom-label-row">
-                                    <span class="zoom-title">Viewport Scale</span>
-                                    <span class="zoom-readout" id="zoomScaleReadout">1.0×</span>
-                                </div>
-                                <input type="range" id="zoomScaleSlider" min="0.1" max="2.6" step="0.02" value="1.0" class="custom-range" title="Adjust synchronous scale of both viewports">
-                            </div>
-                        </div>
-                    </div>
+
 
                     <!-- Canvas Container -->
                     <div class="viewport-content" id="polarCanvasContainer"></div>
@@ -443,11 +409,77 @@
         </div>
 
         <!-- ========================================================
-             PAGE 4: Units, Display & Analysis (Position 3)
+             PAGE 4: Settings (Position 3)
              ======================================================== -->
-        <div class="mobile-page" id="mobilePageAnalysis" data-page-index="3">
+        <div class="mobile-page" id="mobilePageSettings" data-page-index="3">
             <div class="mobile-settings-page">
-                <!-- Section 1: Measurement Units (Moved here for mobile) -->
+                <!-- Section 1: Appearance & Theme -->
+                <div class="mobile-card-section">
+                    <div class="mobile-section-header">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        <h2 class="mobile-section-title">Appearance & Theme</h2>
+                    </div>
+                    <div class="theme-toggle-chips mobile-theme-toggle">
+                        <button type="button" class="theme-chip active" data-theme="dark" id="btnThemeDarkMobile">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                            Dark Mode
+                        </button>
+                        <button type="button" class="theme-chip" data-theme="light" id="btnThemeLightMobile">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"/>
+                                <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                            </svg>
+                            Light Mode
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section 2: Building Footprint Color -->
+                <div class="mobile-card-section">
+                    <div class="mobile-section-header">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                        </svg>
+                        <h2 class="mobile-section-title">Building Footprint Color</h2>
+                    </div>
+                    <div class="color-picker-container">
+                        <div class="color-picker-wheel-row">
+                            <label class="color-picker-label" title="Click to open color picker wheel">
+                                <input type="color" id="inputHouseColorMobile" class="house-color-input" value="#ffffff">
+                                <span class="color-preview-swatch" id="colorPreviewSwatchMobile" style="background-color: #ffffff;"></span>
+                            </label>
+                            <div class="color-meta-info">
+                                <span class="color-hex-val" id="colorHexReadoutMobile">#FFFFFF</span>
+                                <span class="color-hint">Color wheel & presets</span>
+                            </div>
+                        </div>
+                        <div class="color-presets-row" id="colorPresetsRowMobile">
+                            <button type="button" class="color-preset-btn active" data-hex="#ffffff" title="Pure White" style="background-color: #ffffff;"></button>
+                            <button type="button" class="color-preset-btn" data-hex="#f1f5f9" title="Studio Off-White" style="background-color: #f1f5f9;"></button>
+                            <button type="button" class="color-preset-btn" data-hex="#fde68a" title="Warm Sand" style="background-color: #fde68a;"></button>
+                            <button type="button" class="color-preset-btn" data-hex="#f87171" title="Terracotta" style="background-color: #f87171;"></button>
+                            <button type="button" class="color-preset-btn" data-hex="#86efac" title="Sage Green" style="background-color: #86efac;"></button>
+                            <button type="button" class="color-preset-btn" data-hex="#93c5fd" title="Slate Blue" style="background-color: #93c5fd;"></button>
+                            <button type="button" class="color-preset-btn" data-hex="#334155" title="Charcoal" style="background-color: #334155;"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Measurement Units -->
                 <div class="mobile-card-section">
                     <div class="mobile-section-header">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
@@ -455,38 +487,79 @@
                         </svg>
                         <h2 class="mobile-section-title">Measurement Units</h2>
                     </div>
-                    <div class="unit-toggle-group mobile-unit-toggle">
-                        <button class="unit-btn" id="btnMetricMobile">M (Meters)</button>
-                        <button class="unit-btn active" id="btnCustomaryMobile">Ft In (Feet & Inches)</button>
+                    <div class="unit-toggle-chips mobile-unit-toggle">
+                        <button type="button" class="unit-chip" data-unit="metric" id="btnSettingsMetricMobile">
+                            <span class="unit-chip-title">Meters (M)</span>
+                            <span class="unit-chip-sub">Metric • m, m²</span>
+                        </button>
+                        <button type="button" class="unit-chip active" data-unit="customary" id="btnSettingsCustomaryMobile">
+                            <span class="unit-chip-title">Feet & Inches (Ft In)</span>
+                            <span class="unit-chip-sub">Imperial / US • ft, sq ft</span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Section 2: Display & Analysis Options (Touch-Friendly Buttons) -->
+                <!-- Section 4: Labels & Annotations -->
                 <div class="mobile-card-section">
                     <div class="mobile-section-header">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            <line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>
                         </svg>
-                        <h2 class="mobile-section-title">Display & Analysis Options</h2>
+                        <h2 class="mobile-section-title">Labels & Annotations</h2>
                     </div>
-                    <div class="analysis-toggle-buttons-grid">
-                        <button type="button" class="analysis-toggle-btn active" data-toggle="transparentMassings" id="btnTogTransparentMobile">
-                            <span class="toggle-indicator">✓</span>
-                            <span>Transparent Buildings (50% Blue)</span>
-                        </button>
-                        <button type="button" class="analysis-toggle-btn" data-toggle="showDimensions" id="btnTogDimensionsMobile">
-                            <span class="toggle-indicator">—</span>
-                            <span>Turn on Dims & Area</span>
-                        </button>
-                        <button type="button" class="analysis-toggle-btn active" data-toggle="showAllMonths" id="btnTogMonthsMobile">
-                            <span class="toggle-indicator">✓</span>
-                            <span>Month Curves</span>
-                        </button>
-                        <button type="button" class="analysis-toggle-btn active" data-toggle="showAnalemmas" id="btnTogAnalemmasMobile">
-                            <span class="toggle-indicator">✓</span>
-                            <span>Analemma Hour Curves</span>
-                        </button>
+                    <div class="settings-toggles-list">
+                        <label class="settings-toggle-row">
+                            <input type="checkbox" id="chkSettingHourLabelsMobile" checked>
+                            <span class="settings-switch"></span>
+                            <div class="toggle-text-wrap">
+                                <span class="toggle-main-label">Hour & Solstice/Equinox Labels</span>
+                                <span class="toggle-sub-label">Show time tags on analemmas and season badges</span>
+                            </div>
+                        </label>
+                        <label class="settings-toggle-row">
+                            <input type="checkbox" id="chkSettingDimensionsMobile">
+                            <span class="settings-switch"></span>
+                            <div class="toggle-text-wrap">
+                                <span class="toggle-main-label">Massing Dimensions & Area</span>
+                                <span class="toggle-sub-label">Display edge measurements and square footage</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Section 5: Solar Geometry & Display Options -->
+                <div class="mobile-card-section">
+                    <div class="mobile-section-header">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-sun)" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 12l7-7"/>
+                        </svg>
+                        <h2 class="mobile-section-title">Solar Geometry & Display</h2>
+                    </div>
+                    <div class="settings-toggles-list">
+                        <label class="settings-toggle-row">
+                            <input type="checkbox" id="chkSettingMonthsMobile" checked>
+                            <span class="settings-switch"></span>
+                            <div class="toggle-text-wrap">
+                                <span class="toggle-main-label">Annual Month Curves</span>
+                                <span class="toggle-sub-label">Render 12 monthly solar trajectories</span>
+                            </div>
+                        </label>
+                        <label class="settings-toggle-row">
+                            <input type="checkbox" id="chkSettingAnalemmasMobile" checked>
+                            <span class="settings-switch"></span>
+                            <div class="toggle-text-wrap">
+                                <span class="toggle-main-label">Analemma Hour Curves</span>
+                                <span class="toggle-sub-label">Display figure-8 sun position paths</span>
+                            </div>
+                        </label>
+                        <label class="settings-toggle-row">
+                            <input type="checkbox" id="chkSettingTransparentMobile" checked>
+                            <span class="settings-switch"></span>
+                            <div class="toggle-text-wrap">
+                                <span class="toggle-main-label">Transparent Massings</span>
+                                <span class="toggle-sub-label">Allow solar curves to show through buildings</span>
+                            </div>
+                        </label>
                     </div>
                 </div>
             </div>

@@ -10,6 +10,7 @@ import { PolarChart2D } from './polarChart2D.js';
 import { SolarDome3D } from './solarDome3D.js';
 import { LocationModal } from './locationModal.js';
 import { ExportModal } from './exportModal.js';
+import { SettingsModal } from './settingsModal.js';
 import { CITIES_DATABASE, getCityDisplayName } from './citiesData.js';
 
 class SunDomeApp {
@@ -22,9 +23,12 @@ class SunDomeApp {
             longitude: -105.9378,
             showAnalemmas: true,
             showAllMonths: true,
+            showHourAndEventLabels: true,
             transparentMassings: true,
             showDimensions: false,
             unitSystem: 'customary', // 'metric' | 'customary' (default: customary Ft In)
+            theme: 'dark', // 'dark' | 'light'
+            houseColor: '#ffffff',
             zoomScale: (typeof window !== 'undefined' && window.innerWidth <= 820) ? 0.26 : 1.0,
             isPlaying: false,
             playbackSpeed: 30,
@@ -53,6 +57,9 @@ class SunDomeApp {
             () => ({ ...this.state, currentLocationLabel: this.currentLocationLabel }),
             () => this.polarChart
         );
+
+        // Initialize Floating Settings Modal (Theme, House Color, Units, Labels, Display)
+        this.settingsModal = new SettingsModal((key, val) => this.onSettingChange(key, val));
 
         // Setup DOM Elements & Event Listeners
         this.initDomElements();
@@ -214,6 +221,53 @@ class SunDomeApp {
                 }
             });
         }
+
+        // Open Settings Modal (Desktop Floating Modal or Mobile Tab Switch)
+        const btnOpenSettings = document.getElementById('btnOpenSettingsModal');
+        if (btnOpenSettings) {
+            btnOpenSettings.addEventListener('click', () => {
+                if (window.innerWidth <= 820) {
+                    this.scrollToMobilePage(3);
+                } else {
+                    this.settingsModal.open(this.state);
+                }
+            });
+        }
+
+        // Mobile Settings Page Controls
+        const btnDarkMobile = document.getElementById('btnThemeDarkMobile');
+        const btnLightMobile = document.getElementById('btnThemeLightMobile');
+        if (btnDarkMobile) btnDarkMobile.addEventListener('click', () => this.onSettingChange('theme', 'dark'));
+        if (btnLightMobile) btnLightMobile.addEventListener('click', () => this.onSettingChange('theme', 'light'));
+
+        const inputHouseColorMob = document.getElementById('inputHouseColorMobile');
+        if (inputHouseColorMob) {
+            inputHouseColorMob.addEventListener('input', (e) => this.onSettingChange('houseColor', e.target.value));
+        }
+
+        document.querySelectorAll('#colorPresetsRowMobile .color-preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => this.onSettingChange('houseColor', btn.getAttribute('data-hex')));
+        });
+
+        const btnMetricSetMob = document.getElementById('btnSettingsMetricMobile');
+        const btnCustSetMob = document.getElementById('btnSettingsCustomaryMobile');
+        if (btnMetricSetMob) btnMetricSetMob.addEventListener('click', () => this.onSettingChange('unitSystem', 'metric'));
+        if (btnCustSetMob) btnCustSetMob.addEventListener('click', () => this.onSettingChange('unitSystem', 'customary'));
+
+        const chkHourMob = document.getElementById('chkSettingHourLabelsMobile');
+        if (chkHourMob) chkHourMob.addEventListener('change', (e) => this.onSettingChange('showHourAndEventLabels', e.target.checked));
+
+        const chkDimsMob = document.getElementById('chkSettingDimensionsMobile');
+        if (chkDimsMob) chkDimsMob.addEventListener('change', (e) => this.onSettingChange('showDimensions', e.target.checked));
+
+        const chkMonMob = document.getElementById('chkSettingMonthsMobile');
+        if (chkMonMob) chkMonMob.addEventListener('change', (e) => this.onSettingChange('showAllMonths', e.target.checked));
+
+        const chkAnaMob = document.getElementById('chkSettingAnalemmasMobile');
+        if (chkAnaMob) chkAnaMob.addEventListener('change', (e) => this.onSettingChange('showAnalemmas', e.target.checked));
+
+        const chkTransMob = document.getElementById('chkSettingTransparentMobile');
+        if (chkTransMob) chkTransMob.addEventListener('change', (e) => this.onSettingChange('transparentMassings', e.target.checked));
 
         // Open 300 DPI Export PNG Modal
         if (this.btnExportPng) {
@@ -524,6 +578,71 @@ class SunDomeApp {
         if (this.lonDisplay) this.lonDisplay.textContent = lonStr;
     }
 
+    onSettingChange(key, value) {
+        this.state[key] = value;
+
+        if (key === 'theme') {
+            document.documentElement.setAttribute('data-theme', value);
+            if (value === 'light') {
+                document.documentElement.classList.add('light-mode');
+            } else {
+                document.documentElement.classList.remove('light-mode');
+            }
+        } else if (key === 'unitSystem') {
+            this.setUnitSystem(value);
+        }
+
+        this.polarChart.updateState({ [key]: value });
+        this.solarDome.updateState({ [key]: value });
+        this.settingsModal.syncUiWithState(this.state);
+        this.syncMobileSettingsUi();
+    }
+
+    syncMobileSettingsUi() {
+        // 1. Theme Chips
+        const isDark = this.state.theme === 'dark';
+        const btnDarkMob = document.getElementById('btnThemeDarkMobile');
+        const btnLightMob = document.getElementById('btnThemeLightMobile');
+        if (btnDarkMob) btnDarkMob.classList.toggle('active', isDark);
+        if (btnLightMob) btnLightMob.classList.toggle('active', !isDark);
+
+        // 2. Building Color
+        const color = (this.state.houseColor || '#ffffff').toUpperCase();
+        const inputHouseColorMob = document.getElementById('inputHouseColorMobile');
+        const colorSwatchMob = document.getElementById('colorPreviewSwatchMobile');
+        const hexReadoutMob = document.getElementById('colorHexReadoutMobile');
+        if (inputHouseColorMob) inputHouseColorMob.value = color;
+        if (colorSwatchMob) colorSwatchMob.style.backgroundColor = color;
+        if (hexReadoutMob) hexReadoutMob.textContent = color;
+
+        document.querySelectorAll('#colorPresetsRowMobile .color-preset-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-hex').toUpperCase() === color);
+        });
+
+        // 3. Units Chips
+        const isMetric = this.state.unitSystem === 'metric';
+        const btnMetricSetMob = document.getElementById('btnSettingsMetricMobile');
+        const btnCustSetMob = document.getElementById('btnSettingsCustomaryMobile');
+        if (btnMetricSetMob) btnMetricSetMob.classList.toggle('active', isMetric);
+        if (btnCustSetMob) btnCustSetMob.classList.toggle('active', !isMetric);
+
+        // 4. Toggles
+        const chkHourMob = document.getElementById('chkSettingHourLabelsMobile');
+        if (chkHourMob) chkHourMob.checked = this.state.showHourAndEventLabels !== false;
+
+        const chkDimsMob = document.getElementById('chkSettingDimensionsMobile');
+        if (chkDimsMob) chkDimsMob.checked = !!this.state.showDimensions;
+
+        const chkMonMob = document.getElementById('chkSettingMonthsMobile');
+        if (chkMonMob) chkMonMob.checked = !!this.state.showAllMonths;
+
+        const chkAnaMob = document.getElementById('chkSettingAnalemmasMobile');
+        if (chkAnaMob) chkAnaMob.checked = !!this.state.showAnalemmas;
+
+        const chkTransMob = document.getElementById('chkSettingTransparentMobile');
+        if (chkTransMob) chkTransMob.checked = !!this.state.transparentMassings;
+    }
+
     setUnitSystem(unit) {
         this.state.unitSystem = unit;
         if (unit === 'metric') {
@@ -565,6 +684,8 @@ class SunDomeApp {
 
         this.polarChart.updateState({ unitSystem: unit });
         this.solarDome.updateState({ unitSystem: unit });
+        this.settingsModal.syncUiWithState(this.state);
+        this.syncMobileSettingsUi();
         this.renderMassingsList();
     }
 
@@ -979,9 +1100,12 @@ class SunDomeApp {
             longitude: this.state.longitude,
             showAnalemmas: this.state.showAnalemmas,
             showAllMonths: this.state.showAllMonths,
+            showHourAndEventLabels: this.state.showHourAndEventLabels,
             transparentMassings: this.state.transparentMassings,
             showDimensions: this.state.showDimensions,
             unitSystem: this.state.unitSystem,
+            theme: this.state.theme,
+            houseColor: this.state.houseColor,
             zoomScale: polarZoom,
             massings: this.state.massings,
             selectedMassingId: this.state.selectedMassingId
@@ -997,6 +1121,8 @@ class SunDomeApp {
             transparentMassings: this.state.transparentMassings,
             showDimensions: this.state.showDimensions,
             unitSystem: this.state.unitSystem,
+            theme: this.state.theme,
+            houseColor: this.state.houseColor,
             zoomScale: domeZoom,
             massings: this.state.massings
         });

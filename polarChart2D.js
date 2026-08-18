@@ -511,14 +511,16 @@ export class PolarChart2D {
         const { ctx, width, height, centerX, centerY, radius } = this;
         if (!ctx || radius <= 10) return;
 
+        const isLight = this.state.theme === 'light';
+
         ctx.clearRect(0, 0, width, height);
 
         // 1. Flat Clean Background
-        ctx.fillStyle = '#0d0f12';
+        ctx.fillStyle = isLight ? '#f8fafc' : '#0d0f12';
         ctx.fillRect(0, 0, width, height);
 
         // 2. Inner Polar Disk
-        ctx.fillStyle = '#12151b';
+        ctx.fillStyle = isLight ? '#ffffff' : '#12151b';
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
         ctx.fill();
@@ -526,7 +528,7 @@ export class PolarChart2D {
         // 3. Grid (concentric elevation rings & radial azimuth lines behind the house)
         this.drawGrid();
 
-        // 4. 4x Scaled House Footprint at Center
+        // 4. Scaled House Footprint at Center
         this.drawCenterHouse4x();
 
         // 5. Drawn Polygon Massings & To-Scale Dimensions
@@ -560,6 +562,7 @@ export class PolarChart2D {
 
     drawGrid() {
         const { ctx, centerX, centerY, radius } = this;
+        const isLight = this.state.theme === 'light';
 
         // Concentric elevation circles (0° to 80°)
         const elevations = [0, 10, 20, 30, 40, 50, 60, 70, 80];
@@ -571,16 +574,20 @@ export class PolarChart2D {
             
             if (el === 0) {
                 ctx.lineWidth = 1.5;
-                ctx.strokeStyle = '#475063';
+                ctx.strokeStyle = isLight ? '#94a3b8' : '#475063';
             } else {
                 ctx.lineWidth = el % 30 === 0 ? 1.0 : 0.5;
-                ctx.strokeStyle = el % 30 === 0 ? '#2a303d' : '#1c212b';
+                if (isLight) {
+                    ctx.strokeStyle = el % 30 === 0 ? '#cbd5e1' : '#e2e8f0';
+                } else {
+                    ctx.strokeStyle = el % 30 === 0 ? '#2a303d' : '#1c212b';
+                }
             }
             ctx.stroke();
 
             if (el > 0 && el < 90) {
                 ctx.font = '9px "Roboto Mono", monospace';
-                ctx.fillStyle = '#6b7280';
+                ctx.fillStyle = isLight ? '#64748b' : '#6b7280';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 // North segment (between center and North)
@@ -605,13 +612,13 @@ export class PolarChart2D {
 
             if (isCardinal) {
                 ctx.lineWidth = 1.0;
-                ctx.strokeStyle = '#374151';
+                ctx.strokeStyle = isLight ? '#94a3b8' : '#374151';
             } else if (isMajor) {
                 ctx.lineWidth = 0.75;
-                ctx.strokeStyle = '#262b36';
+                ctx.strokeStyle = isLight ? '#cbd5e1' : '#262b36';
             } else {
                 ctx.lineWidth = 0.5;
-                ctx.strokeStyle = '#181c24';
+                ctx.strokeStyle = isLight ? '#e2e8f0' : '#181c24';
             }
             ctx.stroke();
         }
@@ -635,15 +642,15 @@ export class PolarChart2D {
             ctx.moveTo(xTickStart, yTickStart);
             ctx.lineTo(xTickEnd, yTickEnd);
             
-            // Subtle color and lineweight hierarchy
+            // Lineweight & color hierarchy
             if (is30) {
-                ctx.strokeStyle = '#4b5563';
+                ctx.strokeStyle = isLight ? '#64748b' : '#4b5563';
                 ctx.lineWidth = 1.0;
             } else if (is10) {
-                ctx.strokeStyle = '#374151';
+                ctx.strokeStyle = isLight ? '#94a3b8' : '#374151';
                 ctx.lineWidth = 0.75;
             } else {
-                ctx.strokeStyle = '#262b36';
+                ctx.strokeStyle = isLight ? '#cbd5e1' : '#262b36';
                 ctx.lineWidth = 0.5;
             }
             ctx.stroke();
@@ -653,7 +660,7 @@ export class PolarChart2D {
                 const xText = centerX + (radius + 15) * Math.sin(rad);
                 const yText = centerY - (radius + 15) * Math.cos(rad);
                 ctx.font = '8px "Roboto Mono", monospace';
-                ctx.fillStyle = '#6b7280';
+                ctx.fillStyle = isLight ? '#64748b' : '#6b7280';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(`${az}°`, xText, yText);
@@ -662,10 +669,10 @@ export class PolarChart2D {
 
         // Cardinal Labels
         const cardinals = [
-            { label: 'N', deg: 0, color: '#f3f4f6' },
-            { label: 'E', deg: 90, color: '#9ca3af' },
-            { label: 'S', deg: 180, color: '#9ca3af' },
-            { label: 'W', deg: 270, color: '#9ca3af' }
+            { label: 'N', deg: 0, color: isLight ? '#0f172a' : '#f3f4f6' },
+            { label: 'E', deg: 90, color: isLight ? '#475569' : '#9ca3af' },
+            { label: 'S', deg: 180, color: isLight ? '#475569' : '#9ca3af' },
+            { label: 'W', deg: 270, color: isLight ? '#475569' : '#9ca3af' }
         ];
 
         cardinals.forEach(item => {
@@ -745,9 +752,12 @@ export class PolarChart2D {
 
             const segments = this.drawContiguousDaylightSegments(path.points, strokeColor, lineW);
 
-            // Solstice & Equinox labels (Only shown on wider desktop screens; omitted on mobile for clean spacing)
+            // Solstice & Equinox labels (Only shown on wider desktop screens and when hour/event labels are enabled)
             const isMobile = this.width < 520 || (typeof window !== 'undefined' && window.innerWidth <= 820);
-            if (!isMobile && segments.length > 0 && segments[0].length > 0) {
+            const showLabels = this.state.showHourAndEventLabels !== false;
+            const isLight = this.state.theme === 'light';
+
+            if (!isMobile && showLabels && segments.length > 0 && segments[0].length > 0) {
                 const peak = segments[0].reduce((max, p) => p.elevation > max.elevation ? p : max, segments[0][0]);
                 if (peak && peak.elevation > 4) {
                     const pt = this.polarToCanvas(peak.elevation, peak.azimuth);
@@ -765,9 +775,9 @@ export class PolarChart2D {
                         const btnX = Math.round(pt.x - btnW / 2);
                         const btnY = Math.round(pt.y - btnH / 2);
 
-                        // Subtle dark grey button background
-                        ctx.fillStyle = '#161922';
-                        ctx.strokeStyle = '#2d3545';
+                        // Button background
+                        ctx.fillStyle = isLight ? '#ffffff' : '#161922';
+                        ctx.strokeStyle = isLight ? '#cbd5e1' : '#2d3545';
                         ctx.lineWidth = 1;
 
                         ctx.beginPath();
@@ -780,7 +790,7 @@ export class PolarChart2D {
                         ctx.stroke();
 
                         // Centered text vertically on the line
-                        ctx.fillStyle = '#9ca3af';
+                        ctx.fillStyle = isLight ? '#334155' : '#9ca3af';
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
                         ctx.fillText(label, pt.x, pt.y + 0.5);
@@ -797,6 +807,8 @@ export class PolarChart2D {
         const { ctx } = this;
         const year = this.state.date.getFullYear();
         const hourCurves = SolarCalc.getHourCurves(year, this.state.latitude, this.state.longitude);
+        const isLight = this.state.theme === 'light';
+        const showLabels = this.state.showHourAndEventLabels !== false;
 
         hourCurves.forEach(curve => {
             const segments = [];
@@ -831,19 +843,19 @@ export class PolarChart2D {
                     ctx.lineTo(firstPt.x, firstPt.y);
                 }
 
-                ctx.strokeStyle = '#374151';
+                ctx.strokeStyle = isLight ? '#cbd5e1' : '#374151';
                 ctx.lineWidth = 0.8;
                 ctx.stroke();
                 ctx.setLineDash([]);
             });
 
-            // Hour Label
-            if (segments.length > 0 && segments[0].length > 4) {
+            // Hour Label (only when labels are enabled)
+            if (showLabels && segments.length > 0 && segments[0].length > 4) {
                 const midPt = segments[0][Math.floor(segments[0].length / 2)];
                 if (midPt && midPt.elevation > 8) {
                     const pt = this.polarToCanvas(midPt.elevation, midPt.azimuth);
                     ctx.font = '8px "Roboto Mono", monospace';
-                    ctx.fillStyle = '#6b7280';
+                    ctx.fillStyle = isLight ? '#64748b' : '#6b7280';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(curve.label, pt.x, pt.y);
@@ -932,8 +944,9 @@ export class PolarChart2D {
         if (tagY + tagH > this.height - 8) tagY = sunPt.y - tagH - 18; // Flip above if near bottom edge
         if (tagY < 8) tagY = 8;
 
-        ctx.fillStyle = 'rgba(24, 28, 36, 0.94)';
-        ctx.strokeStyle = '#2d3545';
+        const isLight = this.state.theme === 'light';
+        ctx.fillStyle = isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(24, 28, 36, 0.94)';
+        ctx.strokeStyle = isLight ? '#cbd5e1' : '#2d3545';
         ctx.lineWidth = 1;
         ctx.fillRect(tagX, tagY, tagW, tagH);
         ctx.strokeRect(tagX, tagY, tagW, tagH);
@@ -943,7 +956,7 @@ export class PolarChart2D {
         const textCenterX = tagX + tagW / 2;
 
         // Line 1: Solar angles
-        ctx.fillStyle = '#f3f4f6';
+        ctx.fillStyle = isLight ? '#0f172a' : '#f3f4f6';
         ctx.font = '500 8.5px "Roboto Mono", monospace';
         ctx.textBaseline = 'top';
         ctx.fillText(line1, textCenterX, tagY + 3.5);
@@ -958,11 +971,12 @@ export class PolarChart2D {
         const { ctx, centerX, centerY } = this;
         const w = this.house3DWidth * this.pixelsPerMeter;
         const l = this.house3DLength * this.pixelsPerMeter;
+        const isLight = this.state.theme === 'light';
 
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = this.state.houseColor || '#ffffff';
         ctx.fillRect(centerX - w / 2, centerY - l / 2, w, l);
 
-        ctx.strokeStyle = '#0d0f12';
+        ctx.strokeStyle = isLight ? '#64748b' : '#0d0f12';
         ctx.lineWidth = 1.2;
         ctx.strokeRect(centerX - w / 2, centerY - l / 2, w, l);
     }
